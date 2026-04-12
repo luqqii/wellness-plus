@@ -61,6 +61,18 @@ export default function NutritionPage() {
     loadSuggestions();
   }, []);
 
+  // Noom Traffic Light Caloric Density Approximation
+  const getFoodColor = (food) => {
+    if (!food) return 'var(--c-yellow)';
+    const n = (food.name || '').toLowerCase();
+    // Green (Eat freely)
+    if (n.includes('salad') || n.includes('veggie') || n.includes('apple') || n.includes('fruit') || n.includes('spinach')) return 'var(--c-green)';
+    // Orange/Red (Eat sparingly)
+    if (n.includes('cake') || n.includes('butter') || n.includes('oil') || n.includes('sugar') || food.calories > 450) return 'var(--c-orange)';
+    // Yellow (Eat moderately)
+    return 'var(--c-yellow)';
+  };
+
   const getMealItems = (mealKey) => log ? log[mealKey] || [] : [];
   
   const calcTotalCal = (items) => items.reduce((acc, i) => acc + (i.customFood?.calories || 0) * i.servingsConsumed, 0);
@@ -216,10 +228,15 @@ export default function NutritionPage() {
                   </button>
                 </div>
 
-                {section.items.map((item, ii) => (
-                  <div key={ii} className="diary-row">
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--c-text-primary)' }}>{item.customFood?.name}</div>
+                {section.items.map((item, ii) => {
+                  const noomColor = getFoodColor(item.customFood);
+                  return (
+                  <div key={ii} className="diary-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #EAE6DF' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                      {/* Noom Food Density Indicator */}
+                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: noomColor, marginTop: 4, flexShrink: 0 }} />
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1D20' }}>{item.customFood?.name}</div>
                       <div style={{ fontSize: 11, color: 'var(--c-text-muted)', marginTop: 2 }}>
                         {item.servingsConsumed} serving(s) · C: {item.customFood?.carbs}g · P: {item.customFood?.protein}g · F: {item.customFood?.fat}g
                       </div>
@@ -229,7 +246,8 @@ export default function NutritionPage() {
                       <div style={{ fontSize: 10, color: 'var(--c-text-muted)' }}>cal</div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
 
                 {section.items.length === 0 && (
                   <div style={{ padding: '14px 4px', textAlign: 'center' }}>

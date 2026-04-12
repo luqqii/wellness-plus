@@ -76,7 +76,36 @@ export default function DashboardPage() {
 
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 1100 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1100 }}>
+      
+      {/* NOOM DAILY LESSONS */}
+      <motion.div {...fadeUp(0)} style={{ background: '#FFFFFF', borderRadius: 24, padding: 24, boxShadow: '0 8px 24px rgba(0,0,0,0.04)', border: '1px solid #EAE6DF' }}>
+        <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1A1D20', marginBottom: 16 }}>Your Daily Psychology</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {[
+            { title: "Day 1: The Psychology of Fullness", duration: "3 min", done: true },
+            { title: "Identify your eating triggers", duration: "4 min", done: false },
+            { title: "Mindful eating exercise", duration: "2 min", done: false },
+          ].map((lesson, i) => (
+            <div key={i} style={{ 
+              display: 'flex', alignItems: 'center', gap: 14, 
+              padding: '16px', borderRadius: 16, 
+              background: lesson.done ? '#FDFBF8' : '#F5F3EF',
+              border: `2px solid ${lesson.done ? 'var(--c-teal)' : 'transparent'}`,
+              cursor: 'pointer'
+            }}>
+              <div style={{ width: 28, height: 28, borderRadius: '50%', background: lesson.done ? 'var(--c-teal)' : '#FFFFFF', border: lesson.done ? 'none' : '2px solid #EAE6DF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {lesson.done && <Check size={16} color="white" />}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1D20', textDecoration: lesson.done ? 'line-through' : 'none', opacity: lesson.done ? 0.6 : 1 }}>{lesson.title}</div>
+                <div style={{ fontSize: 13, color: '#4A5568', marginTop: 2 }}>{lesson.duration} read</div>
+              </div>
+              {!lesson.done && <ChevronRight size={18} color="#718096" />}
+            </div>
+          ))}
+        </div>
+      </motion.div>
 
       {/* === ROW 1: Score + Stats === */}
       <div className="responsive-split">
