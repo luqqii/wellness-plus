@@ -219,7 +219,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Equation */}
-          <div style={{
+          <div className="macro-equation" style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             gap: 12, padding: '14px 16px',
             background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--r-md)',
@@ -227,15 +227,15 @@ export default function DashboardPage() {
           }}>
             {[
               { val: '2,200', label: 'Goal', color: 'var(--c-text-primary)' },
-              { val: '−', label: '', color: 'var(--c-text-muted)' },
+              { val: '−', label: '', color: 'var(--c-text-muted)', isSym: true },
               { val: currentMetric.calories?.toLocaleString() || '0', label: 'Food', color: 'var(--c-orange)' },
-              { val: '+', label: '', color: 'var(--c-text-muted)' },
+              { val: '+', label: '', color: 'var(--c-text-muted)', isSym: true },
               { val: '320', label: 'Exercise', color: 'var(--c-teal)' },
-              { val: '=', label: '', color: 'var(--c-text-muted)' },
+              { val: '=', label: '', color: 'var(--c-text-muted)', isSym: true },
               { val: Math.max(0, 2200 - (currentMetric.calories || 0) + 320).toLocaleString(), label: 'Remaining', color: 'var(--c-blue)' },
             ].map((item, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: item.label ? 20 : 24, fontWeight: 800, color: item.color, letterSpacing: '-0.5px' }}>{item.val}</div>
+                <div className={item.isSym ? 'macro-equation-sym' : 'macro-equation-val'} style={{ fontSize: item.label ? 20 : 24, fontWeight: 800, color: item.color, letterSpacing: '-0.5px' }}>{item.val}</div>
                 {item.label && <div style={{ fontSize: 10, color: 'var(--c-text-muted)', marginTop: 2 }}>{item.label}</div>}
               </div>
             ))}

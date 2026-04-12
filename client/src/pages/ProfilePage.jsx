@@ -3,12 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Mail, Target, TrendingUp, Award, Edit3, Save, X, CheckCircle2, Plus, Loader2 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import useHabitStore from '../store/habitStore';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 // Achievements are now calculated dynamically inside the component
 
 export default function ProfilePage() {
-  const { user, updateUser } = useAuthStore();
+  const { user, updateUser, logout } = useAuthStore();
+  const navigate = useNavigate();
   const { habits } = useHabitStore();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ 
@@ -91,7 +93,7 @@ export default function ProfilePage() {
     <div style={{ maxWidth: 760 }}>
       {/* Profile Header */}
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="glass-card" style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
           <div style={{ position: 'relative' }}>
             <div style={{
               width: 80, height: 80, borderRadius: 20,
@@ -283,6 +285,21 @@ export default function ProfilePage() {
            </div>
         </motion.div>
       </div>
+
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} style={{ marginTop: 40, textAlign: 'center' }}>
+        <button 
+          onClick={() => {
+            logout();
+            navigate('/login');
+          }} 
+          className="btn" 
+          style={{ 
+            background: 'rgba(255,50,50,0.1)', border: '1px solid rgba(255,50,50,0.2)', 
+            color: '#ff6b6b', width: '100%', padding: '14px 0', fontSize: 16, fontWeight: 600
+          }}>
+          Log Out
+        </button>
+      </motion.div>
     </div>
   );
 }

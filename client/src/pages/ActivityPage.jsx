@@ -440,7 +440,7 @@ export default function ActivityPage() {
           <span className="badge badge-orange">Adaptive Plan</span>
         </div>
 
-        <div className="responsive-grid-3">
+        <div className="coach-emotion-scroll" style={{ display: 'flex', gap: 12, paddingBottom: 10 }}>
           {[
             { day: 'Mon', focus: 'Cardio', intensity: 'High', color: 'var(--c-orange)' },
             { day: 'Tue', focus: 'Strength', intensity: 'Medium', color: 'var(--c-blue)' },
@@ -458,6 +458,7 @@ export default function ActivityPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.65 + i * 0.05 }}
                 style={{
+                  minWidth: 100, flex: 1,
                   padding: '14px 10px',
                   background: isToday ? plan.color + '18' : 'rgba(255,255,255,0.03)',
                   borderRadius: 'var(--r-md)',
