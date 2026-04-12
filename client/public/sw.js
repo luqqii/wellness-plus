@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wellness-plus-cache-v1';
+const CACHE_NAME = 'wellness-plus-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,6 +6,8 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', (event) => {
+  // Skip waiting allows the new service worker to immediately control the page
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -16,12 +18,20 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
+    // Network First strategy
+    fetch(event.request)
+      .then((networkResponse) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          // Update cache if it's a valid GET request
+          if (event.request.method === 'GET' && networkResponse.ok) {
+             cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        });
+      })
+      .catch(() => {
+        // Fallback to cache if network fails
+        return caches.match(event.request);
       })
   );
 });
