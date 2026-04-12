@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+﻿import { GoogleGenerativeAI } from '@google/generative-ai';
 import axios from 'axios';
 import env from '../config/env.js';
 
@@ -26,7 +26,7 @@ Your goal is to be helpful and empathetic.
 When providing an initial greeting, ALWAYS use this exact format: "Hi ${user?.name || 'Alex'}, how may I help you today?"`;
 
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-3.1-flash-lite-preview",
+        model: "gemini-1.5-flash",
         systemInstruction: { parts: [{ text: systemPrompt }] }
       });
       
@@ -55,7 +55,7 @@ Keep responses conversational, human-like, and concise (2-4 sentences max).
 Respond ONLY in JSON format: { "response": "string", "sentiment": "string" }`;
 
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-3.1-flash-lite-preview",
+        model: "gemini-1.5-flash",
         systemInstruction: { parts: [{ text: systemInstruction }] },
         generationConfig: { responseMimeType: "application/json", temperature: 0.7 }
       });
@@ -108,7 +108,7 @@ Respond ONLY in JSON format: { "response": "string", "sentiment": "string" }`;
 export const analyzeFoodImage = async (imageBuffer, mimeType) => {
   if (genAI) {
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite-preview" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const prompt = `Analyze this food image. Return ONLY in JSON format: { "name": String, "calories": Number, "protein": Number, "carbs": Number, "fat": Number, "confidence": Number }`;
 
       const result = await model.generateContent([
@@ -129,7 +129,7 @@ export const generateNutritionAdvice = async (user, consumed, remaining) => {
   if (genAI) {
     try {
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-3.1-flash-lite-preview",
+        model: "gemini-1.5-flash",
         generationConfig: { responseMimeType: "application/json", temperature: 0.7 }
       });
       const prompt = `User Goals: ${user.goals?.join(', ') || 'General Wellness'}. Remaining: ${remaining.calories} cal, ${remaining.protein}g protein, ${remaining.carbs}g carbs, ${remaining.fat}g fat. 
@@ -177,7 +177,7 @@ export const generateMealPlan = async (user, targetCalories) => {
   if (genAI) {
     try {
       const model = genAI.getGenerativeModel({
-        model: "gemini-3.1-flash-lite-preview",
+        model: "gemini-1.5-flash",
         generationConfig: { responseMimeType: "application/json", temperature: 0.8 }
       });
       const goals = Array.isArray(user?.goals) ? user.goals.join(', ') : 'General Wellness';
@@ -228,7 +228,7 @@ export const generateGroceryList = async (mealPlan) => {
   if (genAI) {
     try {
       const model = genAI.getGenerativeModel({
-        model: "gemini-3.1-flash-lite-preview",
+        model: "gemini-1.5-flash",
         generationConfig: { responseMimeType: "application/json", temperature: 0.5 }
       });
 
@@ -264,4 +264,5 @@ Return ONLY a JSON array like:
     { category: 'Pantry & Spices', items: [{ name: 'Olive Oil', quantity: '1 bottle' }, { name: 'Almond Butter', quantity: '1 jar' }, { name: 'Honey', quantity: '1 jar' }] },
   ];
 };
+
 
