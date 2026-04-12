@@ -1,13 +1,19 @@
-﻿import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import axios from 'axios';
 import env from '../config/env.js';
 
-let genAI;
+const MODEL_NAME = 'gemini-1.5-flash';
+
+let genAI = null;
 if (env.GEMINI_API_KEY) {
   genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+  console.log('[AI Service] Gemini initialized with model:', MODEL_NAME);
+} else {
+  console.warn('[AI Service] GEMINI_API_KEY not found — using fallback responses.');
 }
 
 const insightCache = new Map();
+
 
 /**
  * Basic AI Service Interface connected to Gemini
@@ -16,27 +22,18 @@ export const generateCoachingInsight = async (user, metrics, context) => {
   if (genAI) {
     const todayStr = new Date().toISOString().split('T')[0];
     const cacheKey = `${user?._id || user?.id || 'anon'}_${todayStr}`;
-    if (insightCache.has(cacheKey)) {
-      return insightCache.get(cacheKey);
-    }
+    if (insightCache.has(cacheKey)) return insightCache.get(cacheKey);
 
     try {
-      const systemPrompt = `You are Wellness+, a friendly AI Health Coach for ${user?.name || 'Alex'}. 
-Your goal is to be helpful and empathetic. 
-When providing an initial greeting, ALWAYS use this exact format: "Hi ${user?.name || 'Alex'}, how may I help you today?"`;
-
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
-        systemInstruction: { parts: [{ text: systemPrompt }] }
-      });
-      
-      const result = await model.generateContent("Provide my initial greeting message.");
+      const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+      const prompt = `You are Wellness+, a friendly AI Health Coach for ${user?.name || 'Alex'}. 
+Provide a warm, personalized greeting and one actionable wellness tip. Keep it under 3 sentences.`;
+      const result = await model.generateContent(prompt);
       const text = result.response.text().trim();
-      
       insightCache.set(cacheKey, text);
       return text;
     } catch (e) {
-      console.error("Gemini Insight Error:", e.message);
+      console.error('[AI] generateCoachingInsight error:', e.message);
     }
   }
   return `Hi ${user?.name || 'Alex'}, how may I help you today?`;
@@ -49,81 +46,75 @@ export const replyToConversation = async (user, messageHistory, newMessage) => {
   if (genAI) {
     try {
       const goalList = Array.isArray(user?.goals) ? user.goals.map(g => g.type || g).join(', ') : 'General Wellness';
-      const systemInstruction = `You are Wellness+, a helpful Health Coach for ${user?.name || 'Alex'}.
-Goals: ${goalList}.
-Keep responses conversational, human-like, and concise (2-4 sentences max). 
-Respond ONLY in JSON format: { "response": "string", "sentiment": "string" }`;
 
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        generationConfig: { responseMimeType: "application/json", temperature: 0.7 }
-      });
+      const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
+      // Build clean alternating history
       let history = messageHistory
         .map(m => ({
           role: m.role === 'ai' ? 'model' : 'user',
           parts: [{ text: m.content }]
         }))
-        .filter((m, i, arr) => i === 0 || m.role !== arr[i-1].role);
+        .filter((m, i, arr) => i === 0 || m.role !== arr[i - 1].role);
 
+      // History must start with 'user'
       while (history.length > 0 && history[0].role !== 'user') history.shift();
-      // Ensure the history ends with a model response for startChat to work correctly with sendMessage
-      if (history.length > 0 && history[history.length - 1].role !== 'model') {
-        history.pop();
-      }
 
-      const chat = model.startChat({ 
-        history: history.length > 0 ? history : [] 
+      const systemContext = `You are Wellness+, a helpful and empathetic AI Health Coach for ${user?.name || 'Alex'}.
+User goals: ${goalList}.
+Instructions: Be warm, conversational, and concise (2-4 sentences). 
+IMPORTANT: Respond ONLY with a valid JSON object in this exact format: { "response": "your message here", "sentiment": "positive|neutral|negative" }`;
+
+      const chat = model.startChat({
+        history: [
+          { role: 'user', parts: [{ text: systemContext }] },
+          { role: 'model', parts: [{ text: '{ "response": "Understood! I am ready to help.", "sentiment": "positive" }' }] },
+          ...history
+        ]
       });
+
       const result = await chat.sendMessage(newMessage);
-      const text = result.response.text();
-      
+      const text = result.response.text().trim();
+
       const cleanedJson = text.replace(/```json|```/g, '').trim();
-      let output;
       try {
-        output = JSON.parse(cleanedJson);
-      } catch (parseError) {
-        console.warn("Gemini JSON parse failed, using raw response");
-        return { content: cleanedJson, sentiment: 'neutral' };
+        const output = JSON.parse(cleanedJson);
+        return { content: output.response || text, sentiment: output.sentiment || 'neutral' };
+      } catch {
+        // If not JSON, return raw text
+        return { content: text, sentiment: 'neutral' };
       }
-      
-      return { content: output.response || cleanedJson, sentiment: output.sentiment || 'neutral' };
 
     } catch (e) {
-       console.error("Gemini Chat Execution Error:", e.message);
-       return { 
-         content: "I'm here for you. How else can I support your journey today?", 
-         sentiment: "neutral" 
-       };
+      console.error('[AI] replyToConversation error:', e.message);
+      return {
+        content: "I'm here for you. How else can I support your wellness journey today?",
+        sentiment: 'neutral'
+      };
     }
   }
 
-  // Fallback Logic
-  const content = newMessage.toLowerCase();
-  let responseText = "I hear you. Let's focus on small, consistent steps.";
-  return { content: responseText, sentiment: 'neutral' };
+  return { content: "I hear you. Let's focus on small, consistent steps forward.", sentiment: 'neutral' };
 };
 
 export const analyzeFoodImage = async (imageBuffer, mimeType) => {
   if (genAI) {
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: MODEL_NAME });
       const prompt = `Analyze this food image. Return ONLY in JSON format: { "name": String, "calories": Number, "protein": Number, "carbs": Number, "fat": Number, "confidence": Number }`;
-
       const result = await model.generateContent([
         { inlineData: { data: imageBuffer.toString('base64'), mimeType } },
         { text: prompt }
       ]);
-      
       const cleanedJson = result.response.text().replace(/```json|```/g, '').trim();
       return JSON.parse(cleanedJson);
     } catch (e) {
-      console.error("Gemini Vision Error:", e.message);
+      console.error('[AI] analyzeFoodImage error:', e.message);
     }
   }
   return null;
 };
+
 
 export const generateNutritionAdvice = async (user, consumed, remaining) => {
   if (genAI) {
