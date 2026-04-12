@@ -8,6 +8,20 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import OnboardingPage from './pages/OnboardingPage';
+
+// Free Interactive Tools (Noom Clone)
+import MacroCalculatorPage from './pages/MacroCalculatorPage';
+import CalorieCalculatorPage from './pages/CalorieCalculatorPage';
+import PersonalityQuizPage from './pages/PersonalityQuizPage';
+import WeightLossProductPage from './pages/WeightLossProductPage';
+import SupportPage from './pages/SupportPage';
+import AboutUsPage from './pages/AboutUsPage';
+import ResearchPage from './pages/ResearchPage';
+import PressPage from './pages/PressPage';
+import CareersPage from './pages/CareersPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+
 import DashboardPage from './pages/DashboardPage';
 import HabitsPage from './pages/HabitsPage';
 import CoachPage from './pages/CoachPage';
@@ -51,6 +65,21 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
+
+        {/* Free Tools */}
+        <Route path="/macro-calculator" element={<MacroCalculatorPage />} />
+        <Route path="/calorie-deficit-calculator" element={<CalorieCalculatorPage />} />
+        <Route path="/personality-quiz" element={<PersonalityQuizPage />} />
+        
+        {/* Core Corporate Tabs */}
+        <Route path="/weight-loss" element={<WeightLossProductPage />} />
+        <Route path="/support" element={<SupportPage />} />
+        <Route path="/about" element={<AboutUsPage />} />
+        <Route path="/research" element={<ResearchPage />} />
+        <Route path="/press" element={<PressPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
 
         {/* App routes (protected) */}
         <Route element={<AuthGuard />}>

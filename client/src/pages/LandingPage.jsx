@@ -35,7 +35,21 @@ export default function LandingPage() {
           </span>
         </div>
 
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
+          <Link to="/weight-loss" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 700, fontSize: 16 }}>Weight Loss</Link>
+          <Link to="/support" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 700, fontSize: 16 }}>Support</Link>
+          
+          {/* Mock Dropdown for Free Tools */}
+          <div style={{ position: 'relative', cursor: 'pointer' }} className="nav-dropdown-group">
+            <span style={{ fontSize: 16, color: '#0C2B35', fontWeight: 700 }}>Free Tools</span>
+            <div className="nav-dropdown-menu" style={{ position: 'absolute', top: 30, left: -60, background: '#FFFFFF', padding: 20, borderRadius: 16, width: 280, boxShadow: '0 12px 30px rgba(0,0,0,0.08)', display: 'none', flexDirection: 'column', gap: 14 }}>
+              <Link to="/macro-calculator" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 600, fontSize: 15 }}>Macro Calculator</Link>
+              <Link to="/calorie-deficit-calculator" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 600, fontSize: 15 }}>Calorie Deficit Calculator</Link>
+              <Link to="/personality-quiz" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 600, fontSize: 15 }}>Weight Loss Personality Quiz</Link>
+            </div>
+            <style>{`.nav-dropdown-group:hover .nav-dropdown-menu { display: flex !important; }`}</style>
+          </div>
+
           {isAuthenticated ? (
             <Link to="/dashboard" style={{ fontSize: 16, color: '#EC5A42', textDecoration: 'none', fontWeight: 700 }}>
               Dashboard
@@ -126,8 +140,65 @@ export default function LandingPage() {
                </div>
             ))}
          </div>
+         </div>
       </section>
+
+      {/* Full Noom-Style Footer */}
+      <footer style={{ background: '#0C2B35', color: '#E8DED8', padding: '60px 5% 40px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 40, marginBottom: 60 }}>
+            
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: '#FFFFFF', marginBottom: 24 }}>Wellness+</div>
+              <p style={{ fontSize: 14, lineHeight: 1.7, color: '#9CA3AF' }}>Stop dieting. Get lifelong results with our psychology-based program.</p>
+            </div>
+
+            <div>
+              <h4 style={{ fontWeight: 800, color: '#FFFFFF', marginBottom: 20, fontSize: 14, textTransform: 'uppercase', letterSpacing: '1px' }}>Program</h4>
+              {[['Weight Loss', '/weight-loss'], ['Research & Science', '/research'], ['About Us', '/about'], ['Press', '/press']].map(([label, href]) => (
+                <div key={label} style={{ marginBottom: 12 }}>
+                  <Link to={href} style={{ color: '#9CA3AF', textDecoration: 'none', fontSize: 15, fontWeight: 600 }}
+                    onMouseEnter={e => e.target.style.color = '#FFFFFF'} onMouseLeave={e => e.target.style.color = '#9CA3AF'}>
+                    {label}
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <h4 style={{ fontWeight: 800, color: '#FFFFFF', marginBottom: 20, fontSize: 14, textTransform: 'uppercase', letterSpacing: '1px' }}>Free Tools</h4>
+              {[['Macro Calculator', '/macro-calculator'], ['Calorie Calculator', '/calorie-deficit-calculator'], ['Personality Quiz', '/personality-quiz']].map(([label, href]) => (
+                <div key={label} style={{ marginBottom: 12 }}>
+                  <Link to={href} style={{ color: '#9CA3AF', textDecoration: 'none', fontSize: 15, fontWeight: 600 }}
+                    onMouseEnter={e => e.target.style.color = '#FFFFFF'} onMouseLeave={e => e.target.style.color = '#9CA3AF'}>
+                    {label}
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <h4 style={{ fontWeight: 800, color: '#FFFFFF', marginBottom: 20, fontSize: 14, textTransform: 'uppercase', letterSpacing: '1px' }}>Company</h4>
+              {[['Careers', '/careers'], ['Support', '/support'], ['Privacy Policy', '/privacy'], ['Terms & Conditions', '/terms']].map(([label, href]) => (
+                <div key={label} style={{ marginBottom: 12 }}>
+                  <Link to={href} style={{ color: '#9CA3AF', textDecoration: 'none', fontSize: 15, fontWeight: 600 }}
+                    onMouseEnter={e => e.target.style.color = '#FFFFFF'} onMouseLeave={e => e.target.style.color = '#9CA3AF'}>
+                    {label}
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+          </div>
+
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 30, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
+            <span style={{ fontSize: 14, color: '#6B7280' }}>© {new Date().getFullYear()} Wellness+ Inc. All rights reserved.</span>
+            <span style={{ fontSize: 14, color: '#6B7280' }}>This app does not provide medical advice.</span>
+          </div>
+        </div>
+      </footer>
 
     </div>
   );
 }
+
