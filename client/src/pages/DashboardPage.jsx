@@ -182,7 +182,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 + i * 0.08 }}
-                whileHover={{ y: -4, background: 'rgba(255,255,255,0.06)' }}
+                whileHover={{ y: -4, background: 'var(--c-bg-hover)' }}
                 onClick={() => {
                   if (n.action.includes('Flow')) navigate('/activity');
                   else if (n.action.includes('Plan')) navigate('/nutrition');
@@ -222,7 +222,7 @@ export default function DashboardPage() {
           <div className="macro-equation" style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             gap: 12, padding: '14px 16px',
-            background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--r-md)',
+            background: 'var(--c-bg-hover)', borderRadius: 'var(--r-md)',
             border: '1px solid var(--c-border)', marginBottom: 16
           }}>
             {[

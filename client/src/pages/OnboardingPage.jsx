@@ -66,7 +66,7 @@ function WelcomeStep({ onNext }) {
         <div key={label} style={{
           display: 'flex', alignItems: 'center', gap: 12,
           padding: '10px 14px', borderRadius: 12,
-          background: 'rgba(255,255,255,0.03)', border: '1px solid var(--c-border)',
+          background: 'var(--c-bg-hover)', border: '1px solid var(--c-border)',
           marginBottom: 10, textAlign: 'left',
         }}>
           <div style={{ width: 34, height: 34, borderRadius: 10, background: col + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -191,7 +191,7 @@ function ScheduleStep({ data, onChange }) {
               style={{
                 padding: '8px 14px', borderRadius: 'var(--r-full)',
                 border: `1.5px solid ${data.wakeTime === t ? 'var(--c-blue)' : 'var(--c-border-strong)'}`,
-                background: data.wakeTime === t ? 'var(--c-blue-dim)' : 'rgba(255,255,255,0.03)',
+                background: data.wakeTime === t ? 'var(--c-blue-dim)' : 'var(--c-bg-hover)',
                 color: data.wakeTime === t ? 'var(--c-blue)' : 'var(--c-text-secondary)',
                 fontSize: 13, fontWeight: 600, cursor: 'pointer',
                 transition: 'all var(--t-fast)', fontFamily: 'Inter, sans-serif',
@@ -216,7 +216,7 @@ function ScheduleStep({ data, onChange }) {
               style={{
                 padding: '8px 14px', borderRadius: 'var(--r-full)',
                 border: `1.5px solid ${data.sleepTime === t ? 'var(--c-purple)' : 'var(--c-border-strong)'}`,
-                background: data.sleepTime === t ? 'var(--c-purple-dim)' : 'rgba(255,255,255,0.03)',
+                background: data.sleepTime === t ? 'var(--c-purple-dim)' : 'var(--c-bg-hover)',
                 color: data.sleepTime === t ? 'var(--c-purple)' : 'var(--c-text-secondary)',
                 fontSize: 13, fontWeight: 600, cursor: 'pointer',
                 transition: 'all var(--t-fast)', fontFamily: 'Inter, sans-serif',
@@ -254,7 +254,7 @@ function BaselineField({ label, field, unit, placeholder, icon: Icon, color = 'v
           }}
         />
         <div style={{
-          padding: '11px 14px', background: 'rgba(255,255,255,0.04)',
+          padding: '11px 14px', background: 'var(--c-bg-hover)',
           border: '1px solid var(--c-border-strong)', borderLeft: 'none',
           borderRadius: '0 var(--r-md) var(--r-md) 0',
           fontSize: 12, color: 'var(--c-text-muted)', fontWeight: 600, whiteSpace: 'nowrap',
@@ -351,8 +351,8 @@ export default function OnboardingPage() {
     <div className="onboarding-page">
       {/* Background */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        <div style={{ position: 'absolute', width: 500, height: 500, borderRadius: '50%', top: '-15%', right: '-10%', background: 'radial-gradient(circle, rgba(79,141,255,0.08) 0%, transparent 70%)' }} />
-        <div style={{ position: 'absolute', width: 400, height: 400, borderRadius: '50%', bottom: '-10%', left: '-8%', background: 'radial-gradient(circle, rgba(155,109,255,0.06) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', width: 500, height: 500, borderRadius: '50%', top: '-15%', right: '-10%', background: 'radial-gradient(circle, rgba(255,107,74,0.05) 0%, transparent 70%)' }} />
+        <div style={{ position: 'absolute', width: 400, height: 400, borderRadius: '50%', bottom: '-10%', left: '-8%', background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%)' }} />
       </div>
 
       {/* Logo */}

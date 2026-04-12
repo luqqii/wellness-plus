@@ -7,51 +7,51 @@
    ============================================================ */
 
 :root {
-  /* === BASE PALETTE === */
-  --c-bg-base:        #0a0b0f;
-  --c-bg-surface:     #111318;
-  --c-bg-elevated:    #171b24;
-  --c-bg-card:        #1c2030;
-  --c-bg-hover:       #222740;
+  /* === NOOM BRAND PALETTE === */
+  --c-bg-base:        #FDFBF8; /* Off-white warm cream */
+  --c-bg-surface:     #FFFFFF; /* Pure white cards */
+  --c-bg-elevated:    #FFFFFF;
+  --c-bg-card:        #FFFFFF;
+  --c-bg-hover:       #F5F3EF;
 
   /* === BORDERS === */
-  --c-border:         rgba(255,255,255,0.07);
-  --c-border-strong:  rgba(255,255,255,0.14);
+  --c-border:         rgba(0, 0, 0, 0.08);
+  --c-border-strong:  rgba(0, 0, 0, 0.15);
 
-  /* === BRAND COLORS === */
-  --c-blue:           #4f8dff;
-  --c-blue-dim:       rgba(79,141,255,0.15);
-  --c-blue-glow:      rgba(79,141,255,0.25);
+  /* === NOOM COLORS === */
+  --c-blue:           #3B82F6; /* Standard vibrant blue for secondary actions */
+  --c-blue-dim:       rgba(59,130,246,0.15);
+  --c-blue-glow:      rgba(59,130,246,0.25);
 
-  --c-purple:         #9b6dff;
-  --c-purple-dim:     rgba(155,109,255,0.15);
+  --c-purple:         #8B5CF6; 
+  --c-purple-dim:     rgba(139,92,246,0.15);
 
-  --c-orange:         #ff7940;
-  --c-orange-dim:     rgba(255,121,64,0.15);
+  --c-orange:         #FF6B4A; /* Noom's Signature Coral/Orange */
+  --c-orange-dim:     rgba(255,107,74,0.15);
 
-  --c-teal:           #00d4aa;
-  --c-teal-dim:       rgba(0,212,170,0.15);
+  --c-teal:           #14B8A6;
+  --c-teal-dim:       rgba(20,184,166,0.15);
 
-  --c-green:          #2dd4a4;
-  --c-green-dim:      rgba(45,212,164,0.15);
+  --c-green:          #22C55E; /* Noom "Green Food" identifier */
+  --c-green-dim:      rgba(34,197,94,0.15);
 
-  --c-yellow:         #fbbf24;
-  --c-yellow-dim:     rgba(251,191,36,0.15);
+  --c-yellow:         #F59E0B; /* Noom "Yellow Food" identifier */
+  --c-yellow-dim:     rgba(245,158,11,0.15);
 
-  --c-red:            #ff5b5b;
-  --c-red-dim:        rgba(255,91,91,0.15);
+  --c-red:            #EF4444; /* Noom "Red Food" identifier */
+  --c-red-dim:        rgba(239,68,68,0.15);
 
   /* === TEXT === */
-  --c-text-primary:   #f0f2f8;
-  --c-text-secondary: #8892a4;
-  --c-text-muted:     #525c70;
-  --c-text-inverse:   #0a0b0f;
+  --c-text-primary:   #1A1D20; /* Deep navy/black */
+  --c-text-secondary: #4A5568; 
+  --c-text-muted:     #718096;
+  --c-text-inverse:   #FFFFFF;
 
   /* === GLASSMORPHISM === */
-  --glass-bg:         rgba(28, 32, 48, 0.7);
-  --glass-border:     rgba(255,255,255,0.08);
-  --glass-shadow:     0 8px 32px rgba(0,0,0,0.4);
-  --glass-blur:       blur(16px);
+  --glass-bg:         rgba(255, 255, 255, 0.85);
+  --glass-border:     rgba(0, 0, 0, 0.05);
+  --glass-shadow:     0 8px 32px rgba(0,0,0,0.06);
+  --glass-blur:       blur(24px);
 
   /* === SPACING SCALE === */
   --space-1: 4px;
@@ -481,6 +481,7 @@ body {
   gap: 7px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
+  border-radius: 999px !important;
   border: none;
   cursor: pointer;
   transition: all var(--t-fast);
@@ -1146,8 +1147,9 @@ body {
   border: 1px solid var(--c-border);
   position: relative;
   cursor: pointer;
-  transition: all var(--t-base);
+  transition: all 150ms ease;
   flex-shrink: 0;
+  border-radius: 999px; /* Noom pill shape */
 }
 .toggle-track.on { background: var(--c-blue); border-color: var(--c-blue); }
 
@@ -1527,8 +1529,8 @@ body {
 .onboarding-progress-bar {
   width: 100%;
   max-width: 560px;
-  height: 3px;
-  background: rgba(255,255,255,0.07);
+  height: 6px;
+  background: #EAE6DF;
   border-radius: var(--r-full);
   overflow: hidden;
   margin-bottom: 40px;
@@ -1546,9 +1548,9 @@ body {
   max-width: 560px;
   background: var(--c-bg-elevated);
   border: 1px solid var(--c-border-strong);
-  border-radius: var(--r-2xl);
-  padding: 48px 40px;
-  position: relative;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.04);
 }
 
 .onboarding-card::before {
@@ -1556,29 +1558,27 @@ body {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  background: linear-gradient(90deg, transparent, var(--c-border), transparent);
 }
 
 .goal-option {
+  background: var(--c-bg-card);
+  border: 2px solid var(--c-border-strong);
+  border-radius: 16px;
+  padding: 16px;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 16px;
-  border-radius: var(--r-lg);
-  border: 1.5px solid var(--c-border-strong);
-  background: rgba(255,255,255,0.02);
   cursor: pointer;
-  transition: all var(--t-base);
+  transition: all var(--t-fast);
 }
-
 .goal-option:hover {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.15);
+  background: var(--c-bg-hover);
+  border-color: var(--c-blue-glow);
 }
-
 .goal-option.selected {
-  border-color: var(--c-blue);
   background: var(--c-blue-dim);
+  border-color: var(--c-blue);
 }
 
 .goal-option-icon {
