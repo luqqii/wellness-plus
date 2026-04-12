@@ -21,7 +21,7 @@ export default function LandingPage() {
   return (
     <div style={{ background: 'var(--c-bg-base)', minHeight: '100vh', color: 'var(--c-text-primary)' }}>
       {/* Nav */}
-      <nav style={{
+      <nav className="landing-nav" style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 48px', height: 64,
         borderBottom: '1px solid var(--c-border)',
@@ -48,7 +48,7 @@ export default function LandingPage() {
             </Link>
           ) : (
             <>
-              <Link to="/login" style={{ fontSize: 14, color: 'var(--c-text-secondary)', textDecoration: 'none', fontWeight: 500, padding: '8px 12px', borderRadius: 8, transition: 'color 150ms' }}
+              <Link to="/login" style={{ whiteSpace: 'nowrap', fontSize: 14, color: 'var(--c-text-secondary)', textDecoration: 'none', fontWeight: 500, padding: '8px 12px', borderRadius: 8, transition: 'color 150ms' }}
                 onMouseEnter={e => e.target.style.color = 'var(--c-text-primary)'}
                 onMouseLeave={e => e.target.style.color = 'var(--c-text-secondary)'}
               >
@@ -63,7 +63,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section style={{ position: 'relative', padding: '100px 48px 80px', overflow: 'hidden' }}>
+      <section className="landing-pad" style={{ position: 'relative', padding: '100px 48px 80px', overflow: 'hidden' }}>
         <div className="hero-orb hero-orb-1" />
         <div className="hero-orb hero-orb-2" />
         <div className="hero-orb hero-orb-3" />
@@ -113,7 +113,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section style={{ padding: '60px 48px', background: 'var(--c-bg-surface)' }}>
+      <section className="landing-pad" style={{ padding: '60px 48px', background: 'var(--c-bg-surface)' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1px', marginBottom: 10 }}>
@@ -159,7 +159,7 @@ export default function LandingPage() {
       </section>
 
       {/* Checklist section */}
-      <section style={{ padding: '60px 48px' }}>
+      <section className="landing-pad" style={{ padding: '60px 48px' }}>
         <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
           <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1px', marginBottom: 32 }}>
             Everything you need to succeed
@@ -178,7 +178,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: '60px 48px', background: 'var(--c-bg-surface)' }}>
+      <section className="landing-pad" style={{ padding: '60px 48px', background: 'var(--c-bg-surface)' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -207,7 +207,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '24px 48px', borderTop: '1px solid var(--c-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <footer className="landing-footer" style={{ padding: '24px 48px', borderTop: '1px solid var(--c-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: 13, fontWeight: 700 }} className="grad-blue-purple">Wellness+</span>
         <div style={{ display: 'flex', gap: 24 }}>
           {['Privacy', 'Terms', 'API', 'Support'].map(l => (

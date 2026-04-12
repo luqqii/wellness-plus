@@ -1679,6 +1679,26 @@ body {
     max-width: none !important;
   }
 
+  .landing-pad { 
+    padding-left: 20px !important; 
+    padding-right: 20px !important; 
+  }
+  
+  .landing-nav {
+    padding: 0 16px !important;
+  }
+  
+  .landing-footer {
+    flex-direction: column;
+    padding: 32px 20px !important;
+    gap: 20px;
+    text-align: center;
+  }
+  .landing-footer > div {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   .coach-header {
     flex-direction: column !important;
     align-items: flex-start !important;
