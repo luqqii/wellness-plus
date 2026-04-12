@@ -21,9 +21,9 @@ export default function TopBar() {
     if (e.key === 'Enter') {
       const s = searchTerm.toLowerCase().trim();
       if (!s) return;
-      if (s.includes('plan') || s.includes('grocery') || s.includes('list')) navigate('/meal-planner');
+      if (s.includes('plan') || s.includes('grocery') || s.includes('list') || s.includes('meal')) navigate('/meal-planner');
       else if (s.includes('recipe') || s.includes('cook')) navigate('/recipes');
-      else if (s.includes('food') || s.includes('cal') || s.includes('meal') || s.includes('lunch') || s.includes('eat') || s.includes('diary') || s.includes('scan')) navigate('/nutrition');
+      else if (s.includes('food') || s.includes('cal') || s.includes('lunch') || s.includes('eat') || s.includes('diary') || s.includes('scan')) navigate('/nutrition');
       else if (s.includes('habit') || s.includes('track') || s.includes('task')) navigate('/habits');
       else if (s.includes('coach') || s.includes('ai') || s.includes('chat')) navigate('/coach');
       else if (s.includes('step') || s.includes('sleep') || s.includes('activity') || s.includes('walk') || s.includes('run')) navigate('/activity');
