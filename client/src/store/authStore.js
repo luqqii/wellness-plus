@@ -14,13 +14,25 @@ const getUserFromStorage = () => {
 };
 
 const getTokenFromStorage = () => {
-  return localStorage.getItem('wellness_token') || 'mock-jwt-token';
+  try {
+    return localStorage.getItem('wellness_token') || 'mock-jwt-token';
+  } catch {
+    return 'mock-jwt-token';
+  }
+};
+
+const getIsAuthenticatedFromStorage = () => {
+  try {
+    return !!localStorage.getItem('wellness_token');
+  } catch {
+    return false;
+  }
 };
 
 const useAuthStore = create((set) => ({
   // State
   user: getUserFromStorage(),
-  isAuthenticated: !!localStorage.getItem('wellness_token'),
+  isAuthenticated: getIsAuthenticatedFromStorage(),
   isLoading: false,
   token: getTokenFromStorage(),
 
