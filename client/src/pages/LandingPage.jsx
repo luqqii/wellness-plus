@@ -73,12 +73,13 @@ export default function LandingPage() {
             </div>
 
             <h1 style={{
-              fontSize: 'clamp(40px, 6vw, 72px)',
-              fontWeight: 900, lineHeight: 1.05,
-              letterSpacing: '-2.5px',
-              marginBottom: 22,
+              fontSize: 'clamp(32px, 8vw, 64px)',
+              fontWeight: 900, lineHeight: 1.1,
+              letterSpacing: '-1.5px',
+              marginBottom: 20,
+              padding: '0 12px'
             }}>
-              Your Personal{' '}
+              Your Personal <br style={{ display: 'none' }} className="mobile-break" />
               <span className="grad-blue-purple">AI Health</span>
               <br />
               Optimization Coach
@@ -113,7 +114,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+          <div className="responsive-grid-2">
             {FEATURES.map((f, i) => (
               <motion.div
                 key={f.title}
@@ -136,9 +137,9 @@ export default function LandingPage() {
                   <div>
                     <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>{f.title}</h3>
                     <p style={{ fontSize: 13, color: 'var(--c-text-secondary)', lineHeight: 1.6 }}>{f.desc}</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 10, color: f.col, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
-                      Learn more <ChevronRight size={12} />
-                    </div>
+                    <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 10, color: f.col, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+                      Learn more <ChevronRight size={14} />
+                    </Link>
                   </div>
                 </div>
               </motion.div>

@@ -1624,11 +1624,20 @@ body {
   flex-shrink: 0;
 }
 
+.mobile-only-logo { display: none; }
+
+
 /* ============================================================
    RESPONSIVE BREAKPOINTS
    ============================================================ */
 @media (max-width: 768px) {
   .sidebar { display: none !important; }
+  .mobile-hide { display: none !important; }
+  .mobile-break { display: block !important; }
+  .mobile-only-logo { display: flex !important; }
+
+
+
 
   .mobile-nav {
     display: flex;

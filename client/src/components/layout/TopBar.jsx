@@ -36,7 +36,7 @@ export default function TopBar() {
   return (
     <div className="topbar">
       {/* Left */}
-      <div className="watch-hide" style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <div className="mobile-hide" style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
         <span style={{ fontSize: 12, color: 'var(--c-text-muted)', fontWeight: 400 }}>
           {getGreeting()} 👋
         </span>
@@ -45,10 +45,17 @@ export default function TopBar() {
         </span>
       </div>
 
+      {/* Left (Mobile Logo) */}
+      <div className="mobile-only-logo" style={{ alignItems: 'center', gap: 8 }}>
+        <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, var(--c-blue), var(--c-purple))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+           <span style={{color:'white', fontWeight: 800, fontSize: 16}}>W+</span>
+        </div>
+      </div>
+
       {/* Right */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         {/* Search */}
-        <div className="search-input-wrap watch-hide" style={{ display: 'flex' }}>
+        <div className="search-input-wrap mobile-hide" style={{ display: 'flex' }}>
           <Search size={14} color="var(--c-text-muted)" />
           <input 
             placeholder="Search foods, habits..." 
