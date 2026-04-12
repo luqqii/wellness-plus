@@ -128,7 +128,7 @@ export default function CoachPage() {
 
       {/* Header */}
       <div className="glass-card" style={{ zIndex: 1, borderRadius: 'var(--r-xl) var(--r-xl) 0 0', borderBottom: 'none', padding: '14px 20px', flexShrink: 0, background: 'rgba(28, 32, 48, 0.85)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="coach-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{
               width: 42, height: 42,
@@ -143,14 +143,14 @@ export default function CoachPage() {
               <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--c-text-primary)' }}>AI Wellness Coach</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
                 <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--c-teal)', display: 'inline-block' }} />
-                <span style={{ fontSize: 11, color: 'var(--c-text-muted)' }}>Online · Analyzing your data in real time</span>
+                <span style={{ fontSize: 11, color: 'var(--c-text-muted)', whiteSpace: 'nowrap' }}>Online · Analyzing your data</span>
               </div>
             </div>
           </div>
 
           {/* Emotion Detection */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 11, color: 'var(--c-text-muted)' }}>Detected mood:</span>
+          <div className="coach-emotion-scroll" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 11, color: 'var(--c-text-muted)', whiteSpace: 'nowrap' }}>Detected mood:</span>
             {EMOTIONS.map((e) => (
               <button
                 key={e.label}

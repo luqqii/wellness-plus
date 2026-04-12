@@ -155,7 +155,7 @@ export default function NutritionPage() {
         </div>
 
         {/* Calorie equation */}
-        <div style={{
+        <div className="macro-equation" style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           gap: 14, padding: '16px 20px',
           background: 'rgba(255,255,255,0.03)',
@@ -172,7 +172,7 @@ export default function NutritionPage() {
             { val: remaining.toLocaleString(), label: 'Remaining', color: remaining < 0 ? 'var(--c-red)' : 'var(--c-blue)' },
           ].map((item, i) => (
             <div key={i} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: item.isSym ? 20 : 26, fontWeight: 800, color: item.color, letterSpacing: '-1px', lineHeight: 1 }}>{item.val}</div>
+              <div className={item.isSym ? 'macro-equation-sym' : 'macro-equation-val'} style={{ fontSize: item.isSym ? 20 : 26, fontWeight: 800, color: item.color, letterSpacing: '-1px', lineHeight: 1 }}>{item.val}</div>
               {item.label && <div style={{ fontSize: 10, color: 'var(--c-text-muted)', marginTop: 3, fontWeight: 500 }}>{item.label}</div>}
             </div>
           ))}

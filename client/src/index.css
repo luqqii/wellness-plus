@@ -1669,6 +1669,38 @@ body {
   .responsive-grid-2, .responsive-grid-3, .responsive-grid-4 {
     grid-template-columns: 1fr !important;
   }
+
+  .notif-panel {
+    position: fixed !important;
+    top: 60px !important;
+    right: 16px !important;
+    left: 16px !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .coach-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  .coach-emotion-scroll {
+    overflow-x: auto;
+    padding-bottom: 4px;
+    width: 100%;
+  }
+
+  .macro-equation {
+    gap: 6px !important;
+    padding: 12px 10px !important;
+  }
+  .macro-equation-val {
+    font-size: 18px !important;
+  }
+  .macro-equation-sym {
+    font-size: 14px !important;
+  }
   .responsive-split, .responsive-split-reverse {
     grid-template-columns: 1fr !important;
   }
