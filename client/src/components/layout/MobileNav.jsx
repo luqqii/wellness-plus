@@ -23,7 +23,7 @@ export default function MobileNav() {
             to={item.path}
             className={`mobile-nav-item ${isActive ? 'active' : ''}`}
             style={{
-              color: isActive ? 'var(--c-blue)' : 'var(--c-text-muted)',
+              color: isActive ? 'var(--c-orange)' : 'var(--c-text-muted)',
               position: 'relative',
             }}
           >

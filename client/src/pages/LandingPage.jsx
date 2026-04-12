@@ -37,6 +37,7 @@ export default function LandingPage() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
           <Link to="/weight-loss" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 700, fontSize: 16 }}>Weight Loss</Link>
+          <Link to="/pricing" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 700, fontSize: 16 }}>Pricing</Link>
           <Link to="/support" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 700, fontSize: 16 }}>Support</Link>
           
           {/* Mock Dropdown for Free Tools */}
@@ -178,7 +179,7 @@ export default function LandingPage() {
 
             <div>
               <h4 style={{ fontWeight: 800, color: '#FFFFFF', marginBottom: 20, fontSize: 14, textTransform: 'uppercase', letterSpacing: '1px' }}>Company</h4>
-              {[['Careers', '/careers'], ['Support', '/support'], ['Privacy Policy', '/privacy'], ['Terms & Conditions', '/terms']].map(([label, href]) => (
+              {[['Careers', '/careers'], ['Support', '/support'], ['Pricing', '/pricing'], ['Privacy Policy', '/privacy'], ['Terms & Conditions', '/terms']].map(([label, href]) => (
                 <div key={label} style={{ marginBottom: 12 }}>
                   <Link to={href} style={{ color: '#9CA3AF', textDecoration: 'none', fontSize: 15, fontWeight: 600 }}
                     onMouseEnter={e => e.target.style.color = '#FFFFFF'} onMouseLeave={e => e.target.style.color = '#9CA3AF'}>

@@ -24,6 +24,9 @@ import TermsPage from './pages/TermsPage';
 import LessonsPage from './pages/LessonsPage';
 import WeightTrackerPage from './pages/WeightTrackerPage';
 import BMICalculatorPage from './pages/BMICalculatorPage';
+import CommunityPage from './pages/CommunityPage';
+import FoodColorGuidePage from './pages/FoodColorGuidePage';
+import PricingPage from './pages/PricingPage';
 
 import DashboardPage from './pages/DashboardPage';
 import HabitsPage from './pages/HabitsPage';
@@ -84,6 +87,7 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/bmi-calculator" element={<BMICalculatorPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
 
         {/* App routes (protected) */}
         <Route element={<AuthGuard />}>
@@ -99,6 +103,8 @@ export default function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/lessons" element={<LessonsPage />} />
             <Route path="/weight-tracker" element={<WeightTrackerPage />} />
+            <Route path="/community" element={<CommunityPage />} />
+            <Route path="/food-guide" element={<FoodColorGuidePage />} />
           </Route>
         </Route>
 

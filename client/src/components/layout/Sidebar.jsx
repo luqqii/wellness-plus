@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Target, MessageCircle, Utensils, Activity,
   User, Settings, ChevronLeft, ChevronRight, Sparkles, Brain, Calendar, ChefHat,
-  Calculator, FlaskConical, PersonStanding, Scale, BookOpen, LogOut
+  Calculator, FlaskConical, PersonStanding, Scale, BookOpen, LogOut, Users, Salad
 } from 'lucide-react';
 import useUIStore from '../../store/uiStore';
 import useAuthStore from '../../store/authStore';
@@ -19,6 +19,8 @@ const NAV_ITEMS = [
   { path: '/activity',     label: 'Activity',      icon: Activity },
   { path: '/lessons',      label: 'Courses',       icon: BookOpen },
   { path: '/weight-tracker', label: 'Weight Tracker', icon: Scale },
+  { path: '/community',    label: 'Group Sessions', icon: Users },
+  { path: '/food-guide',   label: 'Food Color Guide', icon: Salad },
 ];
 
 const FREE_TOOLS = [
