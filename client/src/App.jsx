@@ -1,0 +1,75 @@
+import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import AppLayout from './components/layout/AppLayout';
+import useAuthStore from './store/authStore';
+
+// Pages
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import OnboardingPage from './pages/OnboardingPage';
+import DashboardPage from './pages/DashboardPage';
+import HabitsPage from './pages/HabitsPage';
+import CoachPage from './pages/CoachPage';
+import NutritionDiary from './pages/NutritionDiary';
+import NutritionPage from './pages/NutritionPage';
+import ActivityPage from './pages/ActivityPage';
+import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
+import MealPlannerPage from './pages/MealPlannerPage';
+import RecipesPage from './pages/RecipesPage';
+
+// Loading fallback
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-bg-primary">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-400 animate-pulse" />
+        <p className="text-sm text-text-muted animate-pulse">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+// Protected Route Guard
+function AuthGuard() {
+  const { isAuthenticated } = useAuthStore();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <Outlet />;
+}
+
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
+
+        {/* App routes (protected) */}
+        <Route element={<AuthGuard />}>
+          <Route element={<AppLayout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/habits" element={<HabitsPage />} />
+            <Route path="/coach" element={<CoachPage />} />
+            <Route path="/nutrition" element={<NutritionPage />} />
+            <Route path="/activity" element={<ActivityPage />} />
+            <Route path="/meal-planner" element={<MealPlannerPage />} />
+            <Route path="/recipes" element={<RecipesPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+          </Route>
+        </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+}
