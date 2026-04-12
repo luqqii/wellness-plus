@@ -134,12 +134,11 @@ export default function LandingPage() {
            Trusted by millions
          </h2>
          <div style={{ display: 'flex', gap: 40, justifyContent: 'center', flexWrap: 'wrap', opacity: 0.8 }}>
-            {['The New York Times', 'Forbes', 'Women\'s Health', 'Harvard Medical'].map(brand => (
+            {['The New York Times', 'Forbes', "Women's Health", 'Harvard Medical'].map(brand => (
                <div key={brand} style={{ fontSize: 20, fontWeight: 900, color: '#0C2B35' }}>
                   {brand}
                </div>
             ))}
-         </div>
          </div>
       </section>
 

@@ -231,21 +231,22 @@ export default function NutritionPage() {
                 {section.items.map((item, ii) => {
                   const noomColor = getFoodColor(item.customFood);
                   return (
-                  <div key={ii} className="diary-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #EAE6DF' }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                      {/* Noom Food Density Indicator */}
-                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: noomColor, marginTop: 4, flexShrink: 0 }} />
-                      <div>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1D20' }}>{item.customFood?.name}</div>
-                      <div style={{ fontSize: 11, color: 'var(--c-text-muted)', marginTop: 2 }}>
-                        {item.servingsConsumed} serving(s) · C: {item.customFood?.carbs}g · P: {item.customFood?.protein}g · F: {item.customFood?.fat}g
+                    <div key={ii} className="diary-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #EAE6DF' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                        {/* Noom Food Density Dot */}
+                        <div style={{ width: 12, height: 12, borderRadius: '50%', background: noomColor, marginTop: 4, flexShrink: 0 }} />
+                        <div>
+                          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-primary)' }}>{item.customFood?.name}</div>
+                          <div style={{ fontSize: 11, color: 'var(--c-text-muted)', marginTop: 2 }}>
+                            {item.servingsConsumed} serving(s) · C: {item.customFood?.carbs}g · P: {item.customFood?.protein}g · F: {item.customFood?.fat}g
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)' }}>{item.customFood?.calories * item.servingsConsumed}</div>
+                        <div style={{ fontSize: 10, color: 'var(--c-text-muted)' }}>cal</div>
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)' }}>{item.customFood?.calories * item.servingsConsumed}</div>
-                      <div style={{ fontSize: 10, color: 'var(--c-text-muted)' }}>cal</div>
-                    </div>
-                  </div>
                   );
                 })}
 
