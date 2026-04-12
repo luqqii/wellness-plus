@@ -12,8 +12,6 @@ if (env.GEMINI_API_KEY) {
   console.warn('[AI Service] GEMINI_API_KEY not found — using fallback responses.');
 }
 
-const insightCache = new Map();
-
 /**
  * Helper: call Gemini generateContent with retry on 429
  */
@@ -42,14 +40,9 @@ async function callGemini(prompt, retries = 2) {
  */
 export const generateCoachingInsight = async (user, metrics, context) => {
   if (ai) {
-    const todayStr = new Date().toISOString().split('T')[0];
-    const cacheKey = `${user?._id || user?.id || 'anon'}_${todayStr}`;
-    if (insightCache.has(cacheKey)) return insightCache.get(cacheKey);
-
     try {
       const prompt = `You are Wellness+, a friendly AI Health Coach. Give a warm one-sentence greeting to ${user?.name || 'Alex'} and one short wellness tip.`;
       const text = await callGemini(prompt);
-      insightCache.set(cacheKey, text);
       return text;
     } catch (e) {
       console.error('[AI] generateCoachingInsight error:', e.message?.substring(0, 150));
@@ -84,11 +77,11 @@ Coach:`;
 
       const text = await callGemini(fullPrompt);
       return { content: text.trim(), sentiment: 'neutral' };
-
     } catch (e) {
-      console.error('[AI] replyToConversation error:', e.message?.substring(0, 150));
+      const errorMsg = e.message || String(e);
+      console.error('[AI] replyToConversation error:', errorMsg);
       return {
-        content: "I'm here for you! How can I support your wellness journey today?",
+        content: `Oops! The AI crashed with error: "${errorMsg.substring(0, 80)}". Please check the API key on Render!`,
         sentiment: 'neutral'
       };
     }
