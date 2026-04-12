@@ -21,6 +21,9 @@ import PressPage from './pages/PressPage';
 import CareersPage from './pages/CareersPage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
+import LessonsPage from './pages/LessonsPage';
+import WeightTrackerPage from './pages/WeightTrackerPage';
+import BMICalculatorPage from './pages/BMICalculatorPage';
 
 import DashboardPage from './pages/DashboardPage';
 import HabitsPage from './pages/HabitsPage';
@@ -80,6 +83,7 @@ export default function App() {
         <Route path="/careers" element={<CareersPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/bmi-calculator" element={<BMICalculatorPage />} />
 
         {/* App routes (protected) */}
         <Route element={<AuthGuard />}>
@@ -93,6 +97,8 @@ export default function App() {
             <Route path="/recipes" element={<RecipesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/lessons" element={<LessonsPage />} />
+            <Route path="/weight-tracker" element={<WeightTrackerPage />} />
           </Route>
         </Route>
 
