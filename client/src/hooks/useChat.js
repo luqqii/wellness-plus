@@ -24,11 +24,12 @@ export function useChat() {
 
       try {
         const res = await api.get('/coach/insight');
-        if (res.data?.insight) {
+        const insight = res.data?.data?.insight || res.data?.insight;
+        if (insight) {
           setMessages([{
             id: 'init_' + Date.now(),
             role: 'ai',
-            content: res.data.insight,
+            content: insight,
             timestamp: new Date()
           }]);
         }
@@ -66,11 +67,12 @@ export function useChat() {
         contextHistory: history,
       });
 
-      if (res.data) {
-        if (res.data.sentiment) {
-          setCurrentSentiment(res.data.sentiment.charAt(0).toUpperCase() + res.data.sentiment.slice(1));
+      const aiMsg = res.data?.data || res.data;
+      if (aiMsg) {
+        if (aiMsg.sentiment) {
+          setCurrentSentiment(aiMsg.sentiment.charAt(0).toUpperCase() + aiMsg.sentiment.slice(1));
         }
-        setMessages(p => [...p, { ...res.data, id: Date.now() + 1 }]);
+        setMessages(p => [...p, { ...aiMsg, id: Date.now() + 1 }]);
       }
     } catch (err) {
       console.error(err);
