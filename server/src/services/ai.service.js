@@ -1,12 +1,12 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import axios from 'axios';
 import env from '../config/env.js';
 
-const MODEL_NAME = 'gemini-1.5-flash';
+const MODEL_NAME = 'gemini-2.0-flash-lite';
 
-let genAI = null;
+let ai = null;
 if (env.GEMINI_API_KEY) {
-  genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+  ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
   console.log('[AI Service] Gemini initialized with model:', MODEL_NAME);
 } else {
   console.warn('[AI Service] GEMINI_API_KEY not found — using fallback responses.');
@@ -14,25 +14,45 @@ if (env.GEMINI_API_KEY) {
 
 const insightCache = new Map();
 
+/**
+ * Helper: call Gemini generateContent with retry on 429
+ */
+async function callGemini(prompt, retries = 2) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const response = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: prompt,
+      });
+      return response.text;
+    } catch (e) {
+      const is429 = e.message?.includes('429') || e.message?.includes('quota');
+      if (is429 && i < retries) {
+        console.warn(`[AI] Rate limited, retrying in ${(i + 1) * 2}s...`);
+        await new Promise(r => setTimeout(r, (i + 1) * 2000));
+        continue;
+      }
+      throw e;
+    }
+  }
+}
 
 /**
  * Basic AI Service Interface connected to Gemini
  */
 export const generateCoachingInsight = async (user, metrics, context) => {
-  if (genAI) {
+  if (ai) {
     const todayStr = new Date().toISOString().split('T')[0];
     const cacheKey = `${user?._id || user?.id || 'anon'}_${todayStr}`;
     if (insightCache.has(cacheKey)) return insightCache.get(cacheKey);
 
     try {
-      const model = genAI.getGenerativeModel({ model: MODEL_NAME });
       const prompt = `You are Wellness+, a friendly AI Health Coach. Give a warm one-sentence greeting to ${user?.name || 'Alex'} and one short wellness tip.`;
-      const result = await model.generateContent(prompt);
-      const text = result.response.text().trim();
+      const text = await callGemini(prompt);
       insightCache.set(cacheKey, text);
       return text;
     } catch (e) {
-      console.error('[AI] generateCoachingInsight error:', e.message);
+      console.error('[AI] generateCoachingInsight error:', e.message?.substring(0, 150));
     }
   }
   return `Hi ${user?.name || 'Alex'}, how may I help you today?`;
@@ -42,13 +62,11 @@ export const generateCoachingInsight = async (user, metrics, context) => {
  * Handle direct conversation messages with history
  */
 export const replyToConversation = async (user, messageHistory, newMessage) => {
-  if (genAI) {
+  if (ai) {
     try {
       const goalList = Array.isArray(user?.goals)
         ? user.goals.map(g => g.type || g).join(', ')
         : 'General Wellness';
-
-      const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
       // Build a plain-text conversation log (free-tier safe approach)
       const conversationLog = messageHistory
@@ -64,13 +82,11 @@ ${conversationLog ? `Conversation so far:\n${conversationLog}\n` : ''}
 User: ${newMessage}
 Coach:`;
 
-      const result = await model.generateContent(fullPrompt);
-      const text = result.response.text().trim();
-
-      return { content: text, sentiment: 'neutral' };
+      const text = await callGemini(fullPrompt);
+      return { content: text.trim(), sentiment: 'neutral' };
 
     } catch (e) {
-      console.error('[AI] replyToConversation error:', e.message);
+      console.error('[AI] replyToConversation error:', e.message?.substring(0, 150));
       return {
         content: "I'm here for you! How can I support your wellness journey today?",
         sentiment: 'neutral'
@@ -81,41 +97,36 @@ Coach:`;
   return { content: "I hear you. Let's focus on small, consistent steps forward.", sentiment: 'neutral' };
 };
 
-
 export const analyzeFoodImage = async (imageBuffer, mimeType) => {
-  if (genAI) {
+  if (ai) {
     try {
-      const model = genAI.getGenerativeModel({ model: MODEL_NAME });
       const prompt = `Analyze this food image. Return ONLY in JSON format: { "name": String, "calories": Number, "protein": Number, "carbs": Number, "fat": Number, "confidence": Number }`;
-      const result = await model.generateContent([
-        { inlineData: { data: imageBuffer.toString('base64'), mimeType } },
-        { text: prompt }
-      ]);
-      const cleanedJson = result.response.text().replace(/```json|```/g, '').trim();
+      const response = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: [
+          { inlineData: { data: imageBuffer.toString('base64'), mimeType } },
+          { text: prompt }
+        ],
+      });
+      const cleanedJson = response.text.replace(/```json|```/g, '').trim();
       return JSON.parse(cleanedJson);
     } catch (e) {
-      console.error('[AI] analyzeFoodImage error:', e.message);
+      console.error('[AI] analyzeFoodImage error:', e.message?.substring(0, 150));
     }
   }
   return null;
 };
 
-
 export const generateNutritionAdvice = async (user, consumed, remaining) => {
-  if (genAI) {
+  if (ai) {
     try {
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
-        generationConfig: { responseMimeType: "application/json", temperature: 0.7 }
-      });
       const prompt = `User Goals: ${user.goals?.join(', ') || 'General Wellness'}. Remaining: ${remaining.calories} cal, ${remaining.protein}g protein, ${remaining.carbs}g carbs, ${remaining.fat}g fat. 
 Give 3 short meal suggestions that perfectly fit these remaining macros. 
 Return ONLY a JSON array of objects with the exact structure: [{ "name": "Meal Name", "calories": Number, "protein": Number, "tag": "e.g. High Protein", "why": "Why it fits" }]`;
-      const result = await model.generateContent(prompt);
-      const text = result.response.text().replace(/```json|```/g, '').trim();
-      return JSON.parse(text);
+      const text = await callGemini(prompt);
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
     } catch (e) {
-      console.error("Gemini Nutrition Error:", e.message);
+      console.error('[AI] generateNutritionAdvice error:', e.message?.substring(0, 150));
     }
   }
   return null;
@@ -150,12 +161,8 @@ export const predictBurnoutRisk = async (metrics) => {
  * Generate a weekly AI meal plan using Gemini
  */
 export const generateMealPlan = async (user, targetCalories) => {
-  if (genAI) {
+  if (ai) {
     try {
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-        generationConfig: { responseMimeType: "application/json", temperature: 0.8 }
-      });
       const goals = Array.isArray(user?.goals) ? user.goals.join(', ') : 'General Wellness';
       const prompt = `Create a 7-day healthy meal plan for someone with goals: ${goals}. Target: ~${targetCalories} calories/day.
 Return ONLY a JSON object with this exact structure:
@@ -172,11 +179,10 @@ Return ONLY a JSON object with this exact structure:
 }
 Include all 7 days (Monday through Sunday). Make meals varied, realistic and delicious.`;
 
-      const result = await model.generateContent(prompt);
-      const text = result.response.text().replace(/```json|```/g, '').trim();
-      return JSON.parse(text);
+      const text = await callGemini(prompt);
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
     } catch (e) {
-      console.error("Gemini Meal Plan Error:", e.message);
+      console.error('[AI] generateMealPlan error:', e.message?.substring(0, 150));
     }
   }
 
@@ -201,14 +207,8 @@ Include all 7 days (Monday through Sunday). Make meals varied, realistic and del
  * Generate a grocery list from a meal plan using Gemini
  */
 export const generateGroceryList = async (mealPlan) => {
-  if (genAI) {
+  if (ai) {
     try {
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-        generationConfig: { responseMimeType: "application/json", temperature: 0.5 }
-      });
-
-      // Extract all meal names from the plan
       const meals = mealPlan.days.flatMap(d => [d.breakfast?.name, d.lunch?.name, d.snack?.name, d.dinner?.name]).filter(Boolean);
       const prompt = `Based on these meals for a week: ${meals.join(', ')}.
 Create a consolidated grocery shopping list organized by category.
@@ -222,11 +222,10 @@ Return ONLY a JSON array like:
   { "category": "Pantry & Spices", "items": [{ "name": "Olive Oil", "quantity": "1 bottle" }] }
 ]`;
 
-      const result = await model.generateContent(prompt);
-      const text = result.response.text().replace(/```json|```/g, '').trim();
-      return JSON.parse(text);
+      const text = await callGemini(prompt);
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
     } catch (e) {
-      console.error("Gemini Grocery List Error:", e.message);
+      console.error('[AI] generateGroceryList error:', e.message?.substring(0, 150));
     }
   }
 
@@ -240,5 +239,3 @@ Return ONLY a JSON array like:
     { category: 'Pantry & Spices', items: [{ name: 'Olive Oil', quantity: '1 bottle' }, { name: 'Almond Butter', quantity: '1 jar' }, { name: 'Honey', quantity: '1 jar' }] },
   ];
 };
-
-
