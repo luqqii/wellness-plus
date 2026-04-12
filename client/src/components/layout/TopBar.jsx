@@ -46,9 +46,9 @@ export default function TopBar() {
       </div>
 
       {/* Left (Mobile Logo) */}
-      <div className="mobile-only-logo" style={{ alignItems: 'center', gap: 8 }}>
-        <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, var(--c-blue), var(--c-purple))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-           <span style={{color:'white', fontWeight: 800, fontSize: 16}}>W+</span>
+      <div className="mobile-only-logo" style={{ alignItems: 'center', gap: 6 }}>
+        <div style={{ padding: '0 8px', height: 28, borderRadius: 8, background: 'linear-gradient(135deg, var(--c-blue), var(--c-purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-glow-blue)' }}>
+           <span style={{color:'white', fontWeight: 800, fontSize: 13, letterSpacing: '-0.5px'}}>Wellness+</span>
         </div>
       </div>
 

@@ -349,7 +349,7 @@ export default function ActivityPage() {
           <div style={{ position: 'relative' }}>
             {/* Vertical line */}
             <div style={{
-              position: 'absolute', left: 15, top: 0, bottom: 0, width: 2,
+              position: 'absolute', left: 24, top: 0, bottom: 0, width: 2,
               background: 'linear-gradient(to bottom, var(--c-blue), var(--c-purple), transparent)',
               opacity: 0.3,
             }} />
