@@ -27,6 +27,7 @@ import BMICalculatorPage from './pages/BMICalculatorPage';
 import CommunityPage from './pages/CommunityPage';
 import FoodColorGuidePage from './pages/FoodColorGuidePage';
 import PricingPage from './pages/PricingPage';
+import CheckInPage from './pages/CheckInPage';
 
 import DashboardPage from './pages/DashboardPage';
 import HabitsPage from './pages/HabitsPage';
@@ -105,6 +106,7 @@ export default function App() {
             <Route path="/weight-tracker" element={<WeightTrackerPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/food-guide" element={<FoodColorGuidePage />} />
+            <Route path="/check-in" element={<CheckInPage />} />
           </Route>
         </Route>
 

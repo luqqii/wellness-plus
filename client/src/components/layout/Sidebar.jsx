@@ -4,23 +4,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Target, MessageCircle, Utensils, Activity,
   User, Settings, ChevronLeft, ChevronRight, Sparkles, Brain, Calendar, ChefHat,
-  Calculator, FlaskConical, PersonStanding, Scale, BookOpen, LogOut, Users, Salad
+  Calculator, FlaskConical, PersonStanding, Scale, BookOpen, LogOut, Users, Salad, Heart
 } from 'lucide-react';
 import useUIStore from '../../store/uiStore';
 import useAuthStore from '../../store/authStore';
 
 const NAV_ITEMS = [
-  { path: '/dashboard',    label: 'Dashboard',     icon: LayoutDashboard },
-  { path: '/habits',       label: 'Habits',        icon: Target },
-  { path: '/coach',        label: 'AI Coach',      icon: Brain,  badge: 'AI' },
-  { path: '/nutrition',    label: 'Food Diary',    icon: Utensils },
-  { path: '/meal-planner', label: 'Meal Planner',  icon: Calendar },
-  { path: '/recipes',      label: 'Recipes',       icon: ChefHat },
-  { path: '/activity',     label: 'Activity',      icon: Activity },
-  { path: '/lessons',      label: 'Courses',       icon: BookOpen },
-  { path: '/weight-tracker', label: 'Weight Tracker', icon: Scale },
-  { path: '/community',    label: 'Group Sessions', icon: Users },
-  { path: '/food-guide',   label: 'Food Color Guide', icon: Salad },
+  { path: '/dashboard',     label: 'Dashboard',      icon: LayoutDashboard },
+  { path: '/check-in',      label: 'Daily Check-in', icon: Heart, badge: 'New' },
+  { path: '/habits',        label: 'Habits',         icon: Target },
+  { path: '/coach',         label: 'AI Coach',       icon: Brain, badge: 'AI' },
+  { path: '/nutrition',     label: 'Food Diary',     icon: Utensils },
+  { path: '/meal-planner',  label: 'Meal Planner',   icon: Calendar },
+  { path: '/recipes',       label: 'Recipes',        icon: ChefHat },
+  { path: '/activity',      label: 'Activity',       icon: Activity },
+  { path: '/lessons',       label: 'Courses',        icon: BookOpen },
+  { path: '/weight-tracker',label: 'Weight Tracker', icon: Scale },
+  { path: '/community',     label: 'Group Sessions', icon: Users },
+  { path: '/food-guide',    label: 'Food Color Guide',icon: Salad },
 ];
 
 const FREE_TOOLS = [
