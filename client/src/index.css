@@ -8,26 +8,26 @@
 
 :root {
   /* === NOOM BRAND PALETTE === */
-  --c-bg-base:        #FDFBF8; /* Off-white warm cream */
+  --c-bg-base:        #FFF3EB; /* Noom's signature beige/pink */
   --c-bg-surface:     #FFFFFF; /* Pure white cards */
   --c-bg-elevated:    #FFFFFF;
   --c-bg-card:        #FFFFFF;
-  --c-bg-hover:       #F5F3EF;
+  --c-bg-hover:       #F7EBE3;
 
   /* === BORDERS === */
-  --c-border:         rgba(0, 0, 0, 0.08);
-  --c-border-strong:  rgba(0, 0, 0, 0.15);
+  --c-border:         #E8DED8;
+  --c-border-strong:  #D4C8C2;
 
   /* === NOOM COLORS === */
-  --c-blue:           #3B82F6; /* Standard vibrant blue for secondary actions */
+  --c-blue:           #3B82F6; 
   --c-blue-dim:       rgba(59,130,246,0.15);
   --c-blue-glow:      rgba(59,130,246,0.25);
 
   --c-purple:         #8B5CF6; 
   --c-purple-dim:     rgba(139,92,246,0.15);
 
-  --c-orange:         #FF6B4A; /* Noom's Signature Coral/Orange */
-  --c-orange-dim:     rgba(255,107,74,0.15);
+  --c-orange:         #EC5A42; /* Noom's EXACT signature coral/orange */
+  --c-orange-dim:     #F9E4E1;
 
   --c-teal:           #14B8A6;
   --c-teal-dim:       rgba(20,184,166,0.15);
@@ -469,6 +469,29 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ============================================================
+   CUSTOM NOOM UI ELEMENTS
+   ============================================================ */
+.noom-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: var(--c-border);
+  border-radius: 4px;
+  outline: none;
+}
+.noom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--c-orange);
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(236,90,66,0.5);
+  border: 4px solid #FFFFFF;
 }
 
 /* ============================================================
