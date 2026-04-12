@@ -26,8 +26,7 @@ export const generateCoachingInsight = async (user, metrics, context) => {
 
     try {
       const model = genAI.getGenerativeModel({ model: MODEL_NAME });
-      const prompt = `You are Wellness+, a friendly AI Health Coach for ${user?.name || 'Alex'}. 
-Provide a warm, personalized greeting and one actionable wellness tip. Keep it under 3 sentences.`;
+      const prompt = `You are Wellness+, a friendly AI Health Coach. Give a warm one-sentence greeting to ${user?.name || 'Alex'} and one short wellness tip.`;
       const result = await model.generateContent(prompt);
       const text = result.response.text().trim();
       insightCache.set(cacheKey, text);
@@ -45,50 +44,35 @@ Provide a warm, personalized greeting and one actionable wellness tip. Keep it u
 export const replyToConversation = async (user, messageHistory, newMessage) => {
   if (genAI) {
     try {
-      const goalList = Array.isArray(user?.goals) ? user.goals.map(g => g.type || g).join(', ') : 'General Wellness';
+      const goalList = Array.isArray(user?.goals)
+        ? user.goals.map(g => g.type || g).join(', ')
+        : 'General Wellness';
 
       const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
-      // Build clean alternating history
-      let history = messageHistory
-        .map(m => ({
-          role: m.role === 'ai' ? 'model' : 'user',
-          parts: [{ text: m.content }]
-        }))
-        .filter((m, i, arr) => i === 0 || m.role !== arr[i - 1].role);
+      // Build a plain-text conversation log (free-tier safe approach)
+      const conversationLog = messageHistory
+        .slice(-10)
+        .map(m => `${m.role === 'ai' ? 'Coach' : 'User'}: ${m.content}`)
+        .join('\n');
 
-      // History must start with 'user'
-      while (history.length > 0 && history[0].role !== 'user') history.shift();
-
-      const systemContext = `You are Wellness+, a helpful and empathetic AI Health Coach for ${user?.name || 'Alex'}.
+      const fullPrompt = `You are Wellness+, a warm and helpful AI Health Coach for ${user?.name || 'Alex'}.
 User goals: ${goalList}.
-Instructions: Be warm, conversational, and concise (2-4 sentences). 
-IMPORTANT: Respond ONLY with a valid JSON object in this exact format: { "response": "your message here", "sentiment": "positive|neutral|negative" }`;
+Keep your reply conversational and concise (2-3 sentences max).
 
-      const chat = model.startChat({
-        history: [
-          { role: 'user', parts: [{ text: systemContext }] },
-          { role: 'model', parts: [{ text: '{ "response": "Understood! I am ready to help.", "sentiment": "positive" }' }] },
-          ...history
-        ]
-      });
+${conversationLog ? `Conversation so far:\n${conversationLog}\n` : ''}
+User: ${newMessage}
+Coach:`;
 
-      const result = await chat.sendMessage(newMessage);
+      const result = await model.generateContent(fullPrompt);
       const text = result.response.text().trim();
 
-      const cleanedJson = text.replace(/```json|```/g, '').trim();
-      try {
-        const output = JSON.parse(cleanedJson);
-        return { content: output.response || text, sentiment: output.sentiment || 'neutral' };
-      } catch {
-        // If not JSON, return raw text
-        return { content: text, sentiment: 'neutral' };
-      }
+      return { content: text, sentiment: 'neutral' };
 
     } catch (e) {
       console.error('[AI] replyToConversation error:', e.message);
       return {
-        content: "I'm here for you. How else can I support your wellness journey today?",
+        content: "I'm here for you! How can I support your wellness journey today?",
         sentiment: 'neutral'
       };
     }
@@ -96,6 +80,7 @@ IMPORTANT: Respond ONLY with a valid JSON object in this exact format: { "respon
 
   return { content: "I hear you. Let's focus on small, consistent steps forward.", sentiment: 'neutral' };
 };
+
 
 export const analyzeFoodImage = async (imageBuffer, mimeType) => {
   if (genAI) {
