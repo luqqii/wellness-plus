@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import useAuthStore from '../store/authStore';
 import { ArrowRight, Check, Brain, Zap, BarChart3, Sparkles, Shield, ChevronRight } from 'lucide-react';
 
 const FEATURES = [
@@ -16,6 +17,7 @@ const CHECKS = [
 ];
 
 export default function LandingPage() {
+  const { isAuthenticated } = useAuthStore();
   return (
     <div style={{ background: 'var(--c-bg-base)', minHeight: '100vh', color: 'var(--c-text-primary)' }}>
       {/* Nav */}
@@ -40,15 +42,23 @@ export default function LandingPage() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Link to="/dashboard" style={{ fontSize: 14, color: 'var(--c-text-secondary)', textDecoration: 'none', fontWeight: 500, padding: '8px 12px', borderRadius: 8, transition: 'color 150ms' }}
-            onMouseEnter={e => e.target.style.color = 'var(--c-text-primary)'}
-            onMouseLeave={e => e.target.style.color = 'var(--c-text-secondary)'}
-          >
-            Log In
-          </Link>
-          <Link to="/dashboard" className="btn btn-primary" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
-            Get Started <ArrowRight size={14} />
-          </Link>
+          {isAuthenticated ? (
+            <Link to="/dashboard" className="btn btn-primary" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+              Go to Dashboard <ArrowRight size={14} />
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" style={{ fontSize: 14, color: 'var(--c-text-secondary)', textDecoration: 'none', fontWeight: 500, padding: '8px 12px', borderRadius: 8, transition: 'color 150ms' }}
+                onMouseEnter={e => e.target.style.color = 'var(--c-text-primary)'}
+                onMouseLeave={e => e.target.style.color = 'var(--c-text-secondary)'}
+              >
+                Log In
+              </Link>
+              <Link to="/signup" className="btn btn-primary" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+                Get Started <ArrowRight size={14} />
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -91,10 +101,10 @@ export default function LandingPage() {
             </p>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-              <Link to="/dashboard" className="btn btn-primary btn-lg" style={{ textDecoration: 'none', gap: 8 }}>
-                Start Your Journey <ArrowRight size={17} />
+              <Link to={isAuthenticated ? "/dashboard" : "/signup"} className="btn btn-primary btn-lg" style={{ textDecoration: 'none', gap: 8 }}>
+                {isAuthenticated ? "Go to Dashboard" : "Start Your Journey"} <ArrowRight size={17} />
               </Link>
-              <Link to="/coach" className="btn btn-secondary btn-lg" style={{ textDecoration: 'none', gap: 8 }}>
+              <Link to={isAuthenticated ? "/coach" : "/login"} className="btn btn-secondary btn-lg" style={{ textDecoration: 'none', gap: 8 }}>
                 <Brain size={17} /> Talk to AI Coach
               </Link>
             </div>
@@ -137,7 +147,7 @@ export default function LandingPage() {
                   <div>
                     <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>{f.title}</h3>
                     <p style={{ fontSize: 13, color: 'var(--c-text-secondary)', lineHeight: 1.6 }}>{f.desc}</p>
-                    <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 10, color: f.col, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+                    <Link to={isAuthenticated ? "/dashboard" : "/signup"} style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 10, color: f.col, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
                       Learn more <ChevronRight size={14} />
                     </Link>
                   </div>
@@ -188,8 +198,8 @@ export default function LandingPage() {
               <p style={{ color: 'var(--c-text-secondary)', marginBottom: 24, lineHeight: 1.7 }}>
                 Join thousands who improved their wellness score by 34% in 30 days.
               </p>
-              <Link to="/dashboard" className="btn btn-primary btn-lg" style={{ textDecoration: 'none', gap: 8, display: 'inline-flex' }}>
-                Get Started Free <ArrowRight size={17} />
+              <Link to={isAuthenticated ? "/dashboard" : "/signup"} className="btn btn-primary btn-lg" style={{ textDecoration: 'none', gap: 8, display: 'inline-flex' }}>
+                {isAuthenticated ? "Go to Dashboard" : "Get Started Free"} <ArrowRight size={17} />
               </Link>
             </div>
           </div>
