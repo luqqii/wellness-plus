@@ -4,12 +4,25 @@ import { SAMPLE_USER } from '../utils/constants';
 /**
  * Global authentication store
  */
+const getUserFromStorage = () => {
+  try {
+    const stored = localStorage.getItem('wellness_user');
+    return stored ? JSON.parse(stored) : SAMPLE_USER;
+  } catch {
+    return SAMPLE_USER;
+  }
+};
+
+const getTokenFromStorage = () => {
+  return localStorage.getItem('wellness_token') || 'mock-jwt-token';
+};
+
 const useAuthStore = create((set) => ({
   // State
-  user: SAMPLE_USER,
-  isAuthenticated: true,
+  user: getUserFromStorage(),
+  isAuthenticated: !!localStorage.getItem('wellness_token'),
   isLoading: false,
-  token: 'mock-jwt-token',
+  token: getTokenFromStorage(),
 
   // Actions
   setToken: (token) => {
