@@ -84,7 +84,7 @@ export default function TopBar() {
       </div>
 
       {/* Left (Mobile Logo & Hamburger) */}
-      <div className="mobile-only-logo" style={{ alignItems: 'center', gap: 12, display: 'flex' }}>
+      <div className="mobile-only-logo" style={{ alignItems: 'center', gap: 12 }}>
         <button 
           onClick={() => setMobileMenuOpen(true)}
           style={{ background: 'none', border: 'none', padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--c-text-primary)' }}
