@@ -1674,6 +1674,12 @@ body {
     border-bottom: 1px solid var(--c-border);
   }
 
+  .mobile-menu-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 40px;
+  }
+
   .mobile-menu-list-item-clean {
     display: flex;
     align-items: center;
