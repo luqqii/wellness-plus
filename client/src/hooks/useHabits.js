@@ -17,9 +17,10 @@ export function useHabits() {
       const res = await api.get('/habits');
       // Normalize completion for today to UI state
       const today = new Date().setHours(0,0,0,0);
-      const normalized = res.data.map(h => ({
+      const habitsList = Array.isArray(res) ? res : (res?.data || []);
+      const normalized = habitsList.map(h => ({
         ...h,
-        id: h._id,
+        id: h._id || h.id,
         completedToday: h.progress?.some(p => new Date(p.date).getTime() === today && p.completed) || false,
       }));
       setHabits(normalized);
