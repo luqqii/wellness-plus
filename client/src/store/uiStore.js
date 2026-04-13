@@ -5,10 +5,12 @@ const useUIStore = create((set) => ({
   activeModal: null,
   theme: 'dark',
   notifications: [],
+  mobileMenuOpen: false,
   unreadCount: 3,
 
   toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
   setSidebarCollapsed: (val) => set({ sidebarCollapsed: val }),
+  setMobileMenuOpen: (val) => set({ mobileMenuOpen: val }),
   openModal: (modalId) => set({ activeModal: modalId }),
   closeModal: () => set({ activeModal: null }),
   setTheme: (theme) => set({ theme }),

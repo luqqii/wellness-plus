@@ -3,13 +3,15 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import MobileNav from './MobileNav';
+import MobileMoreMenu from './MobileMoreMenu';
 import { useSocket } from '../../hooks/useSocket';
+import useUIStore from '../../store/uiStore';
 
 export default function AppLayout() {
   // Initialize Global Socket connection for currently logged in user
   useSocket();
 
-  // (Adaptive dark theme removed — app now uses Wellness+ Light Mode exclusively)
+  const { mobileMenuOpen, setMobileMenuOpen } = useUIStore();
 
   return (
     <div className="app-shell">
@@ -21,6 +23,7 @@ export default function AppLayout() {
         </div>
       </div>
       <MobileNav />
+      <MobileMoreMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </div>
   );
 }

@@ -15,6 +15,7 @@ import { SAMPLE_INSIGHTS } from '../utils/constants';
 import useHabitStore from '../store/habitStore';
 import useMetrics from '../hooks/useMetrics';
 import { useNavigate } from 'react-router-dom';
+import MobileFeaturePortal from '../components/dashboard/MobileFeaturePortal';
 
 
 const ChartTooltip = ({ active, payload, label }) => {
@@ -78,6 +79,11 @@ export default function DashboardPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1100 }}>
+      
+      {/* MOBILE FEATURE PORTAL - Immediate access to all 1:1 features */}
+      <div className="mobile-only-block">
+        <MobileFeaturePortal />
+      </div>
       
       {/* Wellness+ DAILY LESSONS */}
       <motion.div {...fadeUp(0)} style={{ background: '#FFFFFF', borderRadius: 24, padding: 24, boxShadow: '0 8px 24px rgba(0,0,0,0.04)', border: '1px solid #EAE6DF' }}>

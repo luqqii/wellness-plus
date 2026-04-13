@@ -1,8 +1,8 @@
-import React from 'react';
-import { Search, Compass, BookOpen, Apple, Activity, Brain, User as UserIcon, Cog, ChevronRight, Utensils, CheckSquare, CalendarDays, GraduationCap, TrendingUp, Users, Layers, Calculator, Flame, Sparkles, BarChart2 } from 'lucide-react';
+import { Search, Compass, BookOpen, Apple, Activity, Brain, User as UserIcon, Cog, ChevronRight, Utensils, CheckSquare, CalendarDays, GraduationCap, TrendingUp, Users, Layers, Calculator, Flame, Sparkles, BarChart2, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../../store/authStore';
+import useUIStore from '../../store/uiStore';
 import NotificationBell from '../notifications/NotificationBell';
 import Avatar from '../ui/Avatar';
 
@@ -39,6 +39,7 @@ const SEARCH_ROUTES = [
 
 export default function TopBar() {
   const { user } = useAuthStore();
+  const { setMobileMenuOpen } = useUIStore();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isFocused, setIsFocused] = React.useState(false);
   const navigate = useNavigate();
@@ -81,9 +82,18 @@ export default function TopBar() {
         </span>
       </div>
 
-      {/* Left (Mobile Logo) */}
-      <div className="mobile-only-logo" style={{ alignItems: 'center', gap: 6 }}>
-        <div style={{ padding: '0 10px', height: 32, borderRadius: 10, background: 'var(--c-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Left (Mobile Logo & Hamburger) */}
+      <div className="mobile-only-logo" style={{ alignItems: 'center', gap: 12, display: 'flex' }}>
+        <button 
+          onClick={() => setMobileMenuOpen(true)}
+          style={{ background: 'none', border: 'none', padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--c-text-primary)' }}
+        >
+          <Menu size={24} />
+        </button>
+        <div 
+          onClick={() => navigate('/dashboard')}
+          style={{ padding: '0 10px', height: 32, borderRadius: 10, background: 'var(--c-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+        >
            <span style={{color:'white', fontWeight: 900, fontSize: 14, letterSpacing: '-0.5px'}}>Wellness+</span>
         </div>
       </div>
