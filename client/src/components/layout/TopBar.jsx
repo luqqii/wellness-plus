@@ -1,3 +1,4 @@
+import React from 'react';
 import { Search, Compass, BookOpen, Apple, Activity, Brain, User as UserIcon, Cog, ChevronRight, Utensils, CheckSquare, CalendarDays, GraduationCap, TrendingUp, Users, Layers, Calculator, Flame, Sparkles, BarChart2, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';

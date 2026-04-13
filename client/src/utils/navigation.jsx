@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Target, MessageCircle, Utensils, Activity,
   User, Settings, Sparkles, Brain, Calendar, ChefHat,
-  Calculator, FlaskConical, PersonStanding, Scale, BookOpen, Users, Salad, Heart
+  Calculator, FlaskConical, User2, Scale, BookOpen, Users, Salad, Heart
 } from 'lucide-react';
 
 export const NAV_ITEMS = [
@@ -22,7 +22,7 @@ export const NAV_ITEMS = [
 export const FREE_TOOLS = [
   { path: '/macro-calculator',          label: 'Macro Calculator',  icon: Calculator },
   { path: '/calorie-deficit-calculator', label: 'Calorie Calc',     icon: FlaskConical },
-  { path: '/personality-quiz',           label: 'Personality Quiz', icon: PersonStanding },
+  { path: '/personality-quiz',           label: 'Personality Quiz', icon: User2 },
   { path: '/bmi-calculator',             label: 'BMI Calculator',   icon: Scale },
 ];
 

@@ -1,3 +1,7 @@
+import React from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { LayoutDashboard, Utensils, Brain, Calendar, Menu } from 'lucide-react';
 import useUIStore from '../../store/uiStore';
 
 const MAIN_ITEMS = [
@@ -61,4 +65,3 @@ export default function MobileNav() {
     </nav>
   );
 }
-
