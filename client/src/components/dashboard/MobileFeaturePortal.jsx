@@ -54,7 +54,7 @@ export default function MobileFeaturePortal() {
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <feature.icon size={18} />
+              {feature.icon ? <feature.icon size={18} /> : <div style={{width: 18, height: 18, background: 'currentColor', borderRadius: '50%'}} />}
             </div>
             
             <div style={{ flex: 1, minWidth: 0 }}>
