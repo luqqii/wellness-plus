@@ -11,7 +11,7 @@ import {
 import WellnessScore from '../components/dashboard/WellnessScore';
 import HabitSwipe from '../components/dashboard/HabitSwipe';
 import DynamicIcon from '../components/ui/DynamicIcon';
-import { SAMPLE_INSIGHTS } from '../utils/constants';
+import { SAMPLE_INSIGHTS, SAMPLE_METRICS } from '../utils/constants';
 import useHabitStore from '../store/habitStore';
 import useMetrics from '../hooks/useMetrics';
 import { useNavigate } from 'react-router-dom';
