@@ -1594,8 +1594,7 @@ body {
 }
 
 .mobile-only-logo { display: none; }
-
-
+.mobile-only-block { display: none; }
 /* ============================================================
    RESPONSIVE BREAKPOINTS
    ============================================================ */

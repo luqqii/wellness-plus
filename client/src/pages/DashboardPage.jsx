@@ -80,6 +80,11 @@ export default function DashboardPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1100 }}>
       
+      {/* DEPLOYMENT VERIFICATION FLAG */}
+      <div className="mobile-only-block" style={{ padding: '4px 12px', background: 'var(--c-orange)', color: 'white', fontSize: 10, fontWeight: 900, borderRadius: 99, alignSelf: 'center', marginBottom: -12, letterSpacing: '0.5px' }}>
+        LATEST VERSION V2.0 (MOBILE OPTIMIZED)
+      </div>
+
       {/* MOBILE FEATURE PORTAL - Immediate access to all 1:1 features */}
       <div className="mobile-only-block">
         <MobileFeaturePortal />
