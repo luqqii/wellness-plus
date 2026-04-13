@@ -52,7 +52,7 @@ export default function MobileFeaturePortal() {
               color: feature.label.includes('Calculator') || feature.label.includes('Quiz') ? 'var(--c-orange)' : 'var(--c-blue)',
               display: 'flex',
               alignItems: 'center',
-              justify-content: center
+              justifyContent: 'center'
             }}>
               <feature.icon size={18} />
             </div>
