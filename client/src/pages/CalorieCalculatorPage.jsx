@@ -64,7 +64,7 @@ export default function CalorieCalculatorPage() {
 
             <div>
                <label style={{ display:'block', fontWeight:700, marginBottom:8 }}>Timeline (Months)</label>
-               <input type="range" className="noom-slider" min="1" max="12" value={data.months} onChange={e=>setData({...data, months:e.target.value})} />
+               <input type="range" className="Wellness+-slider" min="1" max="12" value={data.months} onChange={e=>setData({...data, months:e.target.value})} />
                <div style={{ textAlign: 'center', marginTop: 10, fontWeight: 700, color: '#EC5A42' }}>{data.months} Months</div>
             </div>
           </div>

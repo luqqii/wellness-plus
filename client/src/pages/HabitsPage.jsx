@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Check, Flame, Target, TrendingUp, Trash2, X, Sparkles } from 'lucide-react';
 import useHabitStore from '../store/habitStore';
+import DynamicIcon from '../components/ui/DynamicIcon';
 
 const ICONS = ['🧘', '💧', '🏋️', '📚', '🍬', '🤸', '🏃', '🎯', '💤', '🥗', '🧠', '🎵', '✍️', '🌿', '🚴', '🧗'];
 const COLORS = ['#4f8dff', '#00d4aa', '#ff7940', '#9b6dff', '#fbbf24', '#2dd4a4', '#ff5b5b', '#06b6d4'];
@@ -67,11 +68,11 @@ export default function HabitsPage() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 900 }}>
 
       {/* Stats row */}
-      <div className="responsive-grid-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Today's Progress", value: `${rate}%`,  icon: Target,     color: 'var(--c-blue)' },
           { label: 'Active Habits',    value: habits.length, icon: TrendingUp, color: 'var(--c-teal)' },
-          { label: 'Total Streaks',    value: `🔥 ${habits.reduce((a, h) => a + h.streak.current, 0)}`, icon: Flame, color: 'var(--c-orange)' },
+          { label: 'Total Streaks',    value: habits.reduce((a, h) => a + h.streak.current, 0), icon: Flame, color: 'var(--c-orange)' },
           { label: 'Done Today',       value: `${habits.filter(h => h.completedToday).length} / ${habits.length}`, icon: Check, color: 'var(--c-purple)' },
         ].map((s, i) => (
           <motion.div
@@ -152,7 +153,9 @@ export default function HabitsPage() {
                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {items.map(habit => (
                       <div key={habit.id} style={{ display: 'flex', alignItems: 'center', gap: 12, opacity: habit.completedToday ? 0.6 : 1 }}>
-                         <span style={{ fontSize: 18 }}>{habit.icon}</span>
+                         <div style={{ width: 20, display: 'flex', justifyContent: 'center' }}>
+                            <DynamicIcon icon={habit.icon} size={18} color={habit.color || 'var(--c-text-primary)'} />
+                         </div>
                          <span style={{ fontSize: 14, fontWeight: 500, color: habit.completedToday ? 'var(--c-text-muted)' : 'var(--c-text-primary)', textDecoration: habit.completedToday ? 'line-through' : 'none' }}>
                            {habit.title}
                          </span>
@@ -171,11 +174,11 @@ export default function HabitsPage() {
           <Sparkles size={16} color="var(--c-purple)" />
           <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--c-purple)' }}>AI Suggested Adjustments</span>
         </div>
-        <div className="responsive-grid-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {aiSuggestions.map((sug, i) => (
             <div key={i} style={{ padding: '12px', background: 'var(--c-bg-card)', borderRadius: 'var(--r-md)', border: '1px solid var(--c-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                <span style={{ fontSize: 20 }}>{sug.icon}</span>
+                <div style={{ width: 24, display: 'flex', justifyContent: 'center' }}><DynamicIcon icon={sug.icon} size={20} color="var(--c-purple)" /></div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--c-text-primary)' }}>{sug.title}</div>
                   <div style={{ fontSize: 11, color: 'var(--c-purple)', marginTop: 2 }}>{sug.reason}</div>
@@ -254,7 +257,9 @@ export default function HabitsPage() {
                             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                             transition: 'all 150ms ease',
                           }}
-                        >{icon}</button>
+                        >
+                          <DynamicIcon icon={icon} size={20} color={form.icon === icon ? 'var(--c-blue)' : 'var(--c-text-secondary)'} />
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -317,7 +322,7 @@ export default function HabitsPage() {
                 >
                   {habit.completedToday
                     ? <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}><Check size={20} color="white" /></motion.div>
-                    : <span>{habit.icon}</span>
+                    : <DynamicIcon icon={habit.icon} size={20} color={habit.color || 'var(--c-text-primary)'} />
                   }
                 </motion.button>
 
@@ -327,7 +332,7 @@ export default function HabitsPage() {
                     {habit.title}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 3 }}>
-                    <span style={{ fontSize: 12, color: 'var(--c-text-muted)' }}>🔥 {habit.streak.current} day streak</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--c-text-muted)' }}><Flame size={12} color="var(--c-orange)" /> {habit.streak.current} day streak</span>
                     <span style={{ fontSize: 11, color: 'var(--c-text-muted)' }}>Best: {habit.streak.longest}</span>
                     {habit.time && <span style={{ fontSize: 11, color: 'var(--c-text-muted)' }}>⏰ {habit.time}</span>}
                   </div>
@@ -335,7 +340,7 @@ export default function HabitsPage() {
 
                 {/* Streak badge */}
                 {habit.streak.current >= 7 && (
-                  <span className="badge badge-orange">🔥 On Fire</span>
+                  <span className="badge badge-orange" style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Flame size={12} /> On Fire</span>
                 )}
 
                 {/* Delete */}

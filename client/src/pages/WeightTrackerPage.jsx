@@ -113,7 +113,7 @@ export default function WeightTrackerPage() {
         <h3 style={{ fontSize: 17, fontWeight: 800, color: '#0C2B35', marginBottom: 16 }}>Goal Weight</h3>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <input type="range" min="40" max="150" value={targetWeight} onChange={e => setTargetWeight(Number(e.target.value))}
-            className="noom-slider" style={{ flex: 1 }} />
+            className="wellness-slider" style={{ flex: 1 }} />
           <div style={{ fontSize: 28, fontWeight: 900, color: '#EC5A42', minWidth: 80 }}>{targetWeight} kg</div>
         </div>
       </motion.div>

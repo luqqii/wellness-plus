@@ -5,7 +5,7 @@ import { formatRelativeTime } from '../../utils/formatters';
 
 const MOCK_NOTIFICATIONS = [
   { id: 1, type: 'coach',   title: 'AI Insight Ready',       body: 'Your stress forecast for this week is ready.',         time: new Date(Date.now() - 1000*60*5),  read: false },
-  { id: 2, type: 'habit',   title: 'Habit Streak! 🔥',        body: 'You\'ve completed Morning Run for 7 days straight.',   time: new Date(Date.now() - 1000*60*30), read: false },
+  { id: 2, type: 'habit',   title: 'Habit Streak!',        body: 'You\'ve completed Morning Run for 7 days straight.',   time: new Date(Date.now() - 1000*60*30), read: false },
   { id: 3, type: 'goal',    title: 'Goal Milestone',          body: 'You\'re 80% towards your weekly step goal!',           time: new Date(Date.now() - 1000*60*90), read: true  },
   { id: 4, type: 'health',  title: 'Recovery Tip',            body: 'Your HRV suggests a rest day tomorrow would help.',    time: new Date(Date.now() - 1000*60*60*3), read: true },
 ];

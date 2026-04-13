@@ -57,14 +57,14 @@ const useMetricsStore = create((set, get) => ({
         apiInstance.get('/metrics/trend')
       ]);
       
-      if (todayRes.data?.data) {
+      if (todayRes.data) {
         set(state => ({ 
-          todayMetrics: { ...state.todayMetrics, ...todayRes.data.data } 
+          todayMetrics: { ...state.todayMetrics, ...todayRes.data } 
         }));
       }
       
-      if (trendRes.data?.data) {
-        const trend = trendRes.data.data.map(m => ({
+      if (trendRes.data) {
+        const trend = trendRes.data.map(m => ({
           day: new Date(m.date).toLocaleDateString('en-US', { weekday: 'short' }),
           score: m.wellnessScore || 50,
           steps: m.steps || 0,

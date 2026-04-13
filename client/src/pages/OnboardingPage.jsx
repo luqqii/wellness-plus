@@ -5,7 +5,7 @@ import { ArrowLeft, Check, ChevronRight } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import useAuthStore from '../store/authStore';
 
-// --- Noom Style Option Button ---
+// --- Wellness+ Style Option Button ---
 function QuizOption({ label, selected, onClick }) {
   return (
     <div 

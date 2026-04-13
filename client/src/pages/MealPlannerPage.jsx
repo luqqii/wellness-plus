@@ -292,7 +292,7 @@ export default function MealPlannerPage() {
               </div>
             </div>
 
-            <div className="responsive-grid-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {groceryList.map((category, catIdx) => (
                 <div key={catIdx} style={{ padding: 14, background: 'rgba(255,255,255,0.03)', borderRadius: 14, border: '1px solid var(--c-border)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 12 }}>

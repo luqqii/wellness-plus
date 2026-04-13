@@ -6,10 +6,11 @@ import {
 } from 'recharts';
 import {
   Footprints, Moon, Flame, Heart, TrendingUp,
-  Sparkles, ChevronRight, Zap, ArrowUpRight, Brain, Target
+  Sparkles, ChevronRight, Zap, ArrowUpRight, Brain, Target, Check
 } from 'lucide-react';
 import WellnessScore from '../components/dashboard/WellnessScore';
 import HabitSwipe from '../components/dashboard/HabitSwipe';
+import DynamicIcon from '../components/ui/DynamicIcon';
 import { SAMPLE_INSIGHTS } from '../utils/constants';
 import useHabitStore from '../store/habitStore';
 import useMetrics from '../hooks/useMetrics';
@@ -61,10 +62,10 @@ export default function DashboardPage() {
   const currentMetric = today || { wellnessScore: 50, steps: 0, calories: 0, stressLevel: 5 };
   
   const STATS = [
-    { icon: Footprints, label: 'Steps',    value: currentMetric.steps?.toLocaleString() || '0', sub: '/ 10,000', pct: Math.min(100, (currentMetric.steps/10000)*100), color: 'var(--c-teal)', path: '/activity' },
-    { icon: Moon,       label: 'Sleep',    value: currentMetric.sleep?.hours || '0',  sub: '/ 8h',   pct: Math.min(100, (currentMetric.sleep?.hours/8)*100), color: 'var(--c-purple)', path: '/activity' },
-    { icon: Flame,      label: 'Calories', value: currentMetric.calories || '0', sub: '/ 2,200', pct: Math.min(100, (currentMetric.calories/2200)*100), color: 'var(--c-orange)', path: '/nutrition' },
-    { icon: Heart,      label: 'Stress',   value: `${currentMetric.stressLevel || 5}/10`, sub: currentMetric.stressLevel > 7 ? 'High' : 'Normal', pct: (currentMetric.stressLevel || 5)*10, color: 'var(--c-blue)', path: '/activity' },
+    { icon: Footprints, label: 'Steps',    value: (currentMetric?.steps || 0).toLocaleString(), sub: '/ 10,000', pct: Math.min(100, ((currentMetric?.steps || 0)/10000)*100), color: 'var(--c-teal)', path: '/activity' },
+    { icon: Moon,       label: 'Sleep',    value: currentMetric?.sleep?.hours || '0',  sub: '/ 8h',   pct: Math.min(100, ((currentMetric?.sleep?.hours || 0)/8)*100), color: 'var(--c-purple)', path: '/activity' },
+    { icon: Flame,      label: 'Calories', value: (currentMetric?.calories || 0).toLocaleString(), sub: '/ 2,200', pct: Math.min(100, ((currentMetric?.calories || 0)/2200)*100), color: 'var(--c-orange)', path: '/nutrition' },
+    { icon: Heart,      label: 'Stress',   value: `${currentMetric?.stressLevel || 5}/10`, sub: (currentMetric?.stressLevel || 5) > 7 ? 'High' : 'Normal', pct: (currentMetric?.stressLevel || 5)*10, color: 'var(--c-blue)', path: '/activity' },
   ];
 
   // Map weekly trend for chart
@@ -78,7 +79,7 @@ export default function DashboardPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 1100 }}>
       
-      {/* NOOM DAILY LESSONS */}
+      {/* Wellness+ DAILY LESSONS */}
       <motion.div {...fadeUp(0)} style={{ background: '#FFFFFF', borderRadius: 24, padding: 24, boxShadow: '0 8px 24px rgba(0,0,0,0.04)', border: '1px solid #EAE6DF' }}>
         <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1A1D20', marginBottom: 16 }}>Your Daily Psychology</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -108,7 +109,7 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* === ROW 1: Score + Stats === */}
-      <div className="responsive-split">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] xl:grid-cols-[280px_1fr] gap-6">
         {/* Wellness Score Card */}
         <motion.div {...fadeUp(0)} className="glass-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 28 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -131,7 +132,7 @@ export default function DashboardPage() {
         </motion.div>
 
         {/* Stats Grid 2x2 */}
-        <div className="responsive-grid-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {STATS.map((s, i) => (
             <motion.div 
               key={s.label} 
@@ -166,7 +167,7 @@ export default function DashboardPage() {
       </div>
 
       {/* === ROW 2: Next Milestone & AI Nudges === */}
-      <div className="responsive-split">
+      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
         {/* Next Milestone Widget */}
         <motion.div {...fadeUp(0.25)} className="glass-card" style={{ display: 'flex', flexDirection: 'column', padding: '20px 24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
@@ -203,7 +204,7 @@ export default function DashboardPage() {
             <Brain size={14} color="var(--c-purple)" />
             <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--c-purple)', letterSpacing: '0.6px', textTransform: 'uppercase' }}>AI Coach Nudges</span>
           </div>
-          <div className="responsive-grid-3" style={{ height: 'calc(100% - 28px)' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ height: 'calc(100% - 28px)' }}>
             {NUDGE_CARDS.map((n, i) => (
               <motion.div
                 key={i}
@@ -220,7 +221,9 @@ export default function DashboardPage() {
                 style={{ flexDirection: 'column', justifyContent: 'space-between', cursor: 'pointer', transition: 'all 200ms ease' }}
               >
                 <div>
-                  <div className="nudge-icon" style={{ marginBottom: 10 }}>{n.icon}</div>
+                  <div className="nudge-icon" style={{ marginBottom: 10 }}>
+                    <DynamicIcon icon={n.icon} size={20} color={n.type === 'blue' ? 'var(--c-blue)' : n.type === 'purple' ? 'var(--c-purple)' : 'var(--c-orange)'} />
+                  </div>
                   <p style={{ fontSize: 12, color: 'var(--c-text-primary)', lineHeight: 1.4, marginBottom: 8 }}>{n.text}</p>
                 </div>
                 <div 
@@ -239,7 +242,7 @@ export default function DashboardPage() {
       </div>
 
       {/* === ROW 3: Food Diary Summary + Chart === */}
-      <div className="responsive-grid-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Calorie Summary */}
         <motion.div {...fadeUp(0.4)} className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -257,11 +260,11 @@ export default function DashboardPage() {
             {[
               { val: '2,200', label: 'Goal', color: 'var(--c-text-primary)' },
               { val: '−', label: '', color: 'var(--c-text-muted)', isSym: true },
-              { val: currentMetric.calories?.toLocaleString() || '0', label: 'Food', color: 'var(--c-orange)' },
+              { val: (currentMetric?.calories || 0).toLocaleString(), label: 'Food', color: 'var(--c-orange)' },
               { val: '+', label: '', color: 'var(--c-text-muted)', isSym: true },
               { val: '320', label: 'Exercise', color: 'var(--c-teal)' },
               { val: '=', label: '', color: 'var(--c-text-muted)', isSym: true },
-              { val: Math.max(0, 2200 - (currentMetric.calories || 0) + 320).toLocaleString(), label: 'Remaining', color: 'var(--c-blue)' },
+              { val: Math.max(0, 2200 - (currentMetric?.calories || 0) + 320).toLocaleString(), label: 'Remaining', color: 'var(--c-blue)' },
             ].map((item, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
                 <div className={item.isSym ? 'macro-equation-sym' : 'macro-equation-val'} style={{ fontSize: item.label ? 20 : 24, fontWeight: 800, color: item.color, letterSpacing: '-0.5px' }}>{item.val}</div>
@@ -272,9 +275,9 @@ export default function DashboardPage() {
 
           {/* Macro bars */}
           {[
-            { label: 'Carbs', val: currentMetric.nutrition?.carbs || 0, max: 275, color: 'var(--c-teal)', unit: 'g' },
-            { label: 'Protein', val: currentMetric.nutrition?.protein || 0, max: 120, color: 'var(--c-orange)', unit: 'g' },
-            { label: 'Fat', val: currentMetric.nutrition?.fat || 0, max: 73, color: 'var(--c-purple)', unit: 'g' },
+            { label: 'Carbs', val: currentMetric?.nutrition?.carbs || 0, max: 275, color: 'var(--c-teal)', unit: 'g' },
+            { label: 'Protein', val: currentMetric?.nutrition?.protein || 0, max: 120, color: 'var(--c-orange)', unit: 'g' },
+            { label: 'Fat', val: currentMetric?.nutrition?.fat || 0, max: 73, color: 'var(--c-purple)', unit: 'g' },
           ].map((m) => (
             <div key={m.label} style={{ marginBottom: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
@@ -336,7 +339,7 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* === ROW 5: AI Insights + Weekly Forecast === */}
-      <div className="responsive-grid-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* AI Insights */}
         <motion.div {...fadeUp(0.55)} className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
@@ -362,7 +365,7 @@ export default function DashboardPage() {
                 onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.055)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
               >
-                <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{ins.icon}</span>
+                <div style={{ flexShrink: 0, marginTop: 1 }}><DynamicIcon icon={ins.icon} size={22} color={ins.color} /></div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--c-text-primary)' }}>{ins.title}</span>

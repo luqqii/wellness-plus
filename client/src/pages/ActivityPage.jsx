@@ -150,7 +150,7 @@ export default function ActivityPage() {
       )}
 
       {/* Stats Row */}
-      <div className="responsive-grid-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
             icon: Footprints, label: 'Steps', value: avgSteps.toLocaleString(),
@@ -203,7 +203,7 @@ export default function ActivityPage() {
       </div>
 
       {/* Steps + Sleep Charts */}
-      <div className="responsive-grid-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--c-text-primary)' }}>Weekly Steps</span>
@@ -259,7 +259,7 @@ export default function ActivityPage() {
       </div>
 
       {/* Recovery Forecast + Health Memory */}
-      <div className="responsive-split-reverse">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
         {/* Predictive Recovery Chart */}
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="glass-card">
           <div style={{ marginBottom: 16 }}>
@@ -294,7 +294,7 @@ export default function ActivityPage() {
           </div>
 
           {/* AI Recommendation cards */}
-          <div className="responsive-grid-3" style={{ marginTop: 14 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ marginTop: 14 }}>
             {[
               {
                 title: intensityLabel.label,

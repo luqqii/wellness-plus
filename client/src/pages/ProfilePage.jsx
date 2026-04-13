@@ -5,6 +5,7 @@ import useAuthStore from '../store/authStore';
 import useHabitStore from '../store/habitStore';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import DynamicIcon from '../components/ui/DynamicIcon';
 
 // Achievements are now calculated dynamically inside the component
 
@@ -29,8 +30,8 @@ export default function ProfilePage() {
   const water = habits.find(h => h.title.toLowerCase().includes('water'))?.streak?.current || 0;
 
   const achievements = [
-    { icon: '🔥', title: '7-Day Streak', desc: 'Any habit for 7 days', earned: maxStreak >= 7, color: 'var(--c-orange)', pct: Math.min(100, (maxStreak/7)*100) },
-    { icon: '🧘', title: 'Zen Master',   desc: '30 days of meditation', earned: meditation >= 30, color: 'var(--c-purple)', pct: Math.min(100, (meditation/30)*100) },
+    { icon: 'Flame', title: '7-Day Streak', desc: 'Any habit for 7 days', earned: maxStreak >= 7, color: 'var(--c-orange)', pct: Math.min(100, (maxStreak/7)*100) },
+    { icon: '🧠', title: 'Zen Master',   desc: '30 days of meditation', earned: meditation >= 30, color: 'var(--c-purple)', pct: Math.min(100, (meditation/30)*100) },
     { icon: '💧', title: 'Hydro Hero',   desc: 'Hit water goal for 14 days', earned: water >= 14, color: 'var(--c-blue)', pct: Math.min(100, (water/14)*100) },
   ];
 
@@ -216,7 +217,7 @@ export default function ProfilePage() {
         </div>
       </motion.div>
 
-      <div className="responsive-split-reverse">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
         {/* Achievements Group */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card">
@@ -226,7 +227,7 @@ export default function ProfilePage() {
                 <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)' }}>Milestones</span>
               </div>
             </div>
-            <div className="responsive-grid-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {achievements.map((ach) => (
                 <div key={ach.title} style={{
                   padding: '12px 14px', borderRadius: 12,
@@ -234,7 +235,9 @@ export default function ProfilePage() {
                   border: `1px solid ${ach.earned ? ach.color + '25' : 'var(--c-border)'}`,
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ fontSize: 24 }}>{ach.icon}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36 }}>
+                      <DynamicIcon icon={ach.icon} size={24} color={ach.earned ? ach.color : 'var(--c-text-muted)'} />
+                    </div>
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--c-text-primary)' }}>{ach.title}</div>

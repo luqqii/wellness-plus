@@ -7,7 +7,7 @@ export default function MacroCalculatorPage() {
   const [results, setResults] = useState(null);
 
   const calculateMacros = () => {
-    // Basic accurate Mifflin-St Jeor Equation clone for Noom behavior
+    // Basic accurate Mifflin-St Jeor Equation clone for Wellness+ behavior
     const w = Number(data.weight) || 75;
     const h = Number(data.height) || 170;
     const a = Number(data.age) || 30;
@@ -22,7 +22,7 @@ export default function MacroCalculatorPage() {
     if (data.goal === 'lose') targetCals -= 500;
     if (data.goal === 'gain') targetCals += 300;
 
-    // Standard Macro Split (Noom leans high protein/moderate carb)
+    // Standard Macro Split (Wellness+ leans high protein/moderate carb)
     const protein = Math.round((targetCals * 0.3) / 4);
     const fat = Math.round((targetCals * 0.3) / 9);
     const carbs = Math.round((targetCals * 0.4) / 4);
@@ -51,7 +51,7 @@ export default function MacroCalculatorPage() {
           {step === 1 && (
             <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}}>
               <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>Step 1: Your Baseline</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 30 }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
                 <div>
                   <label style={{ display:'block', fontWeight:700, marginBottom:8 }}>Gender</label>
                   <select value={data.gender} onChange={e=>setData({...data, gender:e.target.value})} style={{ width:'100%', padding:16, borderRadius:12, border:'2px solid #E8DED8', fontSize:16, outline:'none' }}>
@@ -111,7 +111,7 @@ export default function MacroCalculatorPage() {
                 <div style={{ fontSize: 48, fontWeight: 900, color: '#EC5A42', margin: '20px 0' }}>{results.calories} <span style={{fontSize: 20, color: '#0C2B35'}}>kcal/day</span></div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 40, textAlign: 'center' }}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-center">
                 <div style={{ padding: 24, background: '#F7EBE3', borderRadius: 16 }}>
                   <div style={{ fontSize: 24, fontWeight: 800, color: '#EC5A42' }}>{results.protein}g</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: '#0C2B35' }}>Protein</div>

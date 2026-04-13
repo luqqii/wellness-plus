@@ -9,7 +9,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import OnboardingPage from './pages/OnboardingPage';
 
-// Free Interactive Tools (Noom Clone)
+// Free Interactive Tools (Wellness+ Clone)
 import MacroCalculatorPage from './pages/MacroCalculatorPage';
 import CalorieCalculatorPage from './pages/CalorieCalculatorPage';
 import PersonalityQuizPage from './pages/PersonalityQuizPage';
@@ -21,6 +21,7 @@ import PressPage from './pages/PressPage';
 import CareersPage from './pages/CareersPage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
+import CookiePolicyPage from './pages/CookiePolicyPage';
 import LessonsPage from './pages/LessonsPage';
 import WeightTrackerPage from './pages/WeightTrackerPage';
 import BMICalculatorPage from './pages/BMICalculatorPage';
@@ -87,6 +88,7 @@ export default function App() {
         <Route path="/careers" element={<CareersPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/cookie-policy" element={<CookiePolicyPage />} />
         <Route path="/bmi-calculator" element={<BMICalculatorPage />} />
         <Route path="/pricing" element={<PricingPage />} />
 

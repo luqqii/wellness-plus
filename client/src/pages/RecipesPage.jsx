@@ -208,7 +208,7 @@ export default function RecipesPage() {
       </div>
 
       {/* Recipe Grid */}
-      <div className="responsive-grid-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <AnimatePresence>
           {filtered.map((recipe, i) => {
             const isAdded = addedRecipes[recipe.id];
@@ -341,7 +341,7 @@ export default function RecipesPage() {
                 </div>
 
                 {/* Macros */}
-                <div className="responsive-grid-4" style={{ marginBottom: 18 }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 18 }}>
                   {[
                     { label: 'Calories', val: selectedRecipe.calories, color: 'var(--c-orange)' },
                     { label: 'Protein', val: `${selectedRecipe.protein}g`, color: '#ff7940' },

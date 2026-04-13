@@ -24,7 +24,7 @@ export default function WeightLossProductPage() {
         </button>
       </div>
 
-      {/* Content Breakdown matching Noom's Product explanation */}
+      {/* Content Breakdown matching Wellness+'s Product explanation */}
       <div style={{ maxWidth: 1000, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 60, padding: '0 20px' }}>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: 40, flexWrap: 'wrap' }}>

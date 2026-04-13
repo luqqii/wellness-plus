@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, Flame } from 'lucide-react';
 import useHabitStore from '../../store/habitStore';
+import DynamicIcon from '../ui/DynamicIcon';
 
 export default function HabitSwipe() {
   const { habits, toggleHabit } = useHabitStore();
@@ -29,9 +30,14 @@ export default function HabitSwipe() {
               <Check size={9} color="white" />
             </div>
           )}
-          <div className="habit-pill-icon">{habit.icon}</div>
+          <div className="habit-pill-icon">
+            <DynamicIcon icon={habit.icon} size={24} color={habit.completedToday ? 'var(--c-orange)' : habit.color || 'var(--c-text-primary)'} />
+          </div>
           <div className="habit-pill-label">{habit.title}</div>
-          <div className="habit-pill-streak">🔥{habit.streak.current}</div>
+          <div className="habit-pill-streak" style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Flame size={12} color="var(--c-orange)" /> 
+            {habit.streak.current}
+          </div>
         </motion.button>
       ))}
     </div>

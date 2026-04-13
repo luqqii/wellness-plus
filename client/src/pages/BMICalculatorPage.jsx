@@ -28,7 +28,7 @@ export default function BMICalculatorPage() {
         <p style={{ textAlign: 'center', color: '#718096', fontSize: 17, marginBottom: 40 }}>Body Mass Index is a quick screening tool — not a complete health picture.</p>
 
         <div style={{ background: '#FFFFFF', borderRadius: 24, padding: 36, boxShadow: '0 12px 40px rgba(0,0,0,0.06)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 28 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
             <div>
               <label style={{ display: 'block', fontWeight: 700, marginBottom: 8 }}>Height (cm)</label>
               <input type="number" placeholder="170" value={data.height}

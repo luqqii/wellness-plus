@@ -9,7 +9,7 @@ export default function AppLayout() {
   // Initialize Global Socket connection for currently logged in user
   useSocket();
 
-  // (Adaptive dark theme removed — app now uses Noom Light Mode exclusively)
+  // (Adaptive dark theme removed — app now uses Wellness+ Light Mode exclusively)
 
   return (
     <div className="app-shell">

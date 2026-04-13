@@ -6,6 +6,7 @@ import {
 import { Plus, ChevronLeft, ChevronRight, Check, Sparkles, Apple, Watch } from 'lucide-react';
 import api from '../services/api';
 import FoodSearchModal from '../components/nutrition/FoodSearchModal';
+import DynamicIcon from '../components/ui/DynamicIcon';
 
 const MOCK_AI_SUGGESTIONS = [
   { name: 'Grilled Salmon + Quinoa', cal: 480, protein: 38, tag: 'High Protein', why: 'Closes your protein gap by 38g' },
@@ -61,7 +62,7 @@ export default function NutritionPage() {
     loadSuggestions();
   }, []);
 
-  // Noom Traffic Light Caloric Density Approximation
+  // Wellness+ Traffic Light Caloric Density Approximation
   const getFoodColor = (food) => {
     if (!food) return 'var(--c-yellow)';
     const n = (food.name || '').toLowerCase();
@@ -203,7 +204,7 @@ export default function NutritionPage() {
       </motion.div>
 
       {/* === Main 2-col grid === */}
-      <div className="responsive-split-reverse">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
         {/* LEFT: Food Diary */}
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -217,7 +218,7 @@ export default function NutritionPage() {
               <div key={section.name} className="diary-section">
                 <div className="diary-meal-header">
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 16 }}>{section.icon}</span>
+                    <DynamicIcon icon={section.icon} size={20} color="var(--c-text-primary)" />
                     <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)' }}>{section.name}</span>
                     {sectionCal > 0 && (
                       <span style={{ fontSize: 12, color: 'var(--c-text-muted)' }}>{sectionCal} cal</span>
@@ -229,12 +230,12 @@ export default function NutritionPage() {
                 </div>
 
                 {section.items.map((item, ii) => {
-                  const noomColor = getFoodColor(item.customFood);
+                  const foodColor = getFoodColor(item.customFood);
                   return (
                     <div key={ii} className="diary-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #EAE6DF' }}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                        {/* Noom Food Density Dot */}
-                        <div style={{ width: 12, height: 12, borderRadius: '50%', background: noomColor, marginTop: 4, flexShrink: 0 }} />
+                        {/* Wellness+ Food Density Dot */}
+                        <div style={{ width: 12, height: 12, borderRadius: '50%', background: foodColor, marginTop: 4, flexShrink: 0 }} />
                         <div>
                           <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-primary)' }}>{item.customFood?.name}</div>
                           <div style={{ fontSize: 11, color: 'var(--c-text-muted)', marginTop: 2 }}>
@@ -262,7 +263,10 @@ export default function NutritionPage() {
           {/* Water */}
           <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--c-border)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--c-text-primary)' }}>💧 Water</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <DynamicIcon icon="💧" size={16} color="var(--c-blue)" />
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--c-text-primary)' }}>Water</span>
+              </div>
               <span style={{ fontSize: 12, color: 'var(--c-text-muted)' }}>6 / 8 glasses</span>
             </div>
             <div style={{ display: 'flex', gap: 6 }}>

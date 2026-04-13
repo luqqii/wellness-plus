@@ -19,8 +19,8 @@ export function useMetrics() {
       // 2. Fetch weekly trend (7 days)
       const resWeekly = await api.get('/metrics/trend?days=7');
 
-      setToday(resToday.data?.data);
-      setWeekly(resWeekly.data?.data || []);
+      setToday(resToday.data || null);
+      setWeekly(resWeekly.data || []);
     } catch (err) {
       console.error('Failed to fetch metrics', err);
       setError(err.message);

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, Camera, Bot, User, Sparkles, BarChart3, Brain } from 'lucide-react';
 import useChat from '../hooks/useChat';
 import api from '../services/api';
+import DynamicIcon from '../components/ui/DynamicIcon';
 
 const EMOTIONS = [
   { label: 'Neutral', emoji: '😐' },
@@ -127,7 +128,7 @@ export default function CoachPage() {
       }} />
 
       {/* Header */}
-      <div className="glass-card" style={{ zIndex: 1, borderRadius: 'var(--r-xl) var(--r-xl) 0 0', borderBottom: 'none', padding: '14px 20px', flexShrink: 0, background: 'rgba(28, 32, 48, 0.85)' }}>
+      <div className="glass-card" style={{ zIndex: 1, borderRadius: 'var(--r-xl) var(--r-xl) 0 0', borderBottom: '1px solid var(--c-border)', padding: '16px 24px', flexShrink: 0, background: 'var(--c-bg-card)' }}>
         <div className="coach-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{
@@ -163,7 +164,8 @@ export default function CoachPage() {
                   fontSize: 11, fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4
                 }}
               >
-                {e.emoji} {e.label}
+                <DynamicIcon icon={e.emoji} size={14} color={detectedEmotion === e.label ? 'var(--c-blue)' : 'var(--c-text-muted)'} /> 
+                {e.label}
               </button>
             ))}
           </div>
@@ -176,7 +178,7 @@ export default function CoachPage() {
         flex: 1, overflowY: 'auto',
         borderRadius: 0, borderTop: 'none', borderBottom: 'none',
         padding: '24px 24px', display: 'flex', flexDirection: 'column', gap: 20,
-        background: 'rgba(23, 27, 40, 0.55)',
+        background: 'rgba(255, 255, 255, 0.4)',
         backdropFilter: 'blur(32px)',
         WebkitBackdropFilter: 'blur(32px)'
       }}>
@@ -230,7 +232,7 @@ export default function CoachPage() {
       </div>
 
       {/* Input */}
-      <div className="glass-card" style={{ zIndex: 1, borderRadius: '0 0 var(--r-xl) var(--r-xl)', borderTop: 'none', padding: '16px 24px', flexShrink: 0, background: 'rgba(28, 32, 48, 0.85)' }}>
+      <div className="glass-card" style={{ zIndex: 1, borderRadius: '0 0 var(--r-xl) var(--r-xl)', borderTop: '1px solid var(--c-border)', padding: '16px 24px', flexShrink: 0, background: 'var(--c-bg-card)' }}>
         <div className="chat-input-box">
           {/* Multimodal buttons */}
           <button 
