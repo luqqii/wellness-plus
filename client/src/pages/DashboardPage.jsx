@@ -60,20 +60,21 @@ export default function DashboardPage() {
   const navigate = useNavigate();
 
   // Metrics mapping
-  const currentMetric = today || { wellnessScore: 50, steps: 0, calories: 0, stressLevel: 5 };
+  const currentMetric = today || SAMPLE_METRICS.today;
   
   const STATS = [
     { icon: Footprints, label: 'Steps',    value: (currentMetric?.steps || 0).toLocaleString(), sub: '/ 10,000', pct: Math.min(100, ((currentMetric?.steps || 0)/10000)*100), color: 'var(--c-teal)', path: '/activity' },
     { icon: Moon,       label: 'Sleep',    value: currentMetric?.sleep?.hours || '0',  sub: '/ 8h',   pct: Math.min(100, ((currentMetric?.sleep?.hours || 0)/8)*100), color: 'var(--c-purple)', path: '/activity' },
-    { icon: Flame,      label: 'Calories', value: (currentMetric?.calories || 0).toLocaleString(), sub: '/ 2,200', pct: Math.min(100, ((currentMetric?.calories || 0)/2200)*100), color: 'var(--c-orange)', path: '/nutrition' },
+    { icon: Flame,      label: 'Calories', value: (currentMetric?.calories || currentMetric?.nutrition?.calories || 0).toLocaleString(), sub: '/ 2,200', pct: Math.min(100, ((currentMetric?.calories || currentMetric?.nutrition?.calories || 0)/2200)*100), color: 'var(--c-orange)', path: '/nutrition' },
     { icon: Heart,      label: 'Stress',   value: `${currentMetric?.stressLevel || 5}/10`, sub: (currentMetric?.stressLevel || 5) > 7 ? 'High' : 'Normal', pct: (currentMetric?.stressLevel || 5)*10, color: 'var(--c-blue)', path: '/activity' },
   ];
 
   // Map weekly trend for chart
-  const weeklyData = (weekly || []).map(w => ({
-    day: w.date ? new Date(w.date).toLocaleDateString([], { weekday: 'short' }) : '---',
+  const resolvedWeekly = (weekly && weekly.length > 0) ? weekly : SAMPLE_METRICS.weeklyScores;
+  const weeklyData = resolvedWeekly.map(w => ({
+    day: w.day || (w.date ? new Date(w.date).toLocaleDateString([], { weekday: 'short' }) : '---'),
     steps: w.steps || 0,
-    score: w.wellnessScore || 50
+    score: w.wellnessScore || w.score || 50
   }));
 
 
