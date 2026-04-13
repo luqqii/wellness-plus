@@ -3,6 +3,8 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NAV_ITEMS, FREE_TOOLS, BOTTOM_ITEMS } from '../../utils/navigation';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import useUIStore from '../../store/uiStore';
+import useAuthStore from '../../store/authStore';
 
 export default function Sidebar() {
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
