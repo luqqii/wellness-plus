@@ -25,7 +25,7 @@ export default function MobileFeaturePortal() {
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(2, 1fr)', 
-        gap: 12 
+        gap: 10 
       }}>
         {portalFeatures.map((feature, i) => (
           <motion.div
@@ -35,36 +35,35 @@ export default function MobileFeaturePortal() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 12,
-              padding: '14px',
+              gap: 8,
+              padding: '10px',
               background: '#FFFFFF',
-              borderRadius: 16,
+              borderRadius: 14,
               border: '1px solid #EAE6DF',
               boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
               cursor: 'pointer'
             }}
           >
             <div style={{ 
-              width: 32, 
-              height: 32, 
+              width: 30, 
+              height: 30, 
               borderRadius: 10, 
               background: feature.label.includes('Calculator') || feature.label.includes('Quiz') ? 'var(--c-orange-dim)' : 'var(--c-blue-dim)',
               color: feature.label.includes('Calculator') || feature.label.includes('Quiz') ? 'var(--c-orange)' : 'var(--c-blue)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              flexShrink: 0
             }}>
-              {feature.icon ? <feature.icon size={18} /> : <div style={{width: 18, height: 18, background: 'currentColor', borderRadius: '50%'}} />}
+              {feature.icon ? <feature.icon size={16} /> : <div style={{width: 16, height: 16, background: 'currentColor', borderRadius: '50%'}} />}
             </div>
             
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
               <div style={{ 
-                fontSize: 13, 
+                fontSize: 12, 
                 fontWeight: 700, 
-                color: 'var(--c-text-primary)',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
+                lineHeight: 1.25,
+                color: 'var(--c-text-primary)'
               }}>
                 {feature.label}
               </div>
