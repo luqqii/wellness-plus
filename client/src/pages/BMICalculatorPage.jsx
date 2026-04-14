@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import PublicNavbar from '../components/layout/PublicNavbar';
+import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../store/authStore';
 
 const BMI_CATEGORIES = [
   { max: 18.5, label: 'Underweight', color: '#3B82F6', desc: 'You may need to gain weight. Speak to your doctor about a healthy approach.' },
@@ -12,6 +13,8 @@ const BMI_CATEGORIES = [
 export default function BMICalculatorPage() {
   const [data, setData] = useState({ height: '', weight: '', unit: 'metric' });
   const [result, setResult] = useState(null);
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
 
   const calculate = () => {
     let h = Number(data.height) / 100; // cm to m
@@ -23,14 +26,13 @@ export default function BMICalculatorPage() {
   };
 
   return (
-    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <PublicNavbar />
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '120px 20px 40px' }}>
+    <div style={{ background: isAuthenticated ? 'transparent' : '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: isAuthenticated ? '24px 16px 100px' : '120px 20px 40px' }}>
         <h1 style={{ fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 8, letterSpacing: '-1px' }}>BMI Calculator</h1>
         <p style={{ textAlign: 'center', color: '#718096', fontSize: 17, marginBottom: 40 }}>Body Mass Index is a quick screening tool — not a complete health picture.</p>
 
         <div style={{ background: '#FFFFFF', borderRadius: 24, padding: 36, boxShadow: '0 12px 40px rgba(0,0,0,0.06)' }}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, marginBottom: 32 }}>
             <div>
               <label style={{ display: 'block', fontWeight: 700, marginBottom: 8 }}>Height (cm)</label>
               <input type="number" placeholder="170" value={data.height}
@@ -70,9 +72,10 @@ export default function BMICalculatorPage() {
                 </div>
               </div>
 
-              <button onClick={() => window.location.href = '/signup'}
+              <button
+                onClick={() => isAuthenticated ? navigate('/weight-tracker') : window.location.href = '/signup'}
                 style={{ marginTop: 24, background: '#0C2B35', color: 'white', border: 'none', borderRadius: 999, padding: '14px 32px', fontWeight: 800, fontSize: 15, cursor: 'pointer' }}>
-                Start My Wellness+ Plan
+                {isAuthenticated ? 'View My Weight Tracker' : 'Start My Wellness+ Plan'}
               </button>
             </motion.div>
           )}

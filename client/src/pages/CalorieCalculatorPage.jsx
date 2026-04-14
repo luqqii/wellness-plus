@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import PublicNavbar from '../components/layout/PublicNavbar';
+import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../store/authStore';
 
 export default function CalorieCalculatorPage() {
   const [data, setData] = useState({ gender: '', weight: '', targetWeight: '', months: '6', activity: 'sedentary' });
   const [result, setResult] = useState(null);
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
 
   const calculateDeficit = () => {
     const w = Number(data.weight) || 80;
@@ -33,9 +36,8 @@ export default function CalorieCalculatorPage() {
   };
 
   return (
-    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <PublicNavbar />
-      <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center', padding: '120px 20px 80px' }}>
+    <div style={{ background: isAuthenticated ? 'transparent' : '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+      <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center', padding: isAuthenticated ? '24px 16px 100px' : '120px 20px 80px' }}>
         <h1 style={{ fontSize: 'clamp(36px, 6vw, 48px)', fontWeight: 900, letterSpacing: '-1px', marginBottom: 20 }}>
           Calorie Deficit Calculator
         </h1>
@@ -82,7 +84,9 @@ export default function CalorieCalculatorPage() {
               <p style={{ marginTop: 16, fontSize: 16, color: '#4A5568' }}>
                 To reach your goal safely, you need a daily deficit of <strong>{result.dailyDeficit} calories</strong>. Let us help you track it effortlessly.
               </p>
-              <button onClick={() => window.location.href='/signup'} className="btn" style={{ background: '#EC5A42', color: 'white', marginTop: 24, width: '100%', padding: '16px' }}>Start Tracking Free</button>
+              <button onClick={() => isAuthenticated ? navigate('/nutrition') : window.location.href='/signup'} className="btn" style={{ background: '#EC5A42', color: 'white', marginTop: 24, width: '100%', padding: '16px' }}>
+                {isAuthenticated ? 'Track in My Food Diary' : 'Start Tracking Free'}
+              </button>
             </motion.div>
           )}
 

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import PublicNavbar from '../components/layout/PublicNavbar';
+import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../store/authStore';
 
 export default function MacroCalculatorPage() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState({ gender: '', age: '', weight: '', height: '', goal: '', activity: '' });
   const [results, setResults] = useState(null);
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
 
   const calculateMacros = () => {
     // Basic accurate Mifflin-St Jeor Equation clone for Wellness+ behavior
@@ -38,9 +41,8 @@ export default function MacroCalculatorPage() {
   };
 
   return (
-    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <PublicNavbar />
-      <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', padding: '120px 20px 80px' }}>
+    <div style={{ background: isAuthenticated ? 'transparent' : '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+      <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', padding: isAuthenticated ? '24px 16px 100px' : '120px 20px 80px' }}>
         <h1 style={{ fontSize: 'clamp(36px, 6vw, 56px)', fontWeight: 900, letterSpacing: '-1.5px', marginBottom: 20 }}>
           Wellness+ Macro Calculator
         </h1>
@@ -53,7 +55,7 @@ export default function MacroCalculatorPage() {
           {step === 1 && (
             <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}}>
               <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>Step 1: Your Baseline</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, marginBottom: 32 }}>
                 <div>
                   <label style={{ display:'block', fontWeight:700, marginBottom:8 }}>Gender</label>
                   <select value={data.gender} onChange={e=>setData({...data, gender:e.target.value})} style={{ width:'100%', padding:16, borderRadius:12, border:'2px solid #E8DED8', fontSize:16, outline:'none' }}>
@@ -113,7 +115,7 @@ export default function MacroCalculatorPage() {
                 <div style={{ fontSize: 48, fontWeight: 900, color: '#EC5A42', margin: '20px 0' }}>{results.calories} <span style={{fontSize: 20, color: '#0C2B35'}}>kcal/day</span></div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-center">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 16, marginBottom: 40, textAlign: 'center' }}>
                 <div style={{ padding: 24, background: '#F7EBE3', borderRadius: 16 }}>
                   <div style={{ fontSize: 24, fontWeight: 800, color: '#EC5A42' }}>{results.protein}g</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: '#0C2B35' }}>Protein</div>
@@ -128,9 +130,15 @@ export default function MacroCalculatorPage() {
                 </div>
               </div>
 
-              <button onClick={() => window.location.href = '/signup'} className="btn" style={{ background: '#0C2B35', color: 'white', padding: '18px 0', width: '100%', fontSize: 18 }}>
-                Start tracking with Wellness+
-              </button>
+              {isAuthenticated ? (
+                <button onClick={() => navigate('/dashboard')} className="btn" style={{ background: '#0C2B35', color: 'white', padding: '18px 0', width: '100%', fontSize: 18 }}>
+                  Go to My Dashboard
+                </button>
+              ) : (
+                <button onClick={() => window.location.href = '/signup'} className="btn" style={{ background: '#0C2B35', color: 'white', padding: '18px 0', width: '100%', fontSize: 18 }}>
+                  Start tracking with Wellness+
+                </button>
+              )}
             </motion.div>
           )}
 

@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import AppLayout from './components/layout/AppLayout';
+import ToolLayout from './components/layout/ToolLayout';
 import useAuthStore from './store/authStore';
 
 // Pages
@@ -74,10 +75,13 @@ export default function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
 
-        {/* Free Tools */}
-        <Route path="/macro-calculator" element={<MacroCalculatorPage />} />
-        <Route path="/calorie-deficit-calculator" element={<CalorieCalculatorPage />} />
-        <Route path="/personality-quiz" element={<PersonalityQuizPage />} />
+        {/* Free Tools - render inside AppLayout when logged in, public navbar when not */}
+        <Route element={<ToolLayout />}>
+          <Route path="/macro-calculator" element={<MacroCalculatorPage />} />
+          <Route path="/calorie-deficit-calculator" element={<CalorieCalculatorPage />} />
+          <Route path="/personality-quiz" element={<PersonalityQuizPage />} />
+          <Route path="/bmi-calculator" element={<BMICalculatorPage />} />
+        </Route>
         
         {/* Core Corporate Tabs */}
         <Route path="/weight-loss" element={<WeightLossProductPage />} />
@@ -89,7 +93,7 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/cookie-policy" element={<CookiePolicyPage />} />
-        <Route path="/bmi-calculator" element={<BMICalculatorPage />} />
+
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/food-guide" element={<FoodColorGuidePage />} />
 

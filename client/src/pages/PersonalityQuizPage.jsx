@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import PublicNavbar from '../components/layout/PublicNavbar';
+import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../store/authStore';
 
 const QUIZ_QUESTIONS = [
   {
@@ -22,6 +23,8 @@ export default function PersonalityQuizPage() {
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
 
   const handleSelect = (optionIdx) => {
     setAnswers({ ...answers, [step]: optionIdx });
@@ -54,15 +57,14 @@ export default function PersonalityQuizPage() {
 
   if (result) {
     return (
-      <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-        <PublicNavbar />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '120px 20px 40px' }}>
+      <div style={{ background: isAuthenticated ? 'transparent' : '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isAuthenticated ? '24px 16px 100px' : '120px 20px 40px' }}>
           <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} style={{ background: '#FFFFFF', padding: 40, borderRadius: 24, maxWidth: 600, textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.08)' }}>
             <div style={{ fontSize: 16, fontWeight: 800, color: '#EC5A42', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: 16 }}>Your Eating Personality</div>
             <h1 style={{ fontSize: 40, fontWeight: 900, color: '#0C2B35', marginBottom: 20, lineHeight: 1.1 }}>{result.type}</h1>
             <p style={{ fontSize: 18, color: '#4A5568', lineHeight: 1.6, marginBottom: 40 }}>{result.desc}</p>
-            <button onClick={() => window.location.href='/signup'} className="btn" style={{ background: '#EC5A42', color: 'white', padding: '18px 40px', fontSize: 18, borderRadius: 999 }}>
-              Start Your Custom Plan
+            <button onClick={() => isAuthenticated ? navigate('/coach') : window.location.href='/signup'} className="btn" style={{ background: '#EC5A42', color: 'white', padding: '18px 40px', fontSize: 18, borderRadius: 999 }}>
+              {isAuthenticated ? 'Discuss with My AI Coach' : 'Start Your Custom Plan'}
             </button>
           </motion.div>
         </div>
@@ -71,9 +73,8 @@ export default function PersonalityQuizPage() {
   }
 
   return (
-    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <PublicNavbar />
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '120px 20px 40px' }}>
+    <div style={{ background: isAuthenticated ? 'transparent' : '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: isAuthenticated ? '24px 16px 100px' : '120px 20px 40px' }}>
         
         {loading ? (
           <div style={{ textAlign: 'center', marginTop: 100 }}>
