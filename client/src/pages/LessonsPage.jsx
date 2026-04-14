@@ -12,6 +12,12 @@ export default function LessonsPage() {
   const location = useLocation();
   const CURRICULUM = getCurriculum();
 
+  // Build a flat ordered list of all lesson IDs for sequential unlock
+  const allLessonIds = React.useMemo(
+    () => CURRICULUM.flatMap(w => w.lessons.map(l => l.id)),
+    [CURRICULUM]
+  );
+
   React.useEffect(() => {
     // If navigated from dashboard with a specific lesson ID
     if (location.state?.openLessonId) {
@@ -59,17 +65,23 @@ export default function LessonsPage() {
             {week.lessons.map((lesson) => {
               const isDone = completedIds.includes(lesson.id);
               const isOpen = openLesson === lesson.id;
-              const isLocked = lesson.locked && !isDone;
+              // A lesson is locked if ANY lesson before it in the sequence is not completed
+              const lessonIndex = allLessonIds.indexOf(lesson.id);
+              const precedingIds = allLessonIds.slice(0, lessonIndex);
+              const isLocked = precedingIds.some(pid => !completedIds.includes(pid));
+              // How many preceding uncompleted lessons remain
+              const remainingCount = precedingIds.filter(pid => !completedIds.includes(pid)).length;
               return (
                 <div key={lesson.id}>
                   <div
                     onClick={() => !isLocked && setOpenLesson(isOpen ? null : lesson.id)}
+                    title={isLocked ? `Complete ${remainingCount} more lesson${remainingCount !== 1 ? 's' : ''} to unlock this` : undefined}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
-                      borderRadius: 14, cursor: isLocked ? 'default' : 'pointer',
+                      borderRadius: 14, cursor: isLocked ? 'not-allowed' : 'pointer',
                       background: isDone ? '#F7EBE3' : isLocked ? '#FAFAFA' : '#FDFBF8',
                       border: `2px solid ${isDone ? '#EC5A42' : isLocked ? '#E8DED8' : '#E8DED8'}`,
-                      opacity: isLocked ? 0.6 : 1, transition: 'all 150ms ease'
+                      opacity: isLocked ? 0.55 : 1, transition: 'all 150ms ease'
                     }}
                   >
                     {isDone
