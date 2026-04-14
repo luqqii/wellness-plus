@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
-import PublicNavbar from '../components/layout/PublicNavbar';
+import useAuthStore from '../store/authStore';
 
 const FOOD_DB = [
   // GREEN FOODS
@@ -51,6 +51,7 @@ const COLOR_META = {
 export default function FoodColorGuidePage() {
   const [query, setQuery] = useState('');
   const [filterColor, setFilterColor] = useState('all');
+  const { isAuthenticated } = useAuthStore();
 
   const filtered = FOOD_DB.filter(f => {
     const matchesQ = f.name.toLowerCase().includes(query.toLowerCase()) || f.category.toLowerCase().includes(query.toLowerCase());
@@ -59,9 +60,8 @@ export default function FoodColorGuidePage() {
   });
 
   return (
-    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-       <PublicNavbar />
-       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '120px 20px 80px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div style={{ background: isAuthenticated ? 'transparent' : '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+       <div style={{ maxWidth: 1000, margin: '0 auto', padding: isAuthenticated ? '24px 16px 100px' : '120px 20px 80px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}

@@ -81,6 +81,7 @@ export default function App() {
           <Route path="/calorie-deficit-calculator" element={<CalorieCalculatorPage />} />
           <Route path="/personality-quiz" element={<PersonalityQuizPage />} />
           <Route path="/bmi-calculator" element={<BMICalculatorPage />} />
+          <Route path="/food-guide" element={<FoodColorGuidePage />} />
         </Route>
         
         {/* Core Corporate Tabs */}
@@ -95,7 +96,6 @@ export default function App() {
         <Route path="/cookie-policy" element={<CookiePolicyPage />} />
 
         <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/food-guide" element={<FoodColorGuidePage />} />
 
         {/* App routes (protected) */}
         <Route element={<AuthGuard />}>
