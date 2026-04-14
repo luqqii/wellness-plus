@@ -1,3 +1,5 @@
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Circle, ChevronDown, ChevronUp, Clock, BookOpen, Lock } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import useLessonStore from '../store/lessonStore';
