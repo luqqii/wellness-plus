@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const ARTICLES = [
   { outlet: 'The New York Times', headline: '"Wellness+ is the rare diet app that doesn\'t feel like a diet app — because it isn\'t one."', date: 'March 2025' },
@@ -10,14 +11,12 @@ const ARTICLES = [
   { outlet: 'TechCrunch', headline: '"Wellness+ raises $100M Series C to scale its behavioral AI coaching platform."', date: 'August 2024' },
 ];
 
+
 export default function PressPage() {
   const navigate = useNavigate();
   return (
     <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <nav style={{ padding: '0 5%', height: 80, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E8DED8', background: '#FFFFFF' }}>
-        <div style={{ fontSize: 26, fontWeight: 800, cursor: 'pointer' }} onClick={() => navigate('/')}>Wellness+</div>
-        <button onClick={() => navigate('/signup')} className="btn" style={{ background: '#EC5A42', color: 'white', padding: '12px 28px', fontSize: 15, borderRadius: 999 }}>Get Started</button>
-      </nav>
+      <PublicNavbar />
 
       <section style={{ padding: '100px 20px 80px', textAlign: 'center' }}>
         <h1 style={{ fontSize: 'clamp(40px, 8vw, 68px)', fontWeight: 900, letterSpacing: '-2px', marginBottom: 16 }}>Press & Media</h1>

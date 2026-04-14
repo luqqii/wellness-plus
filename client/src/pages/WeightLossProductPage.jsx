@@ -1,15 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 export default function WeightLossProductPage() {
   const navigate = useNavigate();
 
   return (
     <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif', paddingBottom: 100 }}>
-      {/* Top Navbar Placeholder to match overall site */}
-      <nav style={{ padding: '0 5%', height: 80, display: 'flex', alignItems: 'center', borderBottom: '1px solid #E8DED8', background: '#FFFFFF' }}>
-        <div style={{ fontSize: 26, fontWeight: 800, cursor: 'pointer' }} onClick={() => navigate('/')}>Wellness+</div>
-      </nav>
+      <PublicNavbar />
 
       {/* Hero */}
       <div style={{ textAlign: 'center', padding: '80px 20px', background: '#FFF3EB' }}>

@@ -91,6 +91,7 @@ export default function App() {
         <Route path="/cookie-policy" element={<CookiePolicyPage />} />
         <Route path="/bmi-calculator" element={<BMICalculatorPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/food-guide" element={<FoodColorGuidePage />} />
 
         {/* App routes (protected) */}
         <Route element={<AuthGuard />}>
@@ -107,7 +108,6 @@ export default function App() {
             <Route path="/lessons" element={<LessonsPage />} />
             <Route path="/weight-tracker" element={<WeightTrackerPage />} />
             <Route path="/community" element={<CommunityPage />} />
-            <Route path="/food-guide" element={<FoodColorGuidePage />} />
             <Route path="/check-in" element={<CheckInPage />} />
           </Route>
         </Route>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 export default function MacroCalculatorPage() {
   const [step, setStep] = useState(1);
@@ -37,8 +38,9 @@ export default function MacroCalculatorPage() {
   };
 
   return (
-    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif', padding: '80px 20px' }}>
-      <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
+    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+      <PublicNavbar />
+      <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', padding: '120px 20px 80px' }}>
         <h1 style={{ fontSize: 'clamp(36px, 6vw, 56px)', fontWeight: 900, letterSpacing: '-1.5px', marginBottom: 20 }}>
           Wellness+ Macro Calculator
         </h1>

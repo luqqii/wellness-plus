@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 export default function CalorieCalculatorPage() {
   const [data, setData] = useState({ gender: '', weight: '', targetWeight: '', months: '6', activity: 'sedentary' });
@@ -32,8 +33,9 @@ export default function CalorieCalculatorPage() {
   };
 
   return (
-    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif', padding: '80px 20px' }}>
-      <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
+    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+      <PublicNavbar />
+      <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center', padding: '120px 20px 80px' }}>
         <h1 style={{ fontSize: 'clamp(36px, 6vw, 48px)', fontWeight: 900, letterSpacing: '-1px', marginBottom: 20 }}>
           Calorie Deficit Calculator
         </h1>

@@ -1,27 +1,27 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const STATS = [
-  { val: '45M+', label: 'People helped' },
-  { val: '60+', label: 'Countries reached' },
-  { val: '98%', label: 'Would recommend' },
-  { val: '10 min', label: 'A day is all it takes' },
-];
-
-const TEAM = [
-  { name: 'Dr. Sarah Lee', role: 'Chief Clinical Officer', emoji: '👩‍⚕️' },
-  { name: 'James Rivera', role: 'Head of AI & Engineering', emoji: '👨‍💻' },
-  { name: 'Priya Mehta', role: 'Lead Behavioral Psychologist', emoji: '🧠' },
-  { name: 'Carlos Ruiz', role: 'Director of Nutrition Science', emoji: '🥗' },
+  { val: '2M+', label: 'Active Users' },
+  { val: '50M+', label: 'Pounds Lost' },
+  { val: '100+', label: 'PhD Scientists' },
+  { val: '4.8', label: 'App Store Rating' },
 ];
 
 const TIMELINE = [
-  { year: '2016', event: 'Founded with a mission to make psychological weight loss accessible to everyone.' },
-  { year: '2018', event: 'Reached 1 million users. Launched the color-coded food system.' },
-  { year: '2020', event: 'Published first peer-reviewed study on psychology-based weight loss.' },
-  { year: '2022', event: 'Expanded to 60+ countries. Introduced AI coaching.' },
-  { year: '2024', event: 'Wellness+ launched—the next evolution of science-backed wellness.' },
+  { year: '2021', event: 'Wellness+ founded in a small New York apartment with the mission to end diet culture.' },
+  { year: '2022', event: 'Launched our AI Coaching platform and reached our first 100,000 users.' },
+  { year: '2023', event: 'Published our first peer-reviewed clinical study in the Journal of Behavioral Science.' },
+  { year: '2024', event: 'Expanded globally to 15 countries and introduced the color-coded caloric density system.' },
+];
+
+const TEAM = [
+  { name: 'Dr. Jane Smith', role: 'Chief Behavioral Officer', emoji: '👩‍🔬' },
+  { name: 'Michael Chen', role: 'CEO & Founder', emoji: '👨‍💻' },
+  { name: 'Sarah Johnson', role: 'Head of Nutrition', emoji: '🥗' },
+  { name: 'David Wilson', role: 'VP of Engineering', emoji: '🛠️' },
 ];
 
 export default function AboutUsPage() {
@@ -29,10 +29,7 @@ export default function AboutUsPage() {
 
   return (
     <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <nav style={{ padding: '0 5%', height: 80, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E8DED8', background: '#FFFFFF' }}>
-        <div style={{ fontSize: 26, fontWeight: 800, cursor: 'pointer' }} onClick={() => navigate('/')}>Wellness+</div>
-        <button onClick={() => navigate('/signup')} className="btn" style={{ background: '#EC5A42', color: 'white', padding: '12px 28px', fontSize: 15, borderRadius: 999 }}>Get Started</button>
-      </nav>
+      <PublicNavbar />
 
       {/* Hero */}
       <section style={{ background: '#0C2B35', color: '#FFFFFF', padding: '120px 20px 100px', textAlign: 'center' }}>

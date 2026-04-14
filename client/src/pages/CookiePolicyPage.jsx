@@ -1,16 +1,13 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 export default function CookiePolicyPage() {
   const navigate = useNavigate();
 
   return (
     <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <nav style={{ padding: '0 5%', height: 80, display: 'flex', alignItems: 'center', borderBottom: '1px solid #E8DED8', background: '#FFFFFF' }}>
-        <div style={{ fontSize: 26, fontWeight: 800, cursor: 'pointer' }} onClick={() => navigate('/')}>Wellness+</div>
-      </nav>
-
-      <div style={{ maxWidth: 800, margin: '60px auto 100px', padding: '0 20px' }}>
+      <PublicNavbar />
+      <div style={{ maxWidth: 800, margin: '0 auto', padding: '120px 20px 80px' }}>
         <h1 style={{ fontSize: 'clamp(32px, 6vw, 48px)', fontWeight: 900, marginBottom: 20 }}>Cookie Policy</h1>
         <p style={{ color: '#4A5568', fontSize: 16, marginBottom: 40 }}>Last updated: April 2026</p>
 

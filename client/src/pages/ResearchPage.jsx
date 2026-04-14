@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const STUDIES = [
   {
@@ -39,14 +40,12 @@ const PILLARS = [
   { icon: '📊', title: 'Behavioral Data & AI', desc: 'We analyze thousands of biometric and behavioral signals to personalize your learning curve and predict slip points before they happen.' },
 ];
 
+
 export default function ResearchPage() {
   const navigate = useNavigate();
   return (
     <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <nav style={{ padding: '0 5%', height: 80, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E8DED8', background: '#FFFFFF' }}>
-        <div style={{ fontSize: 26, fontWeight: 800, cursor: 'pointer' }} onClick={() => navigate('/')}>Wellness+</div>
-        <button onClick={() => navigate('/signup')} className="btn" style={{ background: '#EC5A42', color: 'white', padding: '12px 28px', fontSize: 15, borderRadius: 999 }}>Get Started</button>
-      </nav>
+      <PublicNavbar />
 
       {/* Hero */}
       <section style={{ padding: '100px 20px 80px', textAlign: 'center', background: '#0C2B35', color: '#FFFFFF' }}>

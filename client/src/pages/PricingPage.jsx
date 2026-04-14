@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Zap, Star, Shield, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const PLANS = [
   {
@@ -53,16 +54,14 @@ const TESTIMONIALS = [
   { name: 'Priya K.', result: '15 lbs lost in 3 months', quote: 'The AI Coach is like having a therapist and nutritionist in my pocket.', emoji: '⭐⭐⭐⭐⭐' },
 ];
 
+
 export default function PricingPage() {
   const [selected, setSelected] = useState('annual');
   const navigate = useNavigate();
 
   return (
     <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <nav style={{ padding: '0 5%', height: 80, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #E8DED8', background: '#FFFFFF' }}>
-        <div style={{ fontSize: 26, fontWeight: 800, cursor: 'pointer' }} onClick={() => navigate('/')}>Wellness+</div>
-        <button onClick={() => navigate('/login')} style={{ background: 'none', border: 'none', fontWeight: 700, fontSize: 15, color: '#0C2B35', cursor: 'pointer' }}>Log In</button>
-      </nav>
+      <PublicNavbar />
 
       {/* Hero */}
       <section style={{ textAlign: 'center', padding: '80px 20px 60px' }}>

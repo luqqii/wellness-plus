@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const FAQS = [
   { q: "How much does Wellness+ cost?", a: "We offer several subscription tiers starting at $15/month for our baseline AI curriculum. You can cancel at any time directly from the settings panel." },
@@ -19,9 +20,7 @@ export default function SupportPage() {
 
   return (
     <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <nav style={{ padding: '0 5%', height: 80, display: 'flex', alignItems: 'center', borderBottom: '1px solid #E8DED8', background: '#FFFFFF' }}>
-        <div style={{ fontSize: 26, fontWeight: 800, cursor: 'pointer' }} onClick={() => navigate('/')}>Wellness+</div>
-      </nav>
+      <PublicNavbar />
 
       {/* Hero */}
       <div style={{ background: '#0C2B35', color: '#FFFFFF', padding: '100px 20px', textAlign: 'center' }}>

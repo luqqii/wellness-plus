@@ -2,59 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ChevronDown, Check, Star, Brain, PieChart, Activity, Stethoscope, Video, Pill, ShieldCheck, Heart, Users, ChevronRight } from 'lucide-react';
+import { ArrowRight, Star, Brain, PieChart, Activity, Stethoscope, Video, Pill, ShieldCheck, Heart, Users } from 'lucide-react';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
-/* ─── Free Tools dropdown items ─── */
-const FREE_TOOLS_ITEMS = [
-  { label: 'BMI Calculator',                href: '/bmi-calculator',             desc: 'Find your body mass index' },
-  { label: 'Macro Calculator',              href: '/macro-calculator',           desc: 'Protein, carb & fat targets' },
-  { label: 'Calorie Deficit Calculator',    href: '/calorie-deficit-calculator', desc: 'Daily calorie goal' },
-  { label: 'Weight Loss Personality Quiz',  href: '/personality-quiz',           desc: 'Discover your eating style' },
-  { label: 'Food Color Guide',              href: '/food-guide',                 desc: 'Green / Yellow / Orange system' },
-];
-
-function DropdownMenu({ title, items }) {
-  const [open, setOpen] = useState(false);
-  const timerRef = useRef(null);
-
-  const show = () => { clearTimeout(timerRef.current); setOpen(true); };
-  const hide = () => { timerRef.current = setTimeout(() => setOpen(false), 120); };
-
-  return (
-    <div style={{ position: 'relative' }} onMouseEnter={show} onMouseLeave={hide}>
-      <button style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, fontSize: 16, color: '#0C2B35', fontFamily: 'inherit', padding: '6px 0', transition: 'color 0.2s' }}
-        onMouseEnter={e => e.currentTarget.style.color = '#EC5A42'}
-        onMouseLeave={e => e.currentTarget.style.color = '#0C2B35'}
-      >
-        {title} <ChevronDown size={14} style={{ transition: 'transform 200ms', transform: open ? 'rotate(180deg)' : 'rotate(0)' }} />
-      </button>
-      {open && <div style={{ position: 'absolute', top: 24, left: -20, width: 340, height: 20, zIndex: 999 }} />}
-      {open && (
-        <div
-          onMouseEnter={show} onMouseLeave={hide}
-          style={{
-            position: 'absolute', top: 44, left: -20, width: 330,
-            background: '#FFFFFF', borderRadius: 20, boxShadow: '0 20px 50px rgba(0,0,0,0.1)',
-            border: '1px solid #E8DED8', padding: '12px 10px', zIndex: 1000,
-            animation: 'fadeSlideDown 200ms cubic-bezier(0.16, 1, 0.3, 1)'
-          }}
-        >
-          <style>{`@keyframes fadeSlideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }`}</style>
-          {items.map(item => (
-            <Link key={item.href} to={item.href} onClick={() => setOpen(false)}
-              style={{ display: 'flex', flexDirection: 'column', gap: 3, padding: '12px 16px', borderRadius: 14, textDecoration: 'none', transition: 'background 120ms ease' }}
-              onMouseEnter={e => e.currentTarget.style.background = '#FFF3EB'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-              <span style={{ fontSize: 15, fontWeight: 800, color: '#0C2B35' }}>{item.label}</span>
-              {item.desc && <span style={{ fontSize: 13, color: '#718096', fontWeight: 500 }}>{item.desc}</span>}
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
+// DropdownMenu and FREE_TOOLS_ITEMS removed - using PublicNavbar instead
 
 export default function LandingPage() {
   const { isAuthenticated } = useAuthStore();
@@ -72,123 +23,7 @@ export default function LandingPage() {
   return (
     <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif', overflowX: 'hidden' }}>
       
-      {/* ── Navbar ── */}
-      <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 900, height: 72,
-        background: scrolled ? 'rgba(255,243,235,0.97)' : 'rgba(255,243,235,0.97)',
-        backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid #E8DED8',
-        transition: 'all 300ms ease',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%',
-      }}>
-        {/* Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0 }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#EC5A42', boxShadow: '0 4px 12px rgba(236,90,66,0.3)' }} />
-          <span style={{ fontSize: 22, fontWeight: 900, color: '#0C2B35', letterSpacing: '-0.5px' }}>Wellness+</span>
-        </Link>
-
-        {/* Desktop Nav Links — hidden on mobile via JS */}
-        {!mobileMenuOpen && (
-          <div id="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-            <style>{`
-              @media (max-width: 768px) { #desktop-nav { display: none !important; } #desktop-cta { display: none !important; } #hamburger { display: flex !important; } }
-              @media (min-width: 769px) { #hamburger { display: none !important; } }
-            `}</style>
-            <Link to="/weight-loss" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 700, fontSize: 15 }}>Weight Loss</Link>
-            <DropdownMenu title="Free Tools" items={FREE_TOOLS_ITEMS} />
-            <Link to="/research" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 700, fontSize: 15 }}>Science</Link>
-            <Link to="/pricing" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 700, fontSize: 15 }}>Pricing</Link>
-          </div>
-        )}
-
-        {/* Desktop CTA Buttons */}
-        <div id="desktop-cta" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-          {isAuthenticated ? (
-            <Link to="/dashboard" style={{ background: '#EC5A42', color: 'white', padding: '10px 22px', borderRadius: 999, textDecoration: 'none', fontWeight: 800, fontSize: 14, boxShadow: '0 4px 12px rgba(236,90,66,0.2)', whiteSpace: 'nowrap' }}>Go to Dashboard</Link>
-          ) : (
-            <>
-              <Link to="/login" style={{ textDecoration: 'none', color: '#0C2B35', fontWeight: 700, fontSize: 15, whiteSpace: 'nowrap' }}>Log In</Link>
-              <Link to="/signup" style={{ background: '#EC5A42', color: 'white', padding: '10px 20px', borderRadius: 999, textDecoration: 'none', fontWeight: 800, fontSize: 14, whiteSpace: 'nowrap' }}>Sign Up</Link>
-            </>
-          )}
-        </div>
-
-        {/* Hamburger — mobile only */}
-        <button
-          id="hamburger"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          style={{ background: 'none', border: 'none', padding: 6, cursor: 'pointer', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 5 }}
-          aria-label="Toggle menu"
-        >
-          <div style={{ width: 24, height: 2.5, background: '#0C2B35', borderRadius: 2, transition: 'all 200ms', transform: mobileMenuOpen ? 'rotate(45deg) translateY(7px)' : 'none' }} />
-          <div style={{ width: 24, height: 2.5, background: '#0C2B35', borderRadius: 2, transition: 'all 200ms', opacity: mobileMenuOpen ? 0 : 1 }} />
-          <div style={{ width: 24, height: 2.5, background: '#0C2B35', borderRadius: 2, transition: 'all 200ms', transform: mobileMenuOpen ? 'rotate(-45deg) translateY(-7px)' : 'none' }} />
-        </button>
-      </nav>
-
-      {/* ── Mobile Menu Drawer ── */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            style={{
-              position: 'fixed', top: 72, left: 0, right: 0, zIndex: 899,
-              background: '#FFF3EB', borderBottom: '2px solid #E8DED8',
-              padding: '24px 5% 32px',
-              display: 'flex', flexDirection: 'column', gap: 6
-            }}
-          >
-            {/* Nav Links */}
-            {[
-              { label: 'Weight Loss', href: '/weight-loss' },
-              { label: 'Free Tools', href: '/bmi-calculator' },
-              { label: 'Recipes', href: '/recipes' },
-              { label: 'Science', href: '/research' },
-              { label: 'Pricing', href: '/pricing' },
-            ].map(item => (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                style={{
-                  padding: '14px 0', fontSize: 18, fontWeight: 700, color: '#0C2B35',
-                  textDecoration: 'none', borderBottom: '1px solid #E8DED8',
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-                }}
-              >
-                {item.label} <ChevronRight size={18} color="#EC5A42" />
-              </Link>
-            ))}
-
-            {/* CTA Buttons */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
-              {isAuthenticated ? (
-                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}
-                  style={{ background: '#EC5A42', color: 'white', padding: '16px', borderRadius: 999, textDecoration: 'none', fontWeight: 800, fontSize: 17, textAlign: 'center', boxShadow: '0 6px 20px rgba(236,90,66,0.25)' }}
-                >
-                  Go to Dashboard
-                </Link>
-              ) : (
-                <>
-                  <Link to="/signup" onClick={() => setMobileMenuOpen(false)}
-                    style={{ background: '#EC5A42', color: 'white', padding: '16px', borderRadius: 999, textDecoration: 'none', fontWeight: 800, fontSize: 17, textAlign: 'center', boxShadow: '0 6px 20px rgba(236,90,66,0.25)' }}
-                  >
-                    Get Started — It's Free
-                  </Link>
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}
-                    style={{ background: 'white', color: '#0C2B35', padding: '14px', borderRadius: 999, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center', border: '2px solid #E8DED8' }}
-                  >
-                    Log In
-                  </Link>
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <PublicNavbar />
 
       {/* ── HERO ── */}
       <section style={{ paddingTop: 140, paddingBottom: 60, paddingLeft: '4%', paddingRight: '4%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

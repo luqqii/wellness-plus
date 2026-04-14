@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const BMI_CATEGORIES = [
   { max: 18.5, label: 'Underweight', color: '#3B82F6', desc: 'You may need to gain weight. Speak to your doctor about a healthy approach.' },
@@ -22,8 +23,9 @@ export default function BMICalculatorPage() {
   };
 
   return (
-    <div style={{ background: '#FFF3EB', minHeight: '100vh', padding: '40px 20px', fontFamily: '"Nunito", "Inter", sans-serif', color: '#0C2B35' }}>
-      <div style={{ maxWidth: 600, margin: '0 auto' }}>
+    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+      <PublicNavbar />
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '120px 20px 40px' }}>
         <h1 style={{ fontSize: 40, fontWeight: 900, textAlign: 'center', marginBottom: 8, letterSpacing: '-1px' }}>BMI Calculator</h1>
         <p style={{ textAlign: 'center', color: '#718096', fontSize: 17, marginBottom: 40 }}>Body Mass Index is a quick screening tool — not a complete health picture.</p>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const FOOD_DB = [
   // GREEN FOODS
@@ -46,6 +47,7 @@ const COLOR_META = {
   orange: { bg: '#FFE4E6', border: '#FCA5A5', dot: '#EC5A42', label: 'Orange — Eat Sparingly', tip: 'High caloric density. Enjoy occasionally and in small amounts.' },
 };
 
+
 export default function FoodColorGuidePage() {
   const [query, setQuery] = useState('');
   const [filterColor, setFilterColor] = useState('all');
@@ -57,7 +59,9 @@ export default function FoodColorGuidePage() {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 900 }}>
+    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+       <PublicNavbar />
+       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '120px 20px 80px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
@@ -131,6 +135,7 @@ export default function FoodColorGuidePage() {
         })}
       </div>
 
+      </div>
     </div>
   );
 }

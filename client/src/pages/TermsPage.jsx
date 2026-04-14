@@ -1,5 +1,5 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const SECTION = ({ title, children }) => (
   <div style={{ marginBottom: 48 }}>
@@ -12,10 +12,8 @@ export default function TermsPage() {
   const navigate = useNavigate();
   return (
     <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
-      <nav style={{ padding: '0 5%', height: 80, display: 'flex', alignItems: 'center', borderBottom: '1px solid #E8DED8', background: '#FFFFFF' }}>
-        <div style={{ fontSize: 26, fontWeight: 800, cursor: 'pointer' }} onClick={() => navigate('/')}>Wellness+</div>
-      </nav>
-      <div style={{ maxWidth: 800, margin: '0 auto', padding: '80px 20px' }}>
+      <PublicNavbar />
+      <div style={{ maxWidth: 800, margin: '0 auto', padding: '120px 20px 80px' }}>
         <h1 style={{ fontSize: 48, fontWeight: 900, letterSpacing: '-1px', marginBottom: 12 }}>Terms & Conditions</h1>
         <p style={{ color: '#718096', marginBottom: 60, fontSize: 15 }}>Last Updated: April 1, 2025</p>
         <SECTION title="1. Acceptance of Terms">

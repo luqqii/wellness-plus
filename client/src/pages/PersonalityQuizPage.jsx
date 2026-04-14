@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const QUIZ_QUESTIONS = [
   {
-    q: "When you feel stressed, what is your first instinct?",
-    options: ["Raid the pantry for comfort food", "Skip meals entirely", "Go for a walk or exercise", "Binge watch TV"]
+    q: "How would you describe your current goals?",
+    options: ["I want to lose weight for a specific event", "I want to build healthy habits that last", "I want to improve my relationship with food", "I want to increase my daily energy"]
   },
   {
-    q: "How would you describe your historical relationship with diets?",
-    options: ["All or nothing (perfectionist)", "I try for a few days then give up", "Slow and steady", "I've never dieted before"]
+    q: "How often do you find yourself snacking when you're not hungry?",
+    options: ["Rarely", "Occasionally", "Frequently", "Almost every day"]
   },
   {
-    q: "What's your biggest barrier to eating healthy?",
-    options: ["Lack of time", "Sweet tooth", "Social events & eating out", "Emotional eating"]
-  }
+    q: "What's your biggest challenge with consistency?",
+    options: ["Lack of time", "Social pressure", "Emotional eating", "Boredom with traditional diets"]
+  },
 ];
 
 export default function PersonalityQuizPage() {
@@ -53,22 +54,26 @@ export default function PersonalityQuizPage() {
 
   if (result) {
     return (
-      <div style={{ background: '#FFF3EB', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-        <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} style={{ background: '#FFFFFF', padding: 40, borderRadius: 24, maxWidth: 600, textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.08)' }}>
-          <div style={{ fontSize: 16, fontWeight: 800, color: '#EC5A42', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: 16 }}>Your Eating Personality</div>
-          <h1 style={{ fontSize: 40, fontWeight: 900, color: '#0C2B35', marginBottom: 20, lineHeight: 1.1 }}>{result.type}</h1>
-          <p style={{ fontSize: 18, color: '#4A5568', lineHeight: 1.6, marginBottom: 40 }}>{result.desc}</p>
-          <button onClick={() => window.location.href='/signup'} className="btn" style={{ background: '#EC5A42', color: 'white', padding: '18px 40px', fontSize: 18, borderRadius: 999 }}>
-            Start Your Custom Plan
-          </button>
-        </motion.div>
+      <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+        <PublicNavbar />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '120px 20px 40px' }}>
+          <motion.div initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} style={{ background: '#FFFFFF', padding: 40, borderRadius: 24, maxWidth: 600, textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.08)' }}>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#EC5A42', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: 16 }}>Your Eating Personality</div>
+            <h1 style={{ fontSize: 40, fontWeight: 900, color: '#0C2B35', marginBottom: 20, lineHeight: 1.1 }}>{result.type}</h1>
+            <p style={{ fontSize: 18, color: '#4A5568', lineHeight: 1.6, marginBottom: 40 }}>{result.desc}</p>
+            <button onClick={() => window.location.href='/signup'} className="btn" style={{ background: '#EC5A42', color: 'white', padding: '18px 40px', fontSize: 18, borderRadius: 999 }}>
+              Start Your Custom Plan
+            </button>
+          </motion.div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif', paddingTop: 100 }}>
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 20px' }}>
+    <div style={{ background: '#FFF3EB', minHeight: '100vh', color: '#0C2B35', fontFamily: '"Nunito", "Inter", sans-serif' }}>
+      <PublicNavbar />
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '120px 20px 40px' }}>
         
         {loading ? (
           <div style={{ textAlign: 'center', marginTop: 100 }}>
