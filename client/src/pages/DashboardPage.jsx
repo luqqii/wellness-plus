@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   AreaChart, Area, BarChart, Bar,
@@ -16,6 +16,7 @@ import useHabitStore from '../store/habitStore';
 import useMetrics from '../hooks/useMetrics';
 import { useNavigate } from 'react-router-dom';
 import MobileFeaturePortal from '../components/dashboard/MobileFeaturePortal';
+import useLessonStore from '../store/lessonStore';
 
 
 const ChartTooltip = ({ active, payload, label }) => {
@@ -59,9 +60,9 @@ export default function DashboardPage() {
   const completionRate = useHabitStore((s) => s.getCompletionRate());
   const navigate = useNavigate();
 
-  // Metrics mapping
-  const currentMetric = today || SAMPLE_METRICS.today;
-  
+  const { getDailyLessons, completedIds } = useLessonStore();
+  const dailyLessons = getDailyLessons();
+
   const STATS = [
     { icon: Footprints, label: 'Steps',    value: (currentMetric?.steps || 0).toLocaleString(), sub: '/ 10,000', pct: Math.min(100, ((currentMetric?.steps || 0)/10000)*100), color: 'var(--c-teal)', path: '/activity' },
     { icon: Moon,       label: 'Sleep',    value: currentMetric?.sleep?.hours || '0',  sub: '/ 8h',   pct: Math.min(100, ((currentMetric?.sleep?.hours || 0)/8)*100), color: 'var(--c-purple)', path: '/activity' },
@@ -95,28 +96,29 @@ export default function DashboardPage() {
       <motion.div {...fadeUp(0)} style={{ background: '#FFFFFF', borderRadius: 24, padding: 24, boxShadow: '0 8px 24px rgba(0,0,0,0.04)', border: '1px solid #EAE6DF' }}>
         <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1A1D20', marginBottom: 16 }}>Your Daily Psychology</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {[
-            { title: "Day 1: The Psychology of Fullness", duration: "3 min", done: true },
-            { title: "Identify your eating triggers", duration: "4 min", done: false },
-            { title: "Mindful eating exercise", duration: "2 min", done: false },
-          ].map((lesson, i) => (
-            <div key={i} style={{ 
-              display: 'flex', alignItems: 'center', gap: 14, 
-              padding: '16px', borderRadius: 16, 
-              background: lesson.done ? '#FDFBF8' : '#F5F3EF',
-              border: `2px solid ${lesson.done ? 'var(--c-teal)' : 'transparent'}`,
-              cursor: 'pointer'
-            }}>
-              <div style={{ width: 28, height: 28, borderRadius: '50%', background: lesson.done ? 'var(--c-teal)' : '#FFFFFF', border: lesson.done ? 'none' : '2px solid #EAE6DF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {lesson.done && <Check size={16} color="white" />}
+          {dailyLessons.map((lesson) => {
+            const isDone = completedIds.includes(lesson.id);
+            return (
+              <div key={lesson.id} 
+                onClick={() => navigate('/lessons', { state: { openLessonId: lesson.id } })}
+                style={{ 
+                display: 'flex', alignItems: 'center', gap: 14, 
+                padding: '16px', borderRadius: 16, 
+                background: isDone ? '#FDFBF8' : '#F5F3EF',
+                border: `2px solid ${isDone ? 'var(--c-teal)' : 'transparent'}`,
+                cursor: 'pointer'
+              }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', background: isDone ? 'var(--c-teal)' : '#FFFFFF', border: isDone ? 'none' : '2px solid #EAE6DF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {isDone && <Check size={16} color="white" />}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1D20', textDecoration: isDone ? 'line-through' : 'none', opacity: isDone ? 0.6 : 1 }}>{lesson.title}</div>
+                  <div style={{ fontSize: 13, color: '#4A5568', marginTop: 2 }}>{lesson.duration} read</div>
+                </div>
+                {!isDone && <ChevronRight size={18} color="#718096" />}
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1D20', textDecoration: lesson.done ? 'line-through' : 'none', opacity: lesson.done ? 0.6 : 1 }}>{lesson.title}</div>
-                <div style={{ fontSize: 13, color: '#4A5568', marginTop: 2 }}>{lesson.duration} read</div>
-              </div>
-              {!lesson.done && <ChevronRight size={18} color="#718096" />}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </motion.div>
 
