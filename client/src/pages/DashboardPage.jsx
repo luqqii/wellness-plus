@@ -63,6 +63,9 @@ export default function DashboardPage() {
   const { getDailyLessons, completedIds } = useLessonStore();
   const dailyLessons = getDailyLessons();
 
+  // Metrics mapping
+  const currentMetric = today || SAMPLE_METRICS.today;
+
   const STATS = [
     { icon: Footprints, label: 'Steps',    value: (currentMetric?.steps || 0).toLocaleString(), sub: '/ 10,000', pct: Math.min(100, ((currentMetric?.steps || 0)/10000)*100), color: 'var(--c-teal)', path: '/activity' },
     { icon: Moon,       label: 'Sleep',    value: currentMetric?.sleep?.hours || '0',  sub: '/ 8h',   pct: Math.min(100, ((currentMetric?.sleep?.hours || 0)/8)*100), color: 'var(--c-purple)', path: '/activity' },
