@@ -102,14 +102,16 @@ export default function DashboardPage() {
           {dailyLessons.map((lesson) => {
             const isDone = completedIds.includes(lesson.id);
             return (
-              <div key={lesson.id} 
+              <motion.div key={lesson.id} 
                 onClick={() => navigate('/lessons', { state: { openLessonId: lesson.id } })}
+                whileTap={{ scale: 0.98, background: '#F0EAE2' }}
                 style={{ 
                 display: 'flex', alignItems: 'center', gap: 14, 
                 padding: '16px', borderRadius: 16, 
                 background: isDone ? '#FDFBF8' : '#F5F3EF',
                 border: `2px solid ${isDone ? 'var(--c-teal)' : 'transparent'}`,
-                cursor: 'pointer'
+                cursor: 'pointer',
+                transition: 'border-color 200ms ease, background-color 200ms ease'
               }}>
                 <div style={{ width: 28, height: 28, borderRadius: '50%', background: isDone ? 'var(--c-teal)' : '#FFFFFF', border: isDone ? 'none' : '2px solid #EAE6DF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {isDone && <Check size={16} color="white" />}
@@ -119,7 +121,7 @@ export default function DashboardPage() {
                   <div style={{ fontSize: 13, color: '#4A5568', marginTop: 2 }}>{lesson.duration} read</div>
                 </div>
                 {!isDone && <ChevronRight size={18} color="#718096" />}
-              </div>
+              </motion.div>
             );
           })}
         </div>
