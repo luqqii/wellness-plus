@@ -1,17 +1,19 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import axios from 'axios';
 import env from '../config/env.js';
 
-// gemini-2.0-flash is the correct model name for @google/genai SDK v1.x
-const MODEL_NAME = 'gemini-2.0-flash';
+// gemini-2.5-flash-lite bypassed the 429 quota on this key!
+const MODEL_NAME = 'gemini-2.5-flash-lite';
 
-let ai = null;
+let genAI = null;
+let model = null;
 // Circuit breaker: if quota is blown, stop hammering the API
 let quotaExceeded = false;
 let quotaResetTimer = null;
 
 if (env.GEMINI_API_KEY) {
-  ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
+  genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+  model = genAI.getGenerativeModel({ model: MODEL_NAME });
   console.log('[AI Service] Gemini initialized with model:', MODEL_NAME);
 } else {
   console.warn('[AI Service] GEMINI_API_KEY not found — using fallback responses.');
@@ -20,7 +22,6 @@ if (env.GEMINI_API_KEY) {
 function setQuotaExceeded() {
   quotaExceeded = true;
   console.warn('[AI] Quota exceeded — activating circuit breaker for 60 seconds.');
-  // Auto-reset after 60 seconds to try again
   clearTimeout(quotaResetTimer);
   quotaResetTimer = setTimeout(() => {
     quotaExceeded = false;
@@ -36,11 +37,8 @@ async function callGemini(prompt, retries = 2) {
 
   for (let i = 0; i <= retries; i++) {
     try {
-      const response = await ai.models.generateContent({
-        model: MODEL_NAME,
-        contents: prompt,
-      });
-      return response.text;
+      const result = await model.generateContent(prompt);
+      return result.response.text();
     } catch (e) {
       const is429 = e.message?.includes('429') || e.message?.includes('quota') || e.message?.includes('RESOURCE_EXHAUSTED');
       if (is429) {
