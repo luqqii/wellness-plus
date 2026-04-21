@@ -2,9 +2,14 @@ import { GoogleGenAI } from '@google/genai';
 import axios from 'axios';
 import env from '../config/env.js';
 
-const MODEL_NAME = 'gemini-1.5-flash';
+// gemini-2.0-flash is the correct model name for @google/genai SDK v1.x
+const MODEL_NAME = 'gemini-2.0-flash';
 
 let ai = null;
+// Circuit breaker: if quota is blown, stop hammering the API
+let quotaExceeded = false;
+let quotaResetTimer = null;
+
 if (env.GEMINI_API_KEY) {
   ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
   console.log('[AI Service] Gemini initialized with model:', MODEL_NAME);
@@ -12,10 +17,23 @@ if (env.GEMINI_API_KEY) {
   console.warn('[AI Service] GEMINI_API_KEY not found — using fallback responses.');
 }
 
+function setQuotaExceeded() {
+  quotaExceeded = true;
+  console.warn('[AI] Quota exceeded — activating circuit breaker for 60 seconds.');
+  // Auto-reset after 60 seconds to try again
+  clearTimeout(quotaResetTimer);
+  quotaResetTimer = setTimeout(() => {
+    quotaExceeded = false;
+    console.log('[AI] Circuit breaker reset — retrying Gemini API.');
+  }, 60 * 1000);
+}
+
 /**
  * Helper: call Gemini generateContent with retry on 429
  */
-async function callGemini(prompt, retries = 3) {
+async function callGemini(prompt, retries = 2) {
+  if (quotaExceeded) throw new Error('QUOTA_CIRCUIT_OPEN');
+
   for (let i = 0; i <= retries; i++) {
     try {
       const response = await ai.models.generateContent({
@@ -25,11 +43,15 @@ async function callGemini(prompt, retries = 3) {
       return response.text;
     } catch (e) {
       const is429 = e.message?.includes('429') || e.message?.includes('quota') || e.message?.includes('RESOURCE_EXHAUSTED');
-      if (is429 && i < retries) {
-        const delay = (i + 1) * 5000; // 5s, 10s, 15s backoff
-        console.warn(`[AI] Rate limited (attempt ${i + 1}/${retries}), retrying in ${delay / 1000}s...`);
-        await new Promise(r => setTimeout(r, delay));
-        continue;
+      if (is429) {
+        if (i < retries) {
+          const delay = (i + 1) * 3000;
+          console.warn(`[AI] Rate limited (attempt ${i + 1}/${retries}), retrying in ${delay / 1000}s...`);
+          await new Promise(r => setTimeout(r, delay));
+          continue;
+        } else {
+          setQuotaExceeded();
+        }
       }
       throw e;
     }
@@ -80,11 +102,12 @@ Coach:`;
       return { content: text.trim(), sentiment: 'neutral' };
     } catch (e) {
       const errorMsg = e.message || String(e);
-      const isQuota = errorMsg.includes('429') || errorMsg.includes('quota') || errorMsg.includes('RESOURCE_EXHAUSTED');
+      const isQuota = errorMsg.includes('429') || errorMsg.includes('quota') ||
+        errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('QUOTA_CIRCUIT_OPEN');
       console.error('[AI] replyToConversation error:', errorMsg.substring(0, 200));
       return {
         content: isQuota
-          ? `I'm a little overwhelmed right now — too many conversations at once! 😅 Please try again in a moment and I'll be right with you.`
+          ? `I'm taking a short breather — you've been chatting a lot today! 😊 I'll be back in about a minute. In the meantime, keep up the great wellness work!`
           : `Sorry, I'm having a little trouble connecting right now. Please try again in a few seconds!`,
         sentiment: 'neutral'
       };
