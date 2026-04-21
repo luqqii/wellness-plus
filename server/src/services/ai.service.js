@@ -2,7 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import axios from 'axios';
 import env from '../config/env.js';
 
-const MODEL_NAME = 'gemini-2.0-flash-lite';
+const MODEL_NAME = 'gemini-1.5-flash';
 
 let ai = null;
 if (env.GEMINI_API_KEY) {
@@ -15,7 +15,7 @@ if (env.GEMINI_API_KEY) {
 /**
  * Helper: call Gemini generateContent with retry on 429
  */
-async function callGemini(prompt, retries = 2) {
+async function callGemini(prompt, retries = 3) {
   for (let i = 0; i <= retries; i++) {
     try {
       const response = await ai.models.generateContent({
@@ -24,10 +24,11 @@ async function callGemini(prompt, retries = 2) {
       });
       return response.text;
     } catch (e) {
-      const is429 = e.message?.includes('429') || e.message?.includes('quota');
+      const is429 = e.message?.includes('429') || e.message?.includes('quota') || e.message?.includes('RESOURCE_EXHAUSTED');
       if (is429 && i < retries) {
-        console.warn(`[AI] Rate limited, retrying in ${(i + 1) * 2}s...`);
-        await new Promise(r => setTimeout(r, (i + 1) * 2000));
+        const delay = (i + 1) * 5000; // 5s, 10s, 15s backoff
+        console.warn(`[AI] Rate limited (attempt ${i + 1}/${retries}), retrying in ${delay / 1000}s...`);
+        await new Promise(r => setTimeout(r, delay));
         continue;
       }
       throw e;
@@ -79,9 +80,12 @@ Coach:`;
       return { content: text.trim(), sentiment: 'neutral' };
     } catch (e) {
       const errorMsg = e.message || String(e);
-      console.error('[AI] replyToConversation error:', errorMsg);
+      const isQuota = errorMsg.includes('429') || errorMsg.includes('quota') || errorMsg.includes('RESOURCE_EXHAUSTED');
+      console.error('[AI] replyToConversation error:', errorMsg.substring(0, 200));
       return {
-        content: `Oops! The AI crashed with error: "${errorMsg.substring(0, 80)}". Please check the API key on Render!`,
+        content: isQuota
+          ? `I'm a little overwhelmed right now — too many conversations at once! 😅 Please try again in a moment and I'll be right with you.`
+          : `Sorry, I'm having a little trouble connecting right now. Please try again in a few seconds!`,
         sentiment: 'neutral'
       };
     }
