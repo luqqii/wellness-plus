@@ -60,7 +60,7 @@ async function callGemini(prompt, retries = 2) {
  * Basic AI Service Interface connected to Gemini
  */
 export const generateCoachingInsight = async (user, metrics, context) => {
-  if (ai) {
+  if (model) {
     try {
       const prompt = `You are Wellness+, a friendly AI Health Coach. Give a warm one-sentence greeting to ${user?.name || 'Alex'} and one short wellness tip.`;
       const text = await callGemini(prompt);
@@ -76,7 +76,7 @@ export const generateCoachingInsight = async (user, metrics, context) => {
  * Handle direct conversation messages with history
  */
 export const replyToConversation = async (user, messageHistory, newMessage) => {
-  if (ai) {
+  if (model) {
     try {
       const goalList = Array.isArray(user?.goals)
         ? user.goals.map(g => g.type || g).join(', ')
@@ -116,17 +116,14 @@ Coach:`;
 };
 
 export const analyzeFoodImage = async (imageBuffer, mimeType) => {
-  if (ai) {
+  if (model) {
     try {
       const prompt = `Analyze this food image. Return ONLY in JSON format: { "name": String, "calories": Number, "protein": Number, "carbs": Number, "fat": Number, "confidence": Number }`;
-      const response = await ai.models.generateContent({
-        model: MODEL_NAME,
-        contents: [
-          { inlineData: { data: imageBuffer.toString('base64'), mimeType } },
-          { text: prompt }
-        ],
-      });
-      const cleanedJson = response.text.replace(/```json|```/g, '').trim();
+      const result = await model.generateContent([
+        prompt,
+        { inlineData: { data: imageBuffer.toString('base64'), mimeType } }
+      ]);
+      const cleanedJson = result.response.text().replace(/```json|```/g, '').trim();
       return JSON.parse(cleanedJson);
     } catch (e) {
       console.error('[AI] analyzeFoodImage error:', e.message?.substring(0, 150));
@@ -136,7 +133,7 @@ export const analyzeFoodImage = async (imageBuffer, mimeType) => {
 };
 
 export const generateNutritionAdvice = async (user, consumed, remaining) => {
-  if (ai) {
+  if (model) {
     try {
       const prompt = `User Goals: ${user.goals?.join(', ') || 'General Wellness'}. Remaining: ${remaining.calories} cal, ${remaining.protein}g protein, ${remaining.carbs}g carbs, ${remaining.fat}g fat. 
 Give 3 short meal suggestions that perfectly fit these remaining macros. 
@@ -179,7 +176,7 @@ export const predictBurnoutRisk = async (metrics) => {
  * Generate a weekly AI meal plan using Gemini
  */
 export const generateMealPlan = async (user, targetCalories) => {
-  if (ai) {
+  if (model) {
     try {
       const goals = Array.isArray(user?.goals) ? user.goals.join(', ') : 'General Wellness';
       const prompt = `Create a 7-day healthy meal plan for someone with goals: ${goals}. Target: ~${targetCalories} calories/day.
