@@ -13,6 +13,7 @@ import HabitSwipe from '../components/dashboard/HabitSwipe';
 import DynamicIcon from '../components/ui/DynamicIcon';
 import { SAMPLE_INSIGHTS, SAMPLE_METRICS } from '../utils/constants';
 import useHabitStore from '../store/habitStore';
+import useMetricsStore from '../store/metricsStore';
 import useMetrics from '../hooks/useMetrics';
 import { useNavigate } from 'react-router-dom';
 import MobileFeaturePortal from '../components/dashboard/MobileFeaturePortal';
@@ -60,6 +61,7 @@ const fadeUp = (delay = 0) => ({
 export default function DashboardPage() {
   const { today, weekly, loading } = useMetrics();
   const completionRate = useHabitStore((s) => s.getCompletionRate());
+  const liveSensors = useMetricsStore((s) => s.liveSensors);
   const navigate = useNavigate();
 
   const { getDailyLessons, completedIds } = useLessonStore();
@@ -69,10 +71,10 @@ export default function DashboardPage() {
   const currentMetric = today || SAMPLE_METRICS.today;
 
   const STATS = [
-    { icon: Footprints, label: 'Steps',    value: (currentMetric?.steps || 0).toLocaleString(), sub: '/ 10,000', pct: Math.min(100, ((currentMetric?.steps || 0)/10000)*100), color: 'var(--c-teal)', path: '/activity' },
-    { icon: Moon,       label: 'Sleep',    value: currentMetric?.sleep?.hours || '0',  sub: '/ 8h',   pct: Math.min(100, ((currentMetric?.sleep?.hours || 0)/8)*100), color: 'var(--c-purple)', path: '/activity' },
-    { icon: Flame,      label: 'Calories', value: (currentMetric?.calories || currentMetric?.nutrition?.calories || 0).toLocaleString(), sub: '/ 2,200', pct: Math.min(100, ((currentMetric?.calories || currentMetric?.nutrition?.calories || 0)/2200)*100), color: 'var(--c-orange)', path: '/nutrition' },
-    { icon: Heart,      label: 'Stress',   value: `${currentMetric?.stressLevel || 5}/10`, sub: (currentMetric?.stressLevel || 5) > 7 ? 'High' : 'Normal', pct: (currentMetric?.stressLevel || 5)*10, color: 'var(--c-blue)', path: '/activity' },
+    { icon: Footprints, label: 'Steps',    value: (liveSensors.steps || currentMetric?.steps || 0).toLocaleString(), sub: '/ 10,000', pct: Math.min(100, ((liveSensors.steps || currentMetric?.steps || 0)/10000)*100), color: 'var(--c-teal)', path: '/activity' },
+    { icon: Heart,      label: 'Heart Rate', value: `${liveSensors.heartRate || 72} bpm`, sub: 'Live', pct: Math.min(100, ((liveSensors.heartRate || 72)/180)*100), color: 'var(--c-red)', path: '/activity' },
+    { icon: Flame,      label: 'Calories', value: (Math.round((currentMetric?.nutrition?.calories || 1640) + liveSensors.activeCalories)).toLocaleString(), sub: '/ 2,200', pct: Math.min(100, (((currentMetric?.nutrition?.calories || 1640) + liveSensors.activeCalories)/2200)*100), color: 'var(--c-orange)', path: '/nutrition' },
+    { icon: Brain,      label: 'Stress',   value: `${liveSensors.stressLevel || currentMetric?.stressLevel || 5}/10`, sub: (liveSensors.stressLevel || currentMetric?.stressLevel || 5) > 7 ? 'High' : 'Normal', pct: (liveSensors.stressLevel || currentMetric?.stressLevel || 5)*10, color: 'var(--c-blue)', path: '/activity' },
   ];
 
   // Map weekly trend for chart

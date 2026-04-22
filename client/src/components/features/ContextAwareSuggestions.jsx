@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { CloudRain, Sun, Calendar, Moon } from 'lucide-react';
+import { CloudRain, Sun, Calendar, Moon, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
+import useMetricsStore from '../../store/metricsStore';
 
 export default function ContextAwareSuggestions({ metrics }) {
   const [suggestion, setSuggestion] = useState(null);
+  const liveSensors = useMetricsStore((s) => s.liveSensors);
 
   useEffect(() => {
+    // Dynamic override based on live sensors
+    if (liveSensors.isWorkoutActive || liveSensors.heartRate > 120) {
+      setSuggestion({
+        icon: <Activity size={24} color="var(--c-teal)" />,
+        title: "Workout Detected",
+        text: `You're currently active! Heart rate is ${liveSensors.heartRate} bpm. Keep up the great work!`,
+        color: "var(--c-teal)"
+      });
+      return;
+    }
+
     const fetchContextSuggestion = async () => {
       try {
         const { default: api } = await import('../../services/api');
@@ -50,7 +63,7 @@ export default function ContextAwareSuggestions({ metrics }) {
     };
 
     fetchContextSuggestion();
-  }, [metrics]);
+  }, [metrics, liveSensors.isWorkoutActive, liveSensors.heartRate]);
 
   if (!suggestion) return null;
 

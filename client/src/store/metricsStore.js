@@ -19,6 +19,15 @@ const useMetricsStore = create((set, get) => ({
     wellnessScore: 74,
   },
 
+  // Live streaming sensor simulation
+  liveSensors: {
+    heartRate: 72,
+    steps: 6842,
+    stressLevel: 4,
+    activeCalories: 320,
+    isWorkoutActive: false
+  },
+
   // Weekly trend data
   weeklyTrend: [
     { day: 'Mon', score: 68, steps: 7200, sleep: 7.0 },
@@ -39,6 +48,11 @@ const useMetricsStore = create((set, get) => ({
   updateTodayMetrics: (updates) =>
     set(state => ({
       todayMetrics: { ...state.todayMetrics, ...updates },
+    })),
+
+  updateLiveSensors: (updates) =>
+    set(state => ({
+      liveSensors: { ...state.liveSensors, ...updates },
     })),
 
   updateNutrition: (updates) =>

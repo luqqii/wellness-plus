@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, AlertTriangle, Battery, TrendingDown, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import useMetricsStore from '../../store/metricsStore';
 
 export default function PredictiveWellnessInsights({ metrics }) {
   const [insight, setInsight] = useState(null);
+  const liveSensors = useMetricsStore((s) => s.liveSensors);
 
   useEffect(() => {
+    // Dynamic override based on live sensors
+    if (liveSensors.stressLevel > 7 || liveSensors.heartRate > 110) {
+      setInsight({
+        level: 'High',
+        message: `Live Sensor Alert: Heart rate (${liveSensors.heartRate} bpm) and stress are elevated. Consider a 5-min cooldown.`,
+        color: 'var(--c-red)',
+        icon: <AlertTriangle size={20} color="var(--c-red)" />
+      });
+      return;
+    }
+
     const fetchPrediction = async () => {
       try {
         const { default: api } = await import('../../services/api');
@@ -41,7 +54,7 @@ export default function PredictiveWellnessInsights({ metrics }) {
     };
     
     fetchPrediction();
-  }, [metrics]);
+  }, [metrics, liveSensors.stressLevel, liveSensors.heartRate]);
 
   if (!insight) return null;
 
