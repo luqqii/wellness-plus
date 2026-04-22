@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import PublicNavbar from '../components/layout/PublicNavbar';
+import { Plane, ShieldPlus, Globe, BookOpen, HeartPulse, Handshake } from 'lucide-react';
 
 const ROLES = [
-  { dept: 'Engineering', title: 'Senior Full-Stack Engineer (React / Node)', location: 'Remote', type: 'Full-Time' },
-  { dept: 'Engineering', title: 'Machine Learning Engineer — Behavioral AI', location: 'Remote', type: 'Full-Time' },
-  { dept: 'Psychology', title: 'Curriculum Designer — Cognitive Behavioral Therapy', location: 'New York, NY', type: 'Full-Time' },
-  { dept: 'Marketing', title: 'Growth Marketing Lead — Paid Acquisition', location: 'Remote', type: 'Full-Time' },
-  { dept: 'Design', title: 'Senior Product Designer — Mobile', location: 'Remote', type: 'Full-Time' },
-  { dept: 'Science', title: 'Clinical Research Scientist', location: 'Boston, MA', type: 'Full-Time' },
+  { dept: 'Engineering', title: 'Senior Mobile Engineer (React Native)', location: 'Remote', type: 'Full-Time' },
+  { dept: 'Clinical', title: 'Lead Clinical Psychologist', location: 'Remote', type: 'Full-Time' },
+  { dept: 'Nutrition', title: 'Registered Dietitian (RD)', location: 'New York, NY', type: 'Full-Time' },
+  { dept: 'Engineering', title: 'Backend Engineer — Wearable Integrations', location: 'Remote', type: 'Full-Time' },
+  { dept: 'Design', title: 'Senior Product Designer — Wellness Platform', location: 'Remote', type: 'Full-Time' },
+  { dept: 'Science', title: 'Behavioral Scientist', location: 'Boston, MA', type: 'Full-Time' },
 ];
 
 const PERKS = [
-  { emoji: '🏖️', title: 'Unlimited PTO', desc: 'We trust you to do great work and recharge when you need to.' },
-  { emoji: '💊', title: 'Full Health Coverage', desc: 'Medical, dental, and vision for you and your dependents.' },
-  { emoji: '🌍', title: 'Remote First', desc: 'Work from anywhere in the world. Seriously.' },
-  { emoji: '📚', title: 'Learning Budget', desc: '$2,500 annual budget for courses, books, and conferences.' },
-  { emoji: '🧘', title: 'Wellness Stipend', desc: 'Free Wellness+ subscription plus a monthly gym stipend.' },
-  { emoji: '🤝', title: 'Equity for Everyone', desc: 'Every full-time employee receives meaningful stock options.' },
+  { icon: Plane, title: 'Unlimited PTO', desc: 'We trust you to do great work and recharge when you need to.', color: '#4F8DFF' },
+  { icon: ShieldPlus, title: 'Full Health Coverage', desc: 'Medical, dental, and vision for you and your dependents.', color: '#14B8A6' },
+  { icon: Globe, title: 'Remote First', desc: 'Work from anywhere in the world. Seriously.', color: '#9F7AEA' },
+  { icon: BookOpen, title: 'Learning Budget', desc: '$2,500 annual budget for courses, books, and conferences.', color: '#ED8936' },
+  { icon: HeartPulse, title: 'Wellness Stipend', desc: 'Free Wellness+ subscription plus a monthly gym stipend.', color: '#E53E3E' },
+  { icon: Handshake, title: 'Equity for Everyone', desc: 'Every full-time employee receives meaningful stock options.', color: '#38B2AC' },
 ];
 
-const DEPTS = ['All', 'Engineering', 'Psychology', 'Marketing', 'Design', 'Science'];
+const DEPTS = ['All', 'Engineering', 'Clinical', 'Nutrition', 'Design', 'Science'];
 
 export default function CareersPage() {
   const navigate = useNavigate();
@@ -47,13 +47,18 @@ export default function CareersPage() {
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <h2 style={{ fontSize: 34, fontWeight: 900, textAlign: 'center', marginBottom: 50 }}>Why Wellness+?</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
-            {PERKS.map(p => (
-              <div key={p.title} style={{ padding: 28, borderRadius: 20, border: '1px solid #E8DED8', background: '#FDFBF8' }}>
-                <div style={{ fontSize: 40, marginBottom: 16 }}>{p.emoji}</div>
-                <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>{p.title}</h3>
-                <p style={{ fontSize: 14, color: '#4A5568', lineHeight: 1.5 }}>{p.desc}</p>
-              </div>
-            ))}
+            {PERKS.map(p => {
+              const Icon = p.icon;
+              return (
+                <div key={p.title} style={{ padding: 28, borderRadius: 20, border: '1px solid #E8DED8', background: '#FDFBF8' }}>
+                  <div style={{ marginBottom: 16, display: 'inline-flex', padding: 12, borderRadius: 12, background: `${p.color}15` }}>
+                    <Icon size={28} color={p.color} strokeWidth={2.5} />
+                  </div>
+                  <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>{p.title}</h3>
+                  <p style={{ fontSize: 14, color: '#4A5568', lineHeight: 1.5 }}>{p.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
