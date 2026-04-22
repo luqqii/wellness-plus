@@ -50,10 +50,11 @@ const useMetricsStore = create((set, get) => ({
       todayMetrics: { ...state.todayMetrics, ...updates },
     })),
 
-  updateLiveSensors: (updates) =>
-    set(state => ({
-      liveSensors: { ...state.liveSensors, ...updates },
-    })),
+  updateLiveSensors: (updater) =>
+    set(state => {
+      const updates = typeof updater === 'function' ? updater(state.liveSensors) : updater;
+      return { liveSensors: { ...state.liveSensors, ...updates } };
+    }),
 
   resetLiveSensors: () => 
     set(state => ({

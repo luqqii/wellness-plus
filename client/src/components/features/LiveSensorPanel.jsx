@@ -9,13 +9,13 @@ export default function LiveSensorPanel() {
   const updateLiveSensors = useMetricsStore((s) => s.updateLiveSensors);
 
   const simulateWorkout = () => {
-    updateLiveSensors({ 
+    updateLiveSensors((prev) => ({ 
       isWorkoutActive: true, 
       heartRate: 145, 
       stressLevel: 3,
-      steps: liveSensors.steps + 200,
-      activeCalories: liveSensors.activeCalories + 15
-    });
+      steps: prev.steps + 200,
+      activeCalories: prev.activeCalories + 15
+    }));
     
     // Auto turn off workout after 10s for demo purposes
     setTimeout(() => {
