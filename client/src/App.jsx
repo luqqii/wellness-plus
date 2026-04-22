@@ -40,6 +40,8 @@ import ActivityPage from './pages/ActivityPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import MealPlannerPage from './pages/MealPlannerPage';
+import RoutinePlannerPage from './pages/RoutinePlannerPage';
+import CrossSourceDataSyncPage from './pages/CrossSourceDataSyncPage';
 import RecipesPage from './pages/RecipesPage';
 
 // Loading fallback
@@ -106,6 +108,8 @@ export default function App() {
             <Route path="/nutrition" element={<NutritionPage />} />
             <Route path="/activity" element={<ActivityPage />} />
             <Route path="/meal-planner" element={<MealPlannerPage />} />
+            <Route path="/planner" element={<RoutinePlannerPage />} />
+            <Route path="/data-sync" element={<CrossSourceDataSyncPage />} />
             <Route path="/recipes" element={<RecipesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />

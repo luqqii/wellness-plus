@@ -17,6 +17,8 @@ import useMetrics from '../hooks/useMetrics';
 import { useNavigate } from 'react-router-dom';
 import MobileFeaturePortal from '../components/dashboard/MobileFeaturePortal';
 import useLessonStore from '../store/lessonStore';
+import PredictiveWellnessInsights from '../components/features/PredictiveWellnessInsights';
+import ContextAwareSuggestions from '../components/features/ContextAwareSuggestions';
 
 
 const ChartTooltip = ({ active, payload, label }) => {
@@ -93,6 +95,11 @@ export default function DashboardPage() {
       {/* MOBILE FEATURE PORTAL - Immediate access to all 1:1 features */}
       <div className="mobile-only-block">
         <MobileFeaturePortal />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PredictiveWellnessInsights metrics={currentMetric} />
+        <ContextAwareSuggestions metrics={currentMetric} />
       </div>
       
       {/* Wellness+ DAILY LESSONS */}

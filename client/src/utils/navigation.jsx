@@ -1,7 +1,8 @@
 import {
   LayoutDashboard, Target, MessageCircle, Utensils, Activity,
   User, Settings, Sparkles, Brain, Calendar, ChefHat,
-  Calculator, FlaskConical, User2, Scale, BookOpen, Users, Salad, Heart
+  Calculator, FlaskConical, User2, Scale, BookOpen, Users, Salad, Heart,
+  ListTodo, RefreshCw
 } from 'lucide-react';
 
 export const NAV_ITEMS = [
@@ -11,6 +12,7 @@ export const NAV_ITEMS = [
   { path: '/coach',         label: 'AI Coach',       icon: Brain, badge: 'AI' },
   { path: '/nutrition',     label: 'Food Diary',     icon: Utensils },
   { path: '/meal-planner',  label: 'Meal Planner',   icon: Calendar },
+  { path: '/planner',       label: 'Routine Planner',icon: ListTodo, badge: 'AI' },
   { path: '/recipes',       label: 'Recipes',        icon: ChefHat },
   { path: '/activity',      label: 'Activity',       icon: Activity },
   { path: '/lessons',       label: 'Courses',        icon: BookOpen },
@@ -27,6 +29,7 @@ export const FREE_TOOLS = [
 ];
 
 export const BOTTOM_ITEMS = [
+  { path: '/data-sync', label: 'Data Sync', icon: RefreshCw },
   { path: '/profile',  label: 'Profile',  icon: User },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];

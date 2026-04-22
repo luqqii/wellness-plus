@@ -90,14 +90,20 @@ export const replyToConversation = async (user, messageHistory, newMessage) => {
 
       const fullPrompt = `You are Wellness+, a warm and helpful AI Health Coach for ${user?.name || 'Alex'}.
 User goals: ${goalList}.
-Keep your reply conversational and concise (2-3 sentences max).
+You also act as an Emotion & Stress Detector and Context-Aware Suggestion engine. 
+Based on the user's message, extract their emotional tone (choose from: Neutral, Motivated, Tired, Stressed, Positive, Negative).
+If you detect weather or schedule context in their message, adapt your advice accordingly.
+
+Return ONLY a valid JSON object with exactly this structure, no markdown formatting:
+{ "content": "Your conversational, 2-3 sentence coaching reply", "sentiment": "Extracted emotion string" }
 
 ${conversationLog ? `Conversation so far:\n${conversationLog}\n` : ''}
 User: ${newMessage}
 Coach:`;
 
       const text = await callGemini(fullPrompt);
-      return { content: text.trim(), sentiment: 'neutral' };
+      const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+      return { content: parsed.content || "I hear you.", sentiment: parsed.sentiment || 'Neutral' };
     } catch (e) {
       const errorMsg = e.message || String(e);
       const isQuota = errorMsg.includes('429') || errorMsg.includes('quota') ||
@@ -107,7 +113,7 @@ Coach:`;
         content: isQuota
           ? `I'm taking a short breather — you've been chatting a lot today! 😊 I'll be back in about a minute. In the meantime, keep up the great wellness work!`
           : `Sorry, I'm having a little trouble connecting right now. Please try again in a few seconds!`,
-        sentiment: 'neutral'
+        sentiment: 'Neutral'
       };
     }
   }
