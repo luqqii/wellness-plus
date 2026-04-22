@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Plane, ShieldPlus, Globe, BookOpen, HeartPulse, Handshake } from 'lucide-react';
+import PublicNavbar from '../components/layout/PublicNavbar';
 
 const ROLES = [
   { dept: 'Engineering', title: 'Senior Mobile Engineer (React Native)', location: 'Remote', type: 'Full-Time' },

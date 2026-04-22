@@ -71,11 +71,17 @@ export default function DashboardPage() {
   // Metrics mapping
   const currentMetric = today || SAMPLE_METRICS.today;
 
+  // Safe fallbacks to prevent NaN crashes
+  const steps = Number(liveSensors?.steps) || 0;
+  const hr = Number(liveSensors?.heartRate) || 72;
+  const cal = Number(liveSensors?.activeCalories) || 0;
+  const stress = Number(liveSensors?.stressLevel) || 5;
+
   const STATS = [
-    { icon: Footprints, label: 'Steps',    value: liveSensors.steps.toLocaleString(), sub: '/ 10,000', pct: Math.min(100, (liveSensors.steps/10000)*100), color: 'var(--c-teal)', path: '/activity' },
-    { icon: Heart,      label: 'Heart Rate', value: `${liveSensors.heartRate} bpm`, sub: 'Live', pct: Math.min(100, (liveSensors.heartRate/180)*100), color: 'var(--c-red)', path: '/activity' },
-    { icon: Flame,      label: 'Active Cal', value: Math.round(liveSensors.activeCalories).toLocaleString(), sub: '/ 600 kcal', pct: Math.min(100, (liveSensors.activeCalories/600)*100), color: 'var(--c-orange)', path: '/activity' },
-    { icon: Brain,      label: 'Stress',   value: `${liveSensors.stressLevel}/10`, sub: liveSensors.stressLevel > 7 ? 'High' : 'Normal', pct: liveSensors.stressLevel*10, color: 'var(--c-blue)', path: '/activity' },
+    { icon: Footprints, label: 'Steps',    value: steps.toLocaleString(), sub: '/ 10,000', pct: Math.min(100, (steps/10000)*100), color: 'var(--c-teal)', path: '/activity' },
+    { icon: Heart,      label: 'Heart Rate', value: `${hr} bpm`, sub: 'Live', pct: Math.min(100, (hr/180)*100), color: 'var(--c-red)', path: '/activity' },
+    { icon: Flame,      label: 'Active Cal', value: Math.round(cal).toLocaleString(), sub: '/ 600 kcal', pct: Math.min(100, (cal/600)*100), color: 'var(--c-orange)', path: '/activity' },
+    { icon: Brain,      label: 'Stress',   value: `${stress}/10`, sub: stress > 7 ? 'High' : 'Normal', pct: stress*10, color: 'var(--c-blue)', path: '/activity' },
   ];
 
   // Map weekly trend for chart
@@ -85,7 +91,7 @@ export default function DashboardPage() {
     const isToday = index === resolvedWeekly.length - 1;
     return {
       day: w.day || (w.date ? new Date(w.date).toLocaleDateString([], { weekday: 'short' }) : '---'),
-      steps: isToday ? Math.max(w.steps || 0, liveSensors.steps) : (w.steps || 0),
+      steps: isToday ? Math.max(w.steps || 0, steps) : (w.steps || 0),
       score: w.wellnessScore || w.score || 50
     };
   });
@@ -151,7 +157,7 @@ export default function DashboardPage() {
             <Sparkles size={14} color="var(--c-blue)" />
             <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--c-blue)' }}>LIVE SCORE</span>
           </div>
-          <WellnessScore score={Math.round(Math.min(100, Math.max(0, 80 - (liveSensors.stressLevel * 3) + (liveSensors.steps / 1000) + (liveSensors.isWorkoutActive ? 8 : 0))))} size={160} />
+          <WellnessScore score={Math.round(Math.min(100, Math.max(0, 80 - (stress * 3) + (steps / 1000) + (liveSensors?.isWorkoutActive ? 8 : 0))))} size={160} />
 
           <div style={{
             width: '100%', padding: '10px 14px',
