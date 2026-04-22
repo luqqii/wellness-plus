@@ -8,7 +8,6 @@ const ROLES = [
   { dept: 'Nutrition', title: 'Registered Dietitian (RD)', location: 'New York, NY', type: 'Full-Time', desc: 'Design personalized macro and nutrition plans within the platform and review AI-generated dietary recommendations for accuracy.' },
   { dept: 'Science', title: 'Behavioral Scientist', location: 'Boston, MA', type: 'Full-Time', desc: 'Research and translate behavioral psychology findings into actionable product features that drive lasting habit change.' },
   { dept: 'Clinical', title: 'Licensed Therapist (Online)', location: 'Remote', type: 'Part-Time', desc: 'Provide 1-on-1 mental wellness coaching sessions to Wellness+ Premium members through our integrated telehealth platform.' },
-  { dept: 'Design', title: 'Senior Product Designer — Health UX', location: 'Remote', type: 'Full-Time', desc: 'Lead the design of health dashboards, onboarding flows, and data visualizations that make wellness data beautiful and actionable.' },
   { dept: 'Nutrition', title: 'Sports Nutrition Specialist', location: 'Remote', type: 'Full-Time', desc: 'Develop athletic performance nutrition programs and recovery protocols for our high-performance user segment.' },
 ];
 
@@ -21,7 +20,7 @@ const PERKS = [
   { icon: Handshake,  title: 'Equity for Everyone',  desc: 'Every full-time employee receives meaningful stock options.',            color: '#38B2AC' },
 ];
 
-const DEPTS = ['All', 'Clinical', 'Nutrition', 'Science', 'Design'];
+const DEPTS = ['All', 'Clinical', 'Nutrition', 'Science'];
 
 function ApplyModal({ role, onClose }) {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
