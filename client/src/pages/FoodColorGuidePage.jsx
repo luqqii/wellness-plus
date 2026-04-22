@@ -121,7 +121,16 @@ export default function FoodColorGuidePage() {
           return (
             <motion.div key={i} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.02 }}
               style={{ background: '#FFFFFF', borderRadius: 16, padding: 18, border: `2px solid ${m.border}`, display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-              <div style={{ fontSize: 32, flexShrink: 0 }}>{food.emoji}</div>
+              <div style={{
+                width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                background: m.bg,
+                border: `2px solid ${m.border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <span style={{ fontSize: 18, fontWeight: 900, color: m.dot, lineHeight: 1 }}>
+                  {food.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                   <span style={{ fontSize: 16, fontWeight: 800, color: '#0C2B35' }}>{food.name}</span>
