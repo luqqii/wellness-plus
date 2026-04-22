@@ -6,7 +6,8 @@ import {
 } from 'recharts';
 import {
   Footprints, Moon, Flame, Heart, TrendingUp,
-  Sparkles, ChevronRight, Zap, ArrowUpRight, Brain, Target, Check
+  Sparkles, ChevronRight, Zap, ArrowUpRight, Brain, Target, Check,
+  CloudRain, BedDouble, Trophy, AlertCircle, Lightbulb
 } from 'lucide-react';
 import WellnessScore from '../components/dashboard/WellnessScore';
 import HabitSwipe from '../components/dashboard/HabitSwipe';
@@ -41,9 +42,9 @@ const ChartTooltip = ({ active, payload, label }) => {
 };
 
 const NUDGE_CARDS = [
-  { icon: '🌧️', text: "It's cloudy today — try this 10-min indoor mobility flow", type: 'blue', action: 'Start Flow' },
-  { icon: '😴', text: 'Sleep was low (7.2h). AI suggests 5% less intensity today', type: 'purple', action: 'See Plan' },
-  { icon: '🔥', text: 'Streak Alert! Meditation day 12 — don\'t break the chain!', type: 'orange', action: 'Log Now' },
+  { lucideIcon: CloudRain, text: "It's cloudy today — try this 10-min indoor mobility flow", type: 'blue', action: 'Start Flow' },
+  { lucideIcon: BedDouble, text: 'Sleep was low (7.2h). AI suggests 5% less intensity today', type: 'purple', action: 'See Plan' },
+  { lucideIcon: Trophy, text: 'Streak Alert! Meditation day 12 — don\'t break the chain!', type: 'orange', action: 'Log Now' },
 ];
 
 const STATS = [
@@ -263,7 +264,7 @@ export default function DashboardPage() {
               >
                 <div>
                   <div className="nudge-icon" style={{ marginBottom: 10 }}>
-                    <DynamicIcon icon={n.icon} size={20} color={n.type === 'blue' ? 'var(--c-blue)' : n.type === 'purple' ? 'var(--c-purple)' : 'var(--c-orange)'} />
+                    {(() => { const NI = n.lucideIcon; return <NI size={20} color={n.type === 'blue' ? 'var(--c-blue)' : n.type === 'purple' ? 'var(--c-purple)' : 'var(--c-orange)'} />; })()}
                   </div>
                   <p style={{ fontSize: 12, color: 'var(--c-text-primary)', lineHeight: 1.4, marginBottom: 8 }}>{n.text}</p>
                 </div>

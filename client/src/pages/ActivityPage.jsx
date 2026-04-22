@@ -4,7 +4,7 @@ import {
   AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { Footprints, Zap, Clock, Battery, TrendingUp, TrendingDown, Minus, ChevronRight, Brain, RefreshCw } from 'lucide-react';
+import { Footprints, Zap, Clock, Battery, TrendingUp, TrendingDown, Minus, ChevronRight, Brain, RefreshCw, Bot, PersonStanding, Waves, Moon, Leaf, Dna, MapPin } from 'lucide-react';
 import api from '../services/api';
 
 // Fallback chart data when no backend data exists
@@ -34,11 +34,11 @@ const FALLBACK_FORECAST = [
 
 // Health Memory — built from milestones; future: persist to DB
 const HEALTH_MEMORY = [
-  { date: 'Apr 11', title: 'Connected AI Coach', context: 'Started getting personalized insights', icon: '🤖', color: 'var(--c-blue)' },
-  { date: 'Mar 28', title: 'Hit 10K steps for first time', context: 'During a high-stress work week', icon: '🏃', color: 'var(--c-teal)' },
-  { date: 'Mar 21', title: 'Meditation streak: 7 days', context: 'After starting morning routine', icon: '🧘', color: 'var(--c-purple)' },
-  { date: 'Mar 14', title: 'Sleep improved 6h → 7.5h', context: 'Removed late-night screen time', icon: '🌙', color: 'var(--c-blue)' },
-  { date: 'Mar 7', title: 'Started wellness journey', context: 'Initial wellness score: 52', icon: '🌱', color: 'var(--c-green)' },
+  { date: 'Apr 11', title: 'Connected AI Coach', context: 'Started getting personalized insights', lucideIcon: Bot, color: 'var(--c-blue)' },
+  { date: 'Mar 28', title: 'Hit 10K steps for first time', context: 'During a high-stress work week', lucideIcon: PersonStanding, color: 'var(--c-teal)' },
+  { date: 'Mar 21', title: 'Meditation streak: 7 days', context: 'After starting morning routine', lucideIcon: Waves, color: 'var(--c-purple)' },
+  { date: 'Mar 14', title: 'Sleep improved 6h → 7.5h', context: 'Removed late-night screen time', lucideIcon: Moon, color: 'var(--c-blue)' },
+  { date: 'Mar 7',  title: 'Started wellness journey', context: 'Initial wellness score: 52', lucideIcon: Leaf, color: 'var(--c-green)' },
 ];
 
 const ChartTooltip = ({ active, payload, label }) => {
@@ -235,7 +235,7 @@ export default function ActivityPage() {
 
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }} className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--c-text-primary)' }}>🌙 Sleep Trends</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--c-text-primary)', display: 'flex', alignItems: 'center', gap: 6 }}><Moon size={15} color="var(--c-purple)" /> Sleep Trends</span>
             <span className="badge badge-blue">Avg: {avgSleep}h</span>
           </div>
           <div style={{ height: 200 }}>
@@ -302,7 +302,7 @@ export default function ActivityPage() {
                 color: intensityLabel.color,
                 bg: intensityLabel.bg,
                 border: intensityLabel.color + '33',
-                icon: '✅',
+                lucideIcon: Zap,
               },
               {
                 title: 'Energy Tip',
@@ -310,7 +310,7 @@ export default function ActivityPage() {
                 color: 'var(--c-yellow)',
                 bg: 'rgba(251,191,36,0.08)',
                 border: 'rgba(251,191,36,0.2)',
-                icon: '⚡',
+                lucideIcon: Battery,
               },
               {
                 title: 'Sleep Goal',
@@ -318,15 +318,18 @@ export default function ActivityPage() {
                 color: 'var(--c-purple)',
                 bg: 'rgba(155,109,255,0.08)',
                 border: 'rgba(155,109,255,0.2)',
-                icon: '🌙',
+                lucideIcon: Moon,
               },
-            ].map((r) => (
-              <div key={r.title} style={{ padding: '12px 14px', borderRadius: 'var(--r-md)', background: r.bg, border: `1px solid ${r.border}` }}>
-                <div style={{ fontSize: 16, marginBottom: 6 }}>{r.icon}</div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: r.color, marginBottom: 4 }}>{r.title}</div>
-                <div style={{ fontSize: 11, color: 'var(--c-text-secondary)', lineHeight: 1.4 }}>{r.desc}</div>
-              </div>
-            ))}
+            ].map((r) => {
+              const CardIcon = r.lucideIcon;
+              return (
+                <div key={r.title} style={{ padding: '12px 14px', borderRadius: 'var(--r-md)', background: r.bg, border: `1px solid ${r.border}` }}>
+                  <div style={{ marginBottom: 8 }}><CardIcon size={16} color={r.color} /></div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: r.color, marginBottom: 4 }}>{r.title}</div>
+                  <div style={{ fontSize: 11, color: 'var(--c-text-secondary)', lineHeight: 1.4 }}>{r.desc}</div>
+                </div>
+              );
+            })}
           </div>
         </motion.div>
 
@@ -340,7 +343,8 @@ export default function ActivityPage() {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--c-text-primary)' }}>🧬 Health Memory</span>
+              <Dna size={15} color="var(--c-purple)" />
+              <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--c-text-primary)' }}>Health Memory</span>
             </div>
             <span className="badge badge-purple" style={{ fontSize: 10 }}>{HEALTH_MEMORY.length} events</span>
           </div>
@@ -381,10 +385,12 @@ export default function ActivityPage() {
                     background: event.color + '20',
                     border: `1.5px solid ${event.color}50`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 15, flexShrink: 0, zIndex: 1,
+                    flexShrink: 0, zIndex: 1,
                     boxShadow: `0 0 12px ${event.color}20`,
                   }}>
-                    {event.icon}
+                    {event.lucideIcon
+                      ? (() => { const I = event.lucideIcon; return <I size={16} color={event.color} />; })()
+                      : <MapPin size={16} color={event.color} />}
                   </div>
 
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -424,8 +430,9 @@ export default function ActivityPage() {
           <div style={{
             marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--c-border)',
             fontSize: 11, color: 'var(--c-text-muted)', textAlign: 'center', lineHeight: 1.5,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
           }}>
-            📌 Milestones auto-detected from your data
+            <MapPin size={11} color="var(--c-text-muted)" /> Milestones auto-detected from your data
           </div>
         </motion.div>
       </div>
