@@ -16,7 +16,7 @@ export default function CrossSourceDataSyncPage() {
   React.useEffect(() => {
     const fetchUser = async () => {
       try {
-        const { default: api } = await import('../../services/api');
+        const { default: api } = await import('../services/api');
         const res = await api.get('/users/profile');
         if (res.data?.data?.integrations) {
           const userIntegrations = res.data.data.integrations;
@@ -37,7 +37,7 @@ export default function CrossSourceDataSyncPage() {
 
   const toggleConnection = async (id) => {
     try {
-      const { default: api } = await import('../../services/api');
+      const { default: api } = await import('../services/api');
       const res = await api.post(`/integrations/${id}/toggle`);
       const updatedIntegrations = res.data.integrations || [];
       
@@ -57,7 +57,7 @@ export default function CrossSourceDataSyncPage() {
   const handleSyncAll = async () => {
     setSyncing(true);
     try {
-      const { default: api } = await import('../../services/api');
+      const { default: api } = await import('../services/api');
       const res = await api.post('/integrations/sync-all');
       const updatedIntegrations = res.data.integrations || [];
       
