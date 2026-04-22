@@ -255,3 +255,26 @@ export const getContextAwareSuggestion = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * @desc    Generate a professional assessment from the 10-question onboarding quiz
+ * @route   POST /api/v1/insights/onboarding-assessment
+ * @access  Private
+ */
+export const getOnboardingAssessment = async (req, res, next) => {
+  try {
+    const { answers } = req.body;
+    
+    // Import dynamically since it was added to ai.service.js recently
+    const { generateOnboardingAssessment: generateAssessment } = await import('../services/ai.service.js');
+    
+    const assessment = await generateAssessment(answers);
+
+    res.json({
+      success: true,
+      data: assessment
+    });
+  } catch (error) {
+    next(error);
+  }
+};

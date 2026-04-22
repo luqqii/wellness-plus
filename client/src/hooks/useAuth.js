@@ -28,7 +28,11 @@ export default function useAuth() {
         console.error('CRITICAL: setUser is missing from useAuthStore hook result');
       }
       
-      navigate('/dashboard');
+      if (data.user?.onboarding?.completed) {
+        navigate('/dashboard');
+      } else {
+        navigate('/onboarding');
+      }
       return data;
     } catch (err) {
       setError(err.message);

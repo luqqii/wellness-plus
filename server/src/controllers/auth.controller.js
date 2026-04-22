@@ -93,6 +93,10 @@ export const updateDetails = async (req, res, next) => {
       profilePic: req.body.profilePic,
     };
 
+    if (req.body.onboardingCompleted) {
+      fieldsToUpdate['onboarding.completed'] = true;
+    }
+
     // Remove undefined fields
     Object.keys(fieldsToUpdate).forEach(key => fieldsToUpdate[key] === undefined && delete fieldsToUpdate[key]);
 

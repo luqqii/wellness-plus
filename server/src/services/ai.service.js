@@ -333,3 +333,48 @@ Make sure to include all 7 days of the week in order.`;
     { day: 'Sunday', focus: 'Rest & Meal Prep', duration: '--', completed: false },
   ];
 };
+
+/**
+ * Generate a professional onboarding assessment based on 10 quiz answers
+ */
+export const generateOnboardingAssessment = async (answers) => {
+  if (model) {
+    try {
+      const prompt = `You are an elite, highly empathetic Personal Trainer.
+A new client has just completed a 10-question onboarding assessment. Here are their answers:
+1. Goal: ${answers.q1}
+2. Activity Level: ${answers.q2}
+3. Experience: ${answers.q3}
+4. Workout Preference: ${answers.q4}
+5. Diet: ${answers.q5}
+6. Sleep: ${answers.q6}
+7. Stress: ${answers.q7}
+8. Time: ${answers.q8}
+9. Obstacle: ${answers.q9}
+10. Timeline: ${answers.q10}
+
+Write a personalized, 3-paragraph professional assessment for them. 
+Paragraph 1: Current Status & Strengths.
+Paragraph 2: Major Roadblocks & Adjustments.
+Paragraph 3: Immediate Next Steps (Actionable).
+
+Return ONLY a JSON object with this exact structure:
+{
+  "status": "String",
+  "roadblocks": "String",
+  "nextSteps": "String",
+  "recommendedFocus": "String (e.g. 'Strength & Recovery')"
+}`;
+      const text = await callGemini(prompt);
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e) {
+      console.error('[AI] generateOnboardingAssessment error:', e.message?.substring(0, 150));
+    }
+  }
+  return {
+    status: "Based on your responses, you are building a solid foundation but have room to optimize your routine.",
+    roadblocks: "Your primary roadblocks involve balancing your time constraints with consistent nutrition.",
+    nextSteps: "Let's focus on starting with small, manageable 20-minute sessions and building up slowly.",
+    recommendedFocus: "Consistency & Foundation"
+  };
+};

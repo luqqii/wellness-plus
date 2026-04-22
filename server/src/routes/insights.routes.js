@@ -5,7 +5,8 @@ import {
   dismissInsight,
   getWeeklyForecast,
   predictBurnout,
-  getContextAwareSuggestion
+  getContextAwareSuggestion,
+  getOnboardingAssessment
 } from '../controllers/insights.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.js';
@@ -19,5 +20,6 @@ router.put('/:id/dismiss', protect, dismissInsight);
 router.get('/weekly-forecast', protect, getWeeklyForecast);
 router.get('/predict-burnout', protect, predictBurnout);
 router.post('/context-aware', protect, getContextAwareSuggestion);
+router.post('/onboarding-assessment', protect, getOnboardingAssessment);
 
 export default router;
