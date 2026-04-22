@@ -4,25 +4,75 @@ import { Watch, Smartphone, Heart, Calendar, Activity, RefreshCw } from 'lucide-
 
 export default function CrossSourceDataSyncPage() {
   const [sources, setSources] = useState([
-    { id: 'apple', name: 'Apple Health', icon: <Heart size={24} color="#FF2D55" />, connected: true, lastSync: '10 mins ago', desc: 'Sync steps, sleep, and vitals from your iPhone and Apple Watch.' },
+    { id: 'apple', name: 'Apple Health', icon: <Heart size={24} color="#FF2D55" />, connected: false, lastSync: null, desc: 'Sync steps, sleep, and vitals from your iPhone and Apple Watch.' },
     { id: 'google', name: 'Google Fit', icon: <Activity size={24} color="#4285F4" />, connected: false, lastSync: null, desc: 'Connect to sync activity data from Android devices.' },
     { id: 'garmin', name: 'Garmin Connect', icon: <Watch size={24} color="#000000" />, connected: false, lastSync: null, desc: 'Import workouts and advanced recovery metrics from Garmin.' },
     { id: 'oura', name: 'Oura Ring', icon: <Smartphone size={24} color="#1F2937" />, connected: false, lastSync: null, desc: 'Sync detailed sleep stages and readiness scores.' },
-    { id: 'calendar', name: 'Google Calendar', icon: <Calendar size={24} color="#FABB05" />, connected: true, lastSync: '1 hour ago', desc: 'Sync your schedule to power Context-Aware Suggestions.' },
+    { id: 'calendar', name: 'Google Calendar', icon: <Calendar size={24} color="#FABB05" />, connected: false, lastSync: null, desc: 'Sync your schedule to power Context-Aware Suggestions.' },
   ]);
 
   const [syncing, setSyncing] = useState(false);
 
-  const toggleConnection = (id) => {
-    setSources(sources.map(s => s.id === id ? { ...s, connected: !s.connected, lastSync: !s.connected ? 'Just now' : null } : s));
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { default: api } = await import('../../services/api');
+        const res = await api.get('/users/profile');
+        if (res.data?.data?.integrations) {
+          const userIntegrations = res.data.data.integrations;
+          setSources(prev => prev.map(s => {
+            const match = userIntegrations.find(i => i.provider === s.id);
+            if (match) {
+              return { ...s, connected: true, lastSync: new Date(match.lastSync).toLocaleDateString() };
+            }
+            return s;
+          }));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const toggleConnection = async (id) => {
+    try {
+      const { default: api } = await import('../../services/api');
+      const res = await api.post(`/integrations/${id}/toggle`);
+      const updatedIntegrations = res.data.integrations || [];
+      
+      setSources(prev => prev.map(s => {
+        const match = updatedIntegrations.find(i => i.provider === s.id);
+        return { 
+          ...s, 
+          connected: !!match, 
+          lastSync: match ? new Date(match.lastSync).toLocaleDateString() : null 
+        };
+      }));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const handleSyncAll = () => {
+  const handleSyncAll = async () => {
     setSyncing(true);
-    setTimeout(() => {
-      setSources(sources.map(s => s.connected ? { ...s, lastSync: 'Just now' } : s));
+    try {
+      const { default: api } = await import('../../services/api');
+      const res = await api.post('/integrations/sync-all');
+      const updatedIntegrations = res.data.integrations || [];
+      
+      setSources(prev => prev.map(s => {
+        const match = updatedIntegrations.find(i => i.provider === s.id);
+        if (match) {
+          return { ...s, lastSync: 'Just now' };
+        }
+        return s;
+      }));
+    } catch (e) {
+      console.error(e);
+    } finally {
       setSyncing(false);
-    }, 1500);
+    }
   };
 
   return (

@@ -1,5 +1,5 @@
 import AIInsight from '../models/AIInsight.js';
-import { generateCoachingInsight } from '../services/ai.service.js';
+import { generateCoachingInsight, predictBurnoutRisk, generateContextAwareSuggestion } from '../services/ai.service.js';
 import DailyMetric from '../models/DailyMetric.js';
 
 /**
@@ -186,6 +186,70 @@ export const getWeeklyForecast = async (req, res, next) => {
     res.json({
       success: true,
       data: forecast,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Get predictive burnout risk
+ * @route   GET /api/v1/insights/predict-burnout
+ * @access  Private
+ */
+export const predictBurnout = async (req, res, next) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let metrics = await DailyMetric.findOne({
+      userId: req.user._id,
+      date: today,
+    });
+
+    if (!metrics) {
+      metrics = { stressLevel: 5, sleep: { hours: 7 }, steps: 0 };
+    }
+
+    const prediction = await predictBurnoutRisk(metrics);
+    
+    res.json({
+      success: true,
+      data: prediction
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Generate a context-aware suggestion
+ * @route   POST /api/v1/insights/context-aware
+ * @access  Private
+ */
+export const getContextAwareSuggestion = async (req, res, next) => {
+  try {
+    const { weather, timezone, localTime, calendarBusy } = req.body;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let metrics = await DailyMetric.findOne({
+      userId: req.user._id,
+      date: today,
+    });
+
+    if (!metrics) {
+      metrics = { stressLevel: 5, sleep: { hours: 7 }, steps: 0 };
+    }
+
+    const suggestion = await generateContextAwareSuggestion(req.user, metrics, {
+      weather, timezone, localTime, calendarBusy
+    });
+
+    res.json({
+      success: true,
+      data: suggestion
     });
   } catch (error) {
     next(error);

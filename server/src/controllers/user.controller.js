@@ -5,6 +5,7 @@ import Conversation from '../models/Conversation.js';
 import AIInsight from '../models/AIInsight.js';
 import MealLog from '../models/MealLog.js';
 import Notification from '../models/Notification.js';
+import Milestone from '../models/Milestone.js';
 
 /**
  * @desc    Get user profile
@@ -151,6 +152,54 @@ export const deleteUserAccount = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Account and all associated data permanently deleted'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Get Health Memory Timeline
+ * @route   GET /api/v1/users/timeline
+ * @access  Private
+ */
+export const getTimeline = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const milestones = await Milestone.find({ userId: req.user._id }).sort({ achievedAt: -1 });
+
+    const timeline = [];
+
+    // Add milestones
+    milestones.forEach(m => {
+      timeline.push({
+        id: m._id,
+        date: m.achievedAt || m.createdAt,
+        title: m.title,
+        description: m.description,
+        icon: m.icon || 'Star',
+        color: m.color || 'var(--c-orange)'
+      });
+    });
+
+    // Add onboarding date
+    if (user) {
+      timeline.push({
+        id: 'onboarding',
+        date: user.createdAt,
+        title: 'Joined Wellness+',
+        description: 'Began the wellness journey.',
+        icon: 'Activity',
+        color: 'var(--c-blue)'
+      });
+    }
+
+    // Sort by date descending
+    timeline.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    res.status(200).json({
+      success: true,
+      data: timeline
     });
   } catch (error) {
     next(error);

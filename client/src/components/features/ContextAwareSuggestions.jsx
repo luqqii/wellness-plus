@@ -3,36 +3,56 @@ import { CloudRain, Sun, Calendar, Moon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function ContextAwareSuggestions({ metrics }) {
-  const [contextData, setContextData] = useState({
-    weather: 'rain', // Mock weather
-    calendarBusy: true, // Mock calendar status
-  });
+  const [suggestion, setSuggestion] = useState(null);
 
-  const getSuggestion = () => {
-    if (contextData.weather === 'rain' && contextData.calendarBusy) {
-      return {
-        icon: <CloudRain size={24} color="var(--c-blue)" />,
-        title: "Busy & Raining",
-        text: "Since it's raining and you have back-to-back meetings, try a 10-minute desk stretch instead of your outdoor walk.",
-        color: "var(--c-blue)"
-      };
-    } else if (metrics?.sleep?.hours < 6) {
-      return {
-        icon: <Moon size={24} color="var(--c-purple)" />,
-        title: "Poor Sleep Detected",
-        text: "Your sleep was low last night. Swap your HIIT workout for gentle yoga to avoid spiking cortisol.",
-        color: "var(--c-purple)"
-      };
-    }
-    return {
-      icon: <Sun size={24} color="var(--c-orange)" />,
-      title: "Perfect Conditions",
-      text: "The weather is beautiful and your schedule is open at 4 PM. Perfect time for a 30-min run!",
-      color: "var(--c-orange)"
+  useEffect(() => {
+    const fetchContextSuggestion = async () => {
+      try {
+        const { default: api } = await import('../../services/api');
+        
+        // Mocking dynamic context (in real life, maybe use navigator.geolocation or browser time)
+        const currentHour = new Date().getHours();
+        const mockWeather = currentHour < 12 ? 'clear' : 'rain';
+        const mockCalendar = currentHour > 9 && currentHour < 17;
+
+        const res = await api.post('/insights/context-aware', {
+          weather: mockWeather,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          localTime: new Date().toISOString(),
+          calendarBusy: mockCalendar
+        });
+        
+        const data = res.data?.data;
+        if (data && data.title) {
+          // Map string iconName to React component
+          let IconComponent = Sun;
+          if (data.iconName === 'CloudRain') IconComponent = CloudRain;
+          if (data.iconName === 'Moon') IconComponent = Moon;
+          if (data.iconName === 'Calendar') IconComponent = Calendar;
+
+          setSuggestion({
+            icon: <IconComponent size={24} color={data.color || "var(--c-blue)"} />,
+            title: data.title,
+            text: data.text,
+            color: data.color || "var(--c-blue)"
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch context suggestion:", error);
+        // Fallback
+        setSuggestion({
+          icon: <Sun size={24} color="var(--c-orange)" />,
+          title: "Perfect Conditions",
+          text: "The weather is beautiful. Perfect time for a 30-min run!",
+          color: "var(--c-orange)"
+        });
+      }
     };
-  };
 
-  const suggestion = getSuggestion();
+    fetchContextSuggestion();
+  }, [metrics]);
+
+  if (!suggestion) return null;
 
   return (
     <motion.div 

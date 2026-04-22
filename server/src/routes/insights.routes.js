@@ -4,6 +4,8 @@ import {
   generateAndStoreInsight,
   dismissInsight,
   getWeeklyForecast,
+  predictBurnout,
+  getContextAwareSuggestion
 } from '../controllers/insights.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.js';
@@ -15,5 +17,7 @@ router.get('/', protect, getInsights);
 router.post('/generate', protect, validate(generateInsightSchema), generateAndStoreInsight);
 router.put('/:id/dismiss', protect, dismissInsight);
 router.get('/weekly-forecast', protect, getWeeklyForecast);
+router.get('/predict-burnout', protect, predictBurnout);
+router.post('/context-aware', protect, getContextAwareSuggestion);
 
 export default router;

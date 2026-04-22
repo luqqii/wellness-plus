@@ -169,7 +169,18 @@ export const predictBurnoutRisk = async (metrics) => {
     const res = await axios.post('http://localhost:8000/predict/recovery', payload);
     return res.data;
   } catch (error) {
-    console.error("FastAPI Prediction Error:", error.message);
+    console.warn("FastAPI Prediction failed, falling back to Gemini...");
+    if (model) {
+      try {
+        const prompt = `Analyze these wellness metrics: Steps: ${metrics.steps}, Sleep: ${metrics.sleep?.hours}h, Stress: ${metrics.stressLevel}/10. 
+Predict burnout risk. Return ONLY a JSON object with this exact structure:
+{ "burnout_risk": "Low" | "Moderate" | "High", "recommended_recovery_hours": number, "confidence_score": number }`;
+        const text = await callGemini(prompt);
+        return JSON.parse(text.replace(/```json|```/g, '').trim());
+      } catch (geminiError) {
+        console.error("Gemini Fallback Error:", geminiError.message);
+      }
+    }
     return {
       burnout_risk: "Unknown",
       recommended_recovery_hours: 8.0,
@@ -258,5 +269,67 @@ Return ONLY a JSON array like:
     { category: 'Grains & Carbs', items: [{ name: 'Oats', quantity: '500g' }, { name: 'Quinoa', quantity: '400g' }, { name: 'Whole Wheat Bread', quantity: '1 loaf' }] },
     { category: 'Dairy & Eggs', items: [{ name: 'Greek Yogurt', quantity: '500g' }, { name: 'Almond Milk', quantity: '1L' }] },
     { category: 'Pantry & Spices', items: [{ name: 'Olive Oil', quantity: '1 bottle' }, { name: 'Almond Butter', quantity: '1 jar' }, { name: 'Honey', quantity: '1 jar' }] },
+  ];
+};
+
+/**
+ * Generate a context-aware suggestion based on weather, schedule, and metrics
+ */
+export const generateContextAwareSuggestion = async (user, metrics, context) => {
+  if (model) {
+    try {
+      const prompt = `User Goals: ${user?.goals?.join(', ') || 'General Wellness'}.
+Metrics: Sleep: ${metrics?.sleep?.hours || 7}h, Stress: ${metrics?.stressLevel || 5}/10.
+Context: Weather is ${context.weather || 'clear'}, Calendar is ${context.calendarBusy ? 'busy' : 'open'}.
+
+Generate ONE highly specific wellness suggestion that adapts to this context. 
+Return ONLY a JSON object with this exact structure:
+{
+  "iconName": "CloudRain" | "Sun" | "Moon" | "Briefcase" | "Activity",
+  "title": "Short punchy title",
+  "text": "1-2 sentences of specific advice",
+  "color": "var(--c-blue)" | "var(--c-orange)" | "var(--c-purple)" | "var(--c-teal)"
+}`;
+      const text = await callGemini(prompt);
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e) {
+      console.error('[AI] generateContextAwareSuggestion error:', e.message?.substring(0, 150));
+    }
+  }
+  return {
+    iconName: "Activity",
+    title: "Stay Active",
+    text: "Keep moving throughout the day to maintain your energy levels.",
+    color: "var(--c-teal)"
+  };
+};
+
+/**
+ * Generate a 7-day routine AI planner based on goals and availability
+ */
+export const generateWeeklyRoutine = async (user) => {
+  if (model) {
+    try {
+      const prompt = `User Goals: ${user?.goals?.join(', ') || 'General Wellness'}.
+Create a 7-day fitness and wellness routine.
+Return ONLY a JSON array of objects with this exact structure:
+[
+  { "day": "Monday", "focus": "String describing the workout/activity", "duration": "String like '45 min'", "completed": false }
+]
+Make sure to include all 7 days of the week in order.`;
+      const text = await callGemini(prompt);
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e) {
+      console.error('[AI] generateWeeklyRoutine error:', e.message?.substring(0, 150));
+    }
+  }
+  return [
+    { day: 'Monday', focus: 'Cardio & Mobility', duration: '45 min', completed: false },
+    { day: 'Tuesday', focus: 'Upper Body Strength', duration: '60 min', completed: false },
+    { day: 'Wednesday', focus: 'Active Recovery', duration: '30 min', completed: false },
+    { day: 'Thursday', focus: 'Lower Body Strength', duration: '60 min', completed: false },
+    { day: 'Friday', focus: 'HIIT & Core', duration: '40 min', completed: false },
+    { day: 'Saturday', focus: 'Long Outdoor Run', duration: '90 min', completed: false },
+    { day: 'Sunday', focus: 'Rest & Meal Prep', duration: '--', completed: false },
   ];
 };

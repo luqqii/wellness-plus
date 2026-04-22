@@ -3,13 +3,41 @@ import { Award, TrendingUp, Flag, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function HealthMemoryTimeline({ events }) {
-  // Mock data if none provided
-  const timelineEvents = events || [
-    { id: 1, date: 'Oct 12, 2025', title: 'Started Wellness+', description: 'Set a goal to lose 15 lbs and improve sleep quality.', icon: <Flag size={18} color="white" />, color: 'var(--c-blue)' },
-    { id: 2, date: 'Nov 05, 2025', title: 'First Milestone Reached', description: 'Consistently meditated for 14 days and reduced stress levels by 20%.', icon: <Award size={18} color="white" />, color: 'var(--c-purple)' },
-    { id: 3, date: 'Dec 20, 2025', title: 'Holiday Navigation', description: 'Maintained caloric balance during the holidays using Context-Aware suggestions.', icon: <MapPin size={18} color="white" />, color: 'var(--c-orange)' },
-    { id: 4, date: 'Jan 15, 2026', title: '5 lbs Down', description: 'Hit the first weight loss target. Sleep duration increased by 45 mins average.', icon: <TrendingUp size={18} color="white" />, color: 'var(--c-teal)' },
-  ];
+  const [timelineEvents, setTimelineEvents] = React.useState(events || null);
+
+  React.useEffect(() => {
+    if (events) return; // Use props if provided
+    const fetchTimeline = async () => {
+      try {
+        const { default: api } = await import('../../services/api');
+        const res = await api.get('/users/timeline');
+        if (res.data?.data) {
+          // Map backend data to icon components
+          const formatted = res.data.data.map(ev => {
+            let IconComponent = Flag;
+            if (ev.icon === 'Star') IconComponent = Award;
+            if (ev.icon === 'Activity') IconComponent = TrendingUp;
+            
+            return {
+              ...ev,
+              date: new Date(ev.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+              icon: <IconComponent size={18} color="white" />
+            };
+          });
+          setTimelineEvents(formatted);
+        }
+      } catch (error) {
+        console.error("Failed to fetch timeline:", error);
+        // Fallback
+        setTimelineEvents([
+          { id: 1, date: 'Oct 12, 2025', title: 'Started Wellness+', description: 'Set a goal to lose 15 lbs and improve sleep quality.', icon: <Flag size={18} color="white" />, color: 'var(--c-blue)' }
+        ]);
+      }
+    };
+    fetchTimeline();
+  }, [events]);
+
+  if (!timelineEvents) return null;
 
   return (
     <div className="glass-card" style={{ padding: '24px' }}>

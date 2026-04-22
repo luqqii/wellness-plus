@@ -54,6 +54,13 @@ const userSchema = new mongoose.Schema(
         sleepGoal: Number,
       },
     },
+    integrations: [
+      {
+        provider: String,
+        connectedAt: Date,
+        lastSync: Date,
+      }
+    ],
   },
   {
     timestamps: true,

@@ -8,12 +8,19 @@ export default function RoutineAIPlanner() {
   const [loading, setLoading] = useState(false);
   const [routine, setRoutine] = useState(null);
 
-  const generateRoutine = () => {
+  const generateRoutine = async () => {
     setLoading(true);
-    // Mock API call to generate routine based on goals & availability
-    setTimeout(() => {
+    try {
+      const { default: api } = await import('../../services/api');
+      const res = await api.get('/coach/routine');
+      if (res.data?.data) {
+        setRoutine(res.data.data);
+      }
+    } catch (error) {
+      console.error("Failed to generate routine:", error);
+      // Fallback
       setRoutine([
-        { day: 'Monday', focus: 'Cardio & Mobility', duration: '45 min', completed: true },
+        { day: 'Monday', focus: 'Cardio & Mobility', duration: '45 min', completed: false },
         { day: 'Tuesday', focus: 'Upper Body Strength', duration: '60 min', completed: false },
         { day: 'Wednesday', focus: 'Active Recovery (Yoga)', duration: '30 min', completed: false },
         { day: 'Thursday', focus: 'Lower Body Strength', duration: '60 min', completed: false },
@@ -21,8 +28,9 @@ export default function RoutineAIPlanner() {
         { day: 'Saturday', focus: 'Long Outdoor Run', duration: '90 min', completed: false },
         { day: 'Sunday', focus: 'Rest & Meal Prep', duration: '--', completed: false },
       ]);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (

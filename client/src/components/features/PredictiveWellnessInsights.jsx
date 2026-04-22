@@ -6,38 +6,41 @@ export default function PredictiveWellnessInsights({ metrics }) {
   const [insight, setInsight] = useState(null);
 
   useEffect(() => {
-    // Mocking the predictive burnout risk based on metrics
-    // In a real scenario, this would call the /api/predict/burnout endpoint
-    const calculateRisk = () => {
-      const steps = metrics?.steps || 5000;
-      const sleep = metrics?.sleep?.hours || 6.5;
-      const stress = metrics?.stressLevel || 5;
+    const fetchPrediction = async () => {
+      try {
+        const { default: api } = await import('../../services/api');
+        const res = await api.get('/insights/predict-burnout');
+        const data = res.data?.data || {};
+        
+        let level = data.burnout_risk || 'Low';
+        let message = `Optimal recovery. AI recommends ${data.recommended_recovery_hours || 8}h of rest.`;
+        let color = 'var(--c-teal)';
+        let icon = <Zap size={20} color="var(--c-teal)" />;
 
-      if (sleep < 6 && stress > 7) {
-        return {
-          level: 'High',
-          message: 'Overtraining & Fatigue Risk. AI predicts burnout in 2 days. Prioritize rest.',
-          color: 'var(--c-red)',
-          icon: <AlertTriangle size={20} color="var(--c-red)" />
-        };
-      } else if (steps > 12000 && sleep < 7) {
-        return {
-          level: 'Moderate',
-          message: 'Elevated fatigue detected. Consider active recovery or a light walk today.',
-          color: 'var(--c-orange)',
-          icon: <Battery size={20} color="var(--c-orange)" />
-        };
-      } else {
-        return {
+        if (level === 'High') {
+          message = `Overtraining Risk. AI predicts burnout. Recommended recovery: ${data.recommended_recovery_hours || 10}h.`;
+          color = 'var(--c-red)';
+          icon = <AlertTriangle size={20} color="var(--c-red)" />;
+        } else if (level === 'Moderate') {
+          message = `Elevated fatigue detected. Recommended recovery: ${data.recommended_recovery_hours || 9}h.`;
+          color = 'var(--c-orange)';
+          icon = <Battery size={20} color="var(--c-orange)" />;
+        }
+
+        setInsight({ level, message, color, icon });
+      } catch (error) {
+        console.error("Failed to fetch predictive insights:", error);
+        // Fallback
+        setInsight({
           level: 'Low',
-          message: 'Optimal recovery status. You are primed for a high-intensity session.',
+          message: 'Optimal recovery status.',
           color: 'var(--c-teal)',
           icon: <Zap size={20} color="var(--c-teal)" />
-        };
+        });
       }
     };
     
-    setInsight(calculateRisk());
+    fetchPrediction();
   }, [metrics]);
 
   if (!insight) return null;

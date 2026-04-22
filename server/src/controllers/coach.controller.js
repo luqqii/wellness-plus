@@ -1,4 +1,4 @@
-import { replyToConversation, generateCoachingInsight } from '../services/ai.service.js';
+import { replyToConversation, generateCoachingInsight, generateWeeklyRoutine } from '../services/ai.service.js';
 import DailyMetric from '../models/DailyMetric.js';
 import Conversation from '../models/Conversation.js';
 
@@ -167,6 +167,23 @@ export const getCoachingInsight = async (req, res, next) => {
       success: true,
       data: { insight: `Hi ${req.user.name}, how can I help you today?` }
     });
+  }
+};
+
+/**
+ * @desc    Generate a 7-day routine AI planner
+ * @route   GET /api/v1/coach/routine
+ * @access  Private
+ */
+export const generateRoutine = async (req, res, next) => {
+  try {
+    const routine = await generateWeeklyRoutine(req.user);
+    res.status(200).json({
+      success: true,
+      data: routine
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
