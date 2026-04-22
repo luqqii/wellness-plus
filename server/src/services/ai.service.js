@@ -371,10 +371,57 @@ Return ONLY a JSON object with this exact structure:
       console.error('[AI] generateOnboardingAssessment error:', e.message?.substring(0, 150));
     }
   }
+  // Deterministic Fallback Engine (Runs if AI is unavailable or fails)
+  // This guarantees completely different, tailored results based on quiz outcomes
+  const goal = answers.q1 || 'General Wellness';
+  const time = answers.q8 || '30-45 mins';
+  const roadblock = answers.q9 || 'Consistency';
+  const experience = answers.q3 || 'Beginner';
+  
+  let status = "";
+  let roadblocks = "";
+  let nextSteps = "";
+  let recommendedFocus = "";
+
+  // 1. Analyze Status based on Goal & Experience
+  if (goal === 'Weight Loss') {
+    status = `As a ${experience} focusing on weight loss, your primary lever will be metabolic conditioning and a sustainable caloric deficit. You already have a great baseline, we just need to dial in the consistency.`;
+    recommendedFocus = "Metabolic Conditioning & Deficit";
+  } else if (goal === 'Muscle Gain') {
+    status = `To achieve muscle hypertrophy as a ${experience}, we need to focus on progressive overload and adequate protein intake. Your body is primed for adaptation.`;
+    recommendedFocus = "Progressive Overload & Fuel";
+  } else if (goal === 'Stress Reduction') {
+    status = `Your focus on stress reduction is incredibly mature. We will prioritize down-regulation of your nervous system through mobility, light cardio, and breathwork over high-intensity strain.`;
+    recommendedFocus = "Recovery & Nervous System Reset";
+  } else {
+    status = `Building cardiovascular and muscular endurance takes time. As a ${experience}, your focus will be on sustained, zone-2 training combined with strategic high-intensity bursts.`;
+    recommendedFocus = "Aerobic Base & Stamina";
+  }
+
+  // 2. Analyze Roadblocks
+  if (roadblock === 'Lack of time') {
+    roadblocks = `Since time is your biggest hurdle, we are eliminating junk volume. We will focus entirely on compound movements and high-yield habits that take less time but deliver maximum results.`;
+  } else if (roadblock === 'Lack of knowledge') {
+    roadblocks = `Don't worry about not knowing where to start. That's what this platform is for. We are taking the guesswork completely out of your routine so you can just execute.`;
+  } else if (roadblock === 'Loss of motivation') {
+    roadblocks = `Motivation is fleeting, but discipline and momentum are permanent. We will build momentum through micro-wins—tasks so small you can't fail—to rebuild your psychological drive.`;
+  } else {
+    roadblocks = `Working around discomfort or past injuries requires a smart approach. We will emphasize perfect form, mobility, and pain-free ranges of motion before adding any intensity.`;
+  }
+
+  // 3. Analyze Next Steps based on Time
+  if (time === '< 20 mins') {
+    nextSteps = `1. Start with daily 15-minute micro-workouts. \n2. Focus on hitting your daily step goal. \n3. Log your food accurately just to build awareness.`;
+  } else if (time === '60+ mins') {
+    nextSteps = `1. Follow the full 50-minute structured daily routine. \n2. Dedicate 10 minutes post-workout to active recovery. \n3. Meal prep your proteins for the week.`;
+  } else {
+    nextSteps = `1. Commit to three 35-minute focused sessions per week. \n2. Optimize your sleep environment to maximize recovery. \n3. Drink 3 liters of water daily.`;
+  }
+
   return {
-    status: "Based on your responses, you are building a solid foundation but have room to optimize your routine.",
-    roadblocks: "Your primary roadblocks involve balancing your time constraints with consistent nutrition.",
-    nextSteps: "Let's focus on starting with small, manageable 20-minute sessions and building up slowly.",
-    recommendedFocus: "Consistency & Foundation"
+    status,
+    roadblocks,
+    nextSteps,
+    recommendedFocus
   };
 };
