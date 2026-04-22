@@ -246,6 +246,7 @@ export default function OnboardingPage() {
           nextSteps: "Let's start your journey on the dashboard.",
           recommendedFocus: "General Wellness"
         });
+        updateUser({ onboarding: { completed: true } });
         setStep(QUIZ_QUESTIONS.length + 1);
       }
     }

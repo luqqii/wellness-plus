@@ -55,9 +55,13 @@ const useAuthStore = create((set) => ({
   },
 
   updateUser: (updates) => {
-    set((state) => ({ 
-      user: state.user ? { ...state.user, ...updates } : null 
-    }));
+    set((state) => {
+      const updatedUser = state.user ? { ...state.user, ...updates } : null;
+      if (updatedUser) {
+        localStorage.setItem('wellness_user', JSON.stringify(updatedUser));
+      }
+      return { user: updatedUser };
+    });
   },
 }));
 
