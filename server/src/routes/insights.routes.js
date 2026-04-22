@@ -18,7 +18,7 @@ router.get('/', protect, getInsights);
 router.post('/generate', protect, validate(generateInsightSchema), generateAndStoreInsight);
 router.put('/:id/dismiss', protect, dismissInsight);
 router.get('/weekly-forecast', protect, getWeeklyForecast);
-router.get('/predict-burnout', protect, predictBurnout);
+router.post('/predict-burnout', protect, predictBurnout);
 router.post('/context-aware', protect, getContextAwareSuggestion);
 router.post('/onboarding-assessment', protect, getOnboardingAssessment);
 

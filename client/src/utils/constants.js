@@ -10,7 +10,7 @@ export const SAMPLE_USER = {
     { type: 'stress_reduction', target: 'Daily meditation', deadline: null },
   ],
   preferences: { theme: 'dark', notifications: { push: true, email: true }, units: 'imperial' },
-  onboarding: { completed: true },
+  onboarding: { completed: false },
 };
 
 export const GOAL_OPTIONS = [

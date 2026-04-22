@@ -80,11 +80,15 @@ export default function DashboardPage() {
 
   // Map weekly trend for chart
   const resolvedWeekly = (weekly && weekly.length > 0) ? weekly : SAMPLE_METRICS.weeklyScores;
-  const weeklyData = resolvedWeekly.map(w => ({
-    day: w.day || (w.date ? new Date(w.date).toLocaleDateString([], { weekday: 'short' }) : '---'),
-    steps: w.steps || 0,
-    score: w.wellnessScore || w.score || 50
-  }));
+  const weeklyData = resolvedWeekly.map((w, index) => {
+    // If it's the last day (Today), use live sensors for steps
+    const isToday = index === resolvedWeekly.length - 1;
+    return {
+      day: w.day || (w.date ? new Date(w.date).toLocaleDateString([], { weekday: 'short' }) : '---'),
+      steps: isToday ? Math.max(w.steps || 0, liveSensors.steps) : (w.steps || 0),
+      score: w.wellnessScore || w.score || 50
+    };
+  });
 
 
   return (
@@ -293,9 +297,9 @@ export default function DashboardPage() {
               { val: '−', label: '', color: 'var(--c-text-muted)', isSym: true },
               { val: (currentMetric?.calories || 0).toLocaleString(), label: 'Food', color: 'var(--c-orange)' },
               { val: '+', label: '', color: 'var(--c-text-muted)', isSym: true },
-              { val: '320', label: 'Exercise', color: 'var(--c-teal)' },
+              { val: Math.round(liveSensors.activeCalories).toLocaleString(), label: 'Exercise', color: 'var(--c-teal)' },
               { val: '=', label: '', color: 'var(--c-text-muted)', isSym: true },
-              { val: Math.max(0, 2200 - (currentMetric?.calories || 0) + 320).toLocaleString(), label: 'Remaining', color: 'var(--c-blue)' },
+              { val: Math.max(0, 2200 - (currentMetric?.calories || 0) + Math.round(liveSensors.activeCalories)).toLocaleString(), label: 'Remaining', color: 'var(--c-blue)' },
             ].map((item, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
                 <div className={item.isSym ? 'macro-equation-sym' : 'macro-equation-val'} style={{ fontSize: item.label ? 20 : 24, fontWeight: 800, color: item.color, letterSpacing: '-0.5px' }}>{item.val}</div>

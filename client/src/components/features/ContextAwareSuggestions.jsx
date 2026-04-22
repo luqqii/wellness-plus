@@ -32,7 +32,8 @@ export default function ContextAwareSuggestions({ metrics }) {
           weather: mockWeather,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           localTime: new Date().toISOString(),
-          calendarBusy: mockCalendar
+          calendarBusy: mockCalendar,
+          liveSensors
         });
         
         const data = res.data?.data;

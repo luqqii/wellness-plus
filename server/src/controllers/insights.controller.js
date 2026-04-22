@@ -199,16 +199,26 @@ export const getWeeklyForecast = async (req, res, next) => {
  */
 export const predictBurnout = async (req, res, next) => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const { liveSensors } = req.body;
+    
+    let metrics = { stressLevel: 5, sleep: { hours: 7 }, steps: 0, nutrition: { calories: 2000 } };
+    
+    if (liveSensors) {
+      metrics = {
+        stressLevel: liveSensors.stressLevel || 5,
+        sleep: { hours: 7 }, // fallback
+        steps: liveSensors.steps || 0,
+        nutrition: { calories: liveSensors.activeCalories ? liveSensors.activeCalories + 1500 : 2000 }
+      };
+    } else {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-    let metrics = await DailyMetric.findOne({
-      userId: req.user._id,
-      date: today,
-    });
-
-    if (!metrics) {
-      metrics = { stressLevel: 5, sleep: { hours: 7 }, steps: 0 };
+      const dbMetrics = await DailyMetric.findOne({
+        userId: req.user._id,
+        date: today,
+      });
+      if (dbMetrics) metrics = dbMetrics;
     }
 
     const prediction = await predictBurnoutRisk(metrics);
@@ -229,18 +239,26 @@ export const predictBurnout = async (req, res, next) => {
  */
 export const getContextAwareSuggestion = async (req, res, next) => {
   try {
-    const { weather, timezone, localTime, calendarBusy } = req.body;
+    const { weather, timezone, localTime, calendarBusy, liveSensors } = req.body;
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    let metrics = { stressLevel: 5, sleep: { hours: 7 }, steps: 0, nutrition: { calories: 2000 } };
 
-    let metrics = await DailyMetric.findOne({
-      userId: req.user._id,
-      date: today,
-    });
+    if (liveSensors) {
+      metrics = {
+        stressLevel: liveSensors.stressLevel || 5,
+        sleep: { hours: 7 }, // fallback
+        steps: liveSensors.steps || 0,
+        nutrition: { calories: liveSensors.activeCalories ? liveSensors.activeCalories + 1500 : 2000 }
+      };
+    } else {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-    if (!metrics) {
-      metrics = { stressLevel: 5, sleep: { hours: 7 }, steps: 0 };
+      const dbMetrics = await DailyMetric.findOne({
+        userId: req.user._id,
+        date: today,
+      });
+      if (dbMetrics) metrics = dbMetrics;
     }
 
     const suggestion = await generateContextAwareSuggestion(req.user, metrics, {

@@ -58,10 +58,15 @@ function PageLoader() {
 
 // Protected Route Guard
 function AuthGuard() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+  
+  // If authenticated but hasn't finished onboarding, force them there
+  if (user && !user.onboarding?.completed) {
+    return <Navigate to="/onboarding" replace />;
   }
   
   return <Outlet />;

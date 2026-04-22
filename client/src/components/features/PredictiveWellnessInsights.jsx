@@ -22,7 +22,7 @@ export default function PredictiveWellnessInsights({ metrics }) {
     const fetchPrediction = async () => {
       try {
         const { default: api } = await import('../../services/api');
-        const res = await api.get('/insights/predict-burnout');
+        const res = await api.post('/insights/predict-burnout', { liveSensors });
         const data = res.data?.data || {};
         
         let level = data.burnout_risk || 'Low';
