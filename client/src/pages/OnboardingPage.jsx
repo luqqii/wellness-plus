@@ -271,7 +271,7 @@ export default function OnboardingPage() {
       {step < QUIZ_QUESTIONS.length + 1 && (
         <div style={{ position: 'sticky', top: 0, background: '#FDFBF8', zIndex: 10 }}>
           <div style={{ height: 6, background: 'var(--c-border)', width: '100%' }}>
-            <div style={{ height: '100%', background: 'var(--c-teal)', width: \`\${progress}%\`, transition: 'width 0.4s ease', borderRadius: '0 4px 4px 0' }} />
+            <div style={{ height: '100%', background: 'var(--c-teal)', width: `${progress}%`, transition: 'width 0.4s ease', borderRadius: '0 4px 4px 0' }} />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', maxWidth: 800, margin: '0 auto' }}>
             {step >= 0 && step < QUIZ_QUESTIONS.length && (
@@ -296,7 +296,7 @@ export default function OnboardingPage() {
             )}
 
             {step >= 0 && step < QUIZ_QUESTIONS.length && (
-              <motion.div key={\`q\${step}\`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
+              <motion.div key={`q${step}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
                 <QuizStep 
                   question={QUIZ_QUESTIONS[step]} 
                   answer={answers[QUIZ_QUESTIONS[step].id]}
