@@ -55,6 +55,17 @@ const useMetricsStore = create((set, get) => ({
       liveSensors: { ...state.liveSensors, ...updates },
     })),
 
+  resetLiveSensors: () => 
+    set(state => ({
+      liveSensors: {
+        heartRate: 72,
+        steps: 0, // Reset to 0
+        stressLevel: 4,
+        activeCalories: 0,
+        isWorkoutActive: false
+      }
+    })),
+
   updateNutrition: (updates) =>
     set(state => ({
       todayMetrics: {

@@ -20,6 +20,7 @@ import MobileFeaturePortal from '../components/dashboard/MobileFeaturePortal';
 import useLessonStore from '../store/lessonStore';
 import PredictiveWellnessInsights from '../components/features/PredictiveWellnessInsights';
 import ContextAwareSuggestions from '../components/features/ContextAwareSuggestions';
+import LiveSensorPanel from '../components/features/LiveSensorPanel';
 
 
 const ChartTooltip = ({ active, payload, label }) => {
@@ -98,6 +99,8 @@ export default function DashboardPage() {
       <div className="mobile-only-block">
         <MobileFeaturePortal />
       </div>
+
+      <LiveSensorPanel />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PredictiveWellnessInsights metrics={currentMetric} />
