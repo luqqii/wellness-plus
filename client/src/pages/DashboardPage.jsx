@@ -72,10 +72,10 @@ export default function DashboardPage() {
   const currentMetric = today || SAMPLE_METRICS.today;
 
   const STATS = [
-    { icon: Footprints, label: 'Steps',    value: (liveSensors.steps || currentMetric?.steps || 0).toLocaleString(), sub: '/ 10,000', pct: Math.min(100, ((liveSensors.steps || currentMetric?.steps || 0)/10000)*100), color: 'var(--c-teal)', path: '/activity' },
-    { icon: Heart,      label: 'Heart Rate', value: `${liveSensors.heartRate || 72} bpm`, sub: 'Live', pct: Math.min(100, ((liveSensors.heartRate || 72)/180)*100), color: 'var(--c-red)', path: '/activity' },
-    { icon: Flame,      label: 'Calories', value: (Math.round((currentMetric?.nutrition?.calories || 1640) + liveSensors.activeCalories)).toLocaleString(), sub: '/ 2,200', pct: Math.min(100, (((currentMetric?.nutrition?.calories || 1640) + liveSensors.activeCalories)/2200)*100), color: 'var(--c-orange)', path: '/nutrition' },
-    { icon: Brain,      label: 'Stress',   value: `${liveSensors.stressLevel || currentMetric?.stressLevel || 5}/10`, sub: (liveSensors.stressLevel || currentMetric?.stressLevel || 5) > 7 ? 'High' : 'Normal', pct: (liveSensors.stressLevel || currentMetric?.stressLevel || 5)*10, color: 'var(--c-blue)', path: '/activity' },
+    { icon: Footprints, label: 'Steps',    value: liveSensors.steps.toLocaleString(), sub: '/ 10,000', pct: Math.min(100, (liveSensors.steps/10000)*100), color: 'var(--c-teal)', path: '/activity' },
+    { icon: Heart,      label: 'Heart Rate', value: `${liveSensors.heartRate} bpm`, sub: 'Live', pct: Math.min(100, (liveSensors.heartRate/180)*100), color: 'var(--c-red)', path: '/activity' },
+    { icon: Flame,      label: 'Active Cal', value: Math.round(liveSensors.activeCalories).toLocaleString(), sub: '/ 600 kcal', pct: Math.min(100, (liveSensors.activeCalories/600)*100), color: 'var(--c-orange)', path: '/activity' },
+    { icon: Brain,      label: 'Stress',   value: `${liveSensors.stressLevel}/10`, sub: liveSensors.stressLevel > 7 ? 'High' : 'Normal', pct: liveSensors.stressLevel*10, color: 'var(--c-blue)', path: '/activity' },
   ];
 
   // Map weekly trend for chart
@@ -149,9 +149,9 @@ export default function DashboardPage() {
         <motion.div {...fadeUp(0)} className="glass-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 28 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <Sparkles size={14} color="var(--c-blue)" />
-            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--c-blue)' }}>DAILY SCORE</span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--c-blue)' }}>LIVE SCORE</span>
           </div>
-          <WellnessScore score={currentMetric.wellnessScore || 50} size={160} />
+          <WellnessScore score={Math.round(Math.min(100, Math.max(0, 80 - (liveSensors.stressLevel * 3) + (liveSensors.steps / 1000) + (liveSensors.isWorkoutActive ? 8 : 0))))} size={160} />
 
           <div style={{
             width: '100%', padding: '10px 14px',
