@@ -19,13 +19,28 @@ const useMetricsStore = create((set, get) => ({
     wellnessScore: 74,
   },
 
-  // Live streaming sensor simulation
+  // Live real device sensor data
   liveSensors: {
+    // Motion
     heartRate: 72,
-    steps: 6842,
+    steps: 0,
     stressLevel: 4,
-    activeCalories: 320,
-    isWorkoutActive: false
+    activeCalories: 0,
+    isWorkoutActive: false,
+    lastMotionMag: null,
+    // GPS
+    location: null,     // { latitude, longitude, altitude }
+    speed: null,        // km/h
+    // Orientation
+    orientation: null,  // { alpha, beta, gamma }
+    // Environment
+    ambientLight: null, // lux
+    // Device
+    battery: null,      // { level, charging }
+    network: null,      // { type, downlink }
+    // Meta
+    sensorSource: 'real', // 'real' | 'simulation'
+    permissionGranted: false,
   },
 
   // Weekly trend data
