@@ -96,6 +96,9 @@ export default function CoachPage() {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Reset input value so the same file can be selected again
+    if (fileInputRef.current) fileInputRef.current.value = '';
+
     const imagePreviewUrl = URL.createObjectURL(file);
     addMessage({ role: 'user', content: 'Analyze this food photo for me.', image: imagePreviewUrl });
     setTypingStatus(true);
