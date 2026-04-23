@@ -84,9 +84,22 @@ export default function CoachPage() {
 
     try {
       setInputValue('Analyzing food photo...');
-      const res = await api.post('/nutrition/scan-photo', formData);
       
-      const detection = res.data?.matches?.[0];
+      const token = localStorage.getItem('wellness_token');
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1';
+      
+      const response = await fetch(`${baseUrl}/nutrition/scan-photo`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      
+      if (!response.ok) throw new Error('Upload failed');
+      
+      const resData = await response.json();
+      const detection = resData.data?.matches?.[0];
       if (detection) {
         setInputValue(`I'm eating ${detection.name}. It has around ${detection.cal} calories.`);
         sendMessage(`I'm eating ${detection.name}. Analyze this for me?`, {

@@ -111,8 +111,22 @@ export default function FoodSearchModal({ isOpen, onClose, mealType, date, onFoo
     try {
       const formData = new FormData();
       formData.append('image', file);
-      const res = await api.post('/nutrition/scan-photo', formData);
-      const match = res.data?.matches?.[0];
+      
+      const token = localStorage.getItem('wellness_token');
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1';
+      
+      const response = await fetch(`${baseUrl}/nutrition/scan-photo`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      
+      if (!response.ok) throw new Error('Upload failed');
+      const resData = await response.json();
+      
+      const match = resData.data?.matches?.[0];
       if (match) {
         setPhotoResult({
           name: match.name,
