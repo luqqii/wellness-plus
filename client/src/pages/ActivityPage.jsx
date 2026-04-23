@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import { Footprints, Zap, Clock, Battery, TrendingUp, TrendingDown, Minus, ChevronRight, Brain, RefreshCw, Bot, PersonStanding, Waves, Moon, Leaf, Dna, MapPin } from 'lucide-react';
 import api from '../services/api';
+import useMetricsStore from '../store/metricsStore';
 
 // Fallback chart data when no backend data exists
 const FALLBACK_ACTIVITY = [
@@ -62,12 +63,19 @@ const TrendIcon = ({ trend }) => {
 };
 
 export default function ActivityPage() {
+  const liveSensors = useMetricsStore(s => s.liveSensors);
   const [prediction, setPrediction] = useState(null);
   const [recovery, setRecovery] = useState(null);
   const [trend, setTrend] = useState([]);
   const [memoryData, setMemoryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedMemory, setExpandedMemory] = useState(null);
+
+  // Live sensor-derived metrics
+  const liveSteps = liveSensors.steps || 0;
+  const liveCalories = Math.round(liveSensors.activeCalories || 0);
+  const liveSpeed = liveSensors.speed != null ? liveSensors.speed : null;
+  const liveLocation = liveSensors.location;
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -153,17 +161,17 @@ export default function ActivityPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
-            icon: Footprints, label: 'Steps', value: avgSteps.toLocaleString(),
-            sub: '/ 10,000', pct: Math.min(Math.round((avgSteps / 10000) * 100), 100),
+            icon: Footprints, label: 'Steps', value: liveSteps.toLocaleString(),
+            sub: '/ 10,000', pct: Math.min(Math.round((liveSteps / 10000) * 100), 100),
             color: 'var(--c-teal)', trend: stepsTrend,
           },
           {
-            icon: Zap, label: 'Burned', value: '390',
-            sub: 'kcal', pct: 65, color: 'var(--c-orange)', trend: 'stable',
+            icon: Zap, label: 'Burned', value: liveCalories.toString(),
+            sub: 'kcal', pct: Math.min(Math.round((liveCalories / 600) * 100), 100), color: 'var(--c-orange)', trend: 'stable',
           },
           {
-            icon: Clock, label: 'Active', value: `${Math.round(avgSteps / 130)} min`,
-            sub: '/ 60 min', pct: Math.min(Math.round((avgSteps / 130) / 60 * 100), 100),
+            icon: Clock, label: 'Active', value: `${Math.round(liveSteps / 130)} min`,
+            sub: '/ 60 min', pct: Math.min(Math.round((liveSteps / 130) / 60 * 100), 100),
             color: 'var(--c-blue)', trend: stepsTrend,
           },
           {

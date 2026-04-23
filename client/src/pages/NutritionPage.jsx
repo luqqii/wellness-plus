@@ -7,6 +7,7 @@ import { Plus, ChevronLeft, ChevronRight, Check, Sparkles, Apple, Watch } from '
 import api from '../services/api';
 import FoodSearchModal from '../components/nutrition/FoodSearchModal';
 import DynamicIcon from '../components/ui/DynamicIcon';
+import useMetricsStore from '../store/metricsStore';
 
 const MOCK_AI_SUGGESTIONS = [
   { name: 'Grilled Salmon + Quinoa', cal: 480, protein: 38, tag: 'High Protein', why: 'Closes your protein gap by 38g' },
@@ -15,6 +16,9 @@ const MOCK_AI_SUGGESTIONS = [
 ];
 
 export default function NutritionPage() {
+  const liveSensors = useMetricsStore(s => s.liveSensors);
+  const liveExerciseCal = Math.round(liveSensors.activeCalories || 0);
+
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [log, setLog] = useState(null);
   const [activeMeal, setActiveMeal] = useState(null);
@@ -180,9 +184,9 @@ export default function NutritionPage() {
             { val: '−', label: '', color: 'var(--c-text-muted)', isSym: true },
             { val: totalCal.toLocaleString(), label: 'Food', color: 'var(--c-orange)' },
             { val: '+', label: '', color: 'var(--c-text-muted)', isSym: true },
-            { val: '320', label: 'Exercise', color: 'var(--c-teal)' },
+            { val: liveExerciseCal.toString(), label: 'Exercise', color: 'var(--c-teal)' },
             { val: '=', label: '', color: 'var(--c-text-muted)', isSym: true },
-            { val: remaining.toLocaleString(), label: 'Remaining', color: remaining < 0 ? 'var(--c-red)' : 'var(--c-blue)' },
+            { val: Math.max(0, targetCalories - totalCal + liveExerciseCal).toLocaleString(), label: 'Remaining', color: (targetCalories - totalCal + liveExerciseCal) < 0 ? 'var(--c-red)' : 'var(--c-blue)' },
           ].map((item, i) => (
             <div key={i} style={{ textAlign: 'center' }}>
               <div className={item.isSym ? 'macro-equation-sym' : 'macro-equation-val'} style={{ fontSize: item.isSym ? 20 : 26, fontWeight: 800, color: item.color, letterSpacing: '-1px', lineHeight: 1 }}>{item.val}</div>

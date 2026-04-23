@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Mail, Target, TrendingUp, Award, Edit3, Save, X, CheckCircle2, Plus, Loader2 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import useHabitStore from '../store/habitStore';
+import useMetricsStore from '../store/metricsStore';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import DynamicIcon from '../components/ui/DynamicIcon';
@@ -13,6 +14,7 @@ export default function ProfilePage() {
   const { user, updateUser, logout } = useAuthStore();
   const navigate = useNavigate();
   const { habits } = useHabitStore();
+  const liveSensors = useMetricsStore(s => s.liveSensors);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ 
     name: user?.name || '', 
@@ -275,10 +277,10 @@ export default function ProfilePage() {
            </div>
            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {[
-                { label: 'Active Streak', value: '7 Days', color: 'var(--c-orange)' },
-                { label: 'Total Steps', value: '142,500', color: 'var(--c-teal)' },
-                { label: 'Workouts', value: '12', color: 'var(--c-blue)' },
-                { label: 'Weight Change', value: '-2.4 kg', color: 'var(--c-green)' },
+                { label: 'Active Streak', value: `${Math.max(0, ...habits.map(h => h.streak?.current || 0))} Days`, color: 'var(--c-orange)' },
+                { label: 'Live Steps Today', value: (liveSensors.steps || 0).toLocaleString(), color: 'var(--c-teal)' },
+                { label: 'Heart Rate', value: liveSensors.heartRate ? `${liveSensors.heartRate} bpm` : '— bpm', color: 'var(--c-red)' },
+                { label: 'Active Calories', value: `${Math.round(liveSensors.activeCalories || 0)} kcal`, color: 'var(--c-blue)' },
               ].map(s => (
                 <div key={s.label}>
                    <div style={{ fontSize: 11, color: 'var(--c-text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</div>
