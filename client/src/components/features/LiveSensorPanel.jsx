@@ -5,6 +5,7 @@ import {
   Wifi, Compass, Sun, HeartPulse, Navigation, AlertCircle, CheckCircle
 } from 'lucide-react';
 import useMetricsStore from '../../store/metricsStore';
+import DeviceConnectBanner from './DeviceConnectBanner';
 
 function SensorCard({ icon: Icon, label, value, unit, color, sub }) {
   const isAvailable = value !== null && value !== undefined;
@@ -92,6 +93,9 @@ export default function LiveSensorPanel() {
         </div>
       </div>
 
+      {/* Bluetooth device connect row */}
+      <DeviceConnectBanner />
+
       {/* Sensor Grid */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
 
@@ -118,7 +122,7 @@ export default function LiveSensorPanel() {
           value={s.heartRate}
           unit="bpm"
           color="#EC5A42"
-          sub={s.isWorkoutActive ? 'Workout' : 'Resting'}
+          sub={s.hrSource === 'bluetooth' ? '🔵 Bluetooth' : s.heartRate ? 'Estimated' : 'Connect device'}
         />
 
         <SensorCard

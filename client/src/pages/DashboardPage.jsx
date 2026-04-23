@@ -74,13 +74,13 @@ export default function DashboardPage() {
 
   // Safe fallbacks to prevent NaN crashes
   const steps = Number(liveSensors?.steps) || 0;
-  const hr = Number(liveSensors?.heartRate) || 72;
+  const hr = liveSensors?.heartRate;           // null = not connected
   const cal = Number(liveSensors?.activeCalories) || 0;
   const stress = Number(liveSensors?.stressLevel) || 5;
 
   const STATS = [
     { icon: Footprints, label: 'Steps',    value: steps.toLocaleString(), sub: '/ 10,000', pct: Math.min(100, (steps/10000)*100), color: 'var(--c-teal)', path: '/activity' },
-    { icon: Heart,      label: 'Heart Rate', value: `${hr} bpm`, sub: 'Live', pct: Math.min(100, (hr/180)*100), color: 'var(--c-red)', path: '/activity' },
+    { icon: Heart,      label: 'Heart Rate', value: hr != null ? `${hr} bpm` : '— bpm', sub: hr != null ? (liveSensors.hrSource === 'bluetooth' ? 'Bluetooth' : 'Live') : 'Connect device', pct: hr != null ? Math.min(100, (hr/180)*100) : 0, color: hr != null ? 'var(--c-red)' : 'var(--c-text-muted)', path: '/activity' },
     { icon: Flame,      label: 'Active Cal', value: Math.round(cal).toLocaleString(), sub: '/ 600 kcal', pct: Math.min(100, (cal/600)*100), color: 'var(--c-orange)', path: '/activity' },
     { icon: Brain,      label: 'Stress',   value: `${stress}/10`, sub: stress > 7 ? 'High' : 'Normal', pct: stress*10, color: 'var(--c-blue)', path: '/activity' },
   ];

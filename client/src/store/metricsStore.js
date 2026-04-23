@@ -22,12 +22,13 @@ const useMetricsStore = create((set, get) => ({
   // Live real device sensor data
   liveSensors: {
     // Motion
-    heartRate: 72,
+    heartRate: null,    // null until real data arrives
     steps: 0,
     stressLevel: 4,
     activeCalories: 0,
     isWorkoutActive: false,
     lastMotionMag: null,
+    hrSource: 'none',   // 'none' | 'bluetooth' | 'estimated'
     // GPS
     location: null,     // { latitude, longitude, altitude }
     speed: null,        // km/h
