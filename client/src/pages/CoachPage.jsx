@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mic, Camera, Bot, User, Sparkles, BarChart3, Brain } from 'lucide-react';
 import useChat from '../hooks/useChat';
+import useMetricsStore from '../store/metricsStore';
 import api from '../services/api';
 import DynamicIcon from '../components/ui/DynamicIcon';
 
@@ -16,12 +17,27 @@ const EMOTIONS = [
 
 export default function CoachPage() {
   const { messages, isTyping, inputValue, setInputValue, sendMessage, currentSentiment, addMessage, setTypingStatus } = useChat();
+  const liveSensors = useMetricsStore(s => s.liveSensors);
   const [detectedEmotion, setDetectedEmotion] = useState('Neutral');
   const [isListening, setIsListening] = useState(false);
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
   const recognitionRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Build a hidden sensor context string appended to every user message
+  const buildSensorContext = () => {
+    const parts = [];
+    if (liveSensors.steps > 0) parts.push(`Steps today: ${liveSensors.steps}`);
+    if (liveSensors.heartRate) parts.push(`Heart rate: ${liveSensors.heartRate} bpm`);
+    if (liveSensors.activeCalories > 0) parts.push(`Active calories: ${Math.round(liveSensors.activeCalories)} kcal`);
+    if (liveSensors.location) parts.push(`Location: ${liveSensors.location.latitude?.toFixed(3)}, ${liveSensors.location.longitude?.toFixed(3)}`);
+    if (liveSensors.speed != null) parts.push(`Speed: ${liveSensors.speed} km/h`);
+    if (liveSensors.battery) parts.push(`Battery: ${liveSensors.battery.level}%${liveSensors.battery.charging ? ' (charging)' : ''}`);
+    if (liveSensors.ambientLight != null) parts.push(`Ambient light: ${liveSensors.ambientLight} lux`);
+    if (!parts.length) return '';
+    return `\n\n[Sensor Context — ${new Date().toLocaleTimeString()}: ${parts.join(' | ')}]`;
+  };
 
 
   useEffect(() => {
@@ -72,7 +88,8 @@ export default function CoachPage() {
   };
 
   const handleSend = () => {
-    sendMessage(inputValue);
+    const context = buildSensorContext();
+    sendMessage(inputValue + context);
   };
 
   const handleImageUpload = async (e) => {

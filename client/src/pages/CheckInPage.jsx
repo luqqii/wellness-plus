@@ -4,8 +4,9 @@ import {
   CheckCircle, ChevronRight, Smile, Laugh, Meh, Frown, AlertCircle,
   Flame, Battery, BatteryLow, BatteryMedium, BatteryFull, BatteryWarning,
   Zap, Coffee, Wind, Moon, TrendingDown,
-  HeartPulse, Brain, Apple, Footprints, BookOpen, Dumbbell, Droplets, BedDouble
+  HeartPulse, Brain, Apple, Footprints, BookOpen, Dumbbell, Droplets, BedDouble, MapPin
 } from 'lucide-react';
+import useMetricsStore from '../store/metricsStore';
 
 // ── Mood Options (Lucide instead of emoji) ───────────────────────────────────
 const MOODS = [
@@ -151,6 +152,7 @@ function ResultScreen({ answers, onReset }) {
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function CheckInPage() {
+  const liveSensors = useMetricsStore(s => s.liveSensors);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({ mood: null, hunger: null, energy: null, triggers: [], note: '' });
   const [done, setDone] = useState(false);
@@ -237,6 +239,40 @@ export default function CheckInPage() {
           <motion.div animate={{ width: `${progress}%` }} style={{ height: '100%', background: '#EC5A42', borderRadius: 3 }} />
         </div>
       </div>
+
+      {/* Live Sensor Snapshot */}
+      {(liveSensors.heartRate || liveSensors.steps > 0 || liveSensors.battery) && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+          style={{
+            display: 'flex', flexWrap: 'wrap', gap: 10, padding: '12px 16px',
+            background: 'rgba(12,43,53,0.06)', borderRadius: 16,
+            border: '1px solid rgba(12,43,53,0.1)'
+          }}
+        >
+          {liveSensors.heartRate && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: '#EC5A42' }}>
+              <HeartPulse size={13} /> {liveSensors.heartRate} bpm
+            </div>
+          )}
+          {liveSensors.steps > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: '#14B8A6' }}>
+              <Footprints size={13} /> {liveSensors.steps.toLocaleString()} steps
+            </div>
+          )}
+          {liveSensors.battery && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: liveSensors.battery.level > 20 ? '#22C55E' : '#EC5A42' }}>
+              <Battery size={13} /> {liveSensors.battery.level}%
+            </div>
+          )}
+          {liveSensors.location && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: '#4F8DFF' }}>
+              <MapPin size={13} /> GPS Active
+            </div>
+          )}
+          <span style={{ fontSize: 10, color: '#9CA3AF', marginLeft: 'auto', alignSelf: 'center' }}>Live from device</span>
+        </motion.div>
+      )}
 
       {/* Question Card */}
       <AnimatePresence mode="wait">
