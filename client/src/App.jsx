@@ -43,6 +43,7 @@ import MealPlannerPage from './pages/MealPlannerPage';
 import RoutinePlannerPage from './pages/RoutinePlannerPage';
 import CrossSourceDataSyncPage from './pages/CrossSourceDataSyncPage';
 import RecipesPage from './pages/RecipesPage';
+import CalendarPage from './pages/CalendarPage';
 
 // Loading fallback
 function PageLoader() {
@@ -122,6 +123,7 @@ export default function App() {
             <Route path="/weight-tracker" element={<WeightTrackerPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/check-in" element={<CheckInPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
           </Route>
         </Route>
 

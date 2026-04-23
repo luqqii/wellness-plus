@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { CloudRain, Sun, Calendar, Moon, Activity } from 'lucide-react';
+import { CloudRain, Sun, Calendar, Moon, Activity, Wind, Cloud } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useMetricsStore from '../../store/metricsStore';
+import useCalendarStore from '../../store/calendarStore';
 
 export default function ContextAwareSuggestions({ metrics }) {
   const [suggestion, setSuggestion] = useState(null);
   const liveSensors = useMetricsStore((s) => s.liveSensors);
+  const { getEventsForDate } = useCalendarStore();
 
   useEffect(() => {
     // Dynamic override based on live sensors
@@ -23,16 +25,26 @@ export default function ContextAwareSuggestions({ metrics }) {
       try {
         const { default: api } = await import('../../services/api');
         
-        // Mocking dynamic context (in real life, maybe use navigator.geolocation or browser time)
+        // Use REAL data from our new sensors and stores
         const currentHour = new Date().getHours();
-        const mockWeather = currentHour < 12 ? 'clear' : 'rain';
-        const mockCalendar = currentHour > 9 && currentHour < 17;
+        
+        // 1. Weather
+        const realWeather = liveSensors.weather ? liveSensors.weather.type : 'clear';
+        
+        // 2. Calendar (Check if they have events scheduled today)
+        const todayStr = new Date().toISOString().split('T')[0];
+        const todayEvents = getEventsForDate(todayStr);
+        const hasBusyCalendar = todayEvents.length > 3; // Arbitrary threshold for "busy"
+        
+        // 3. Sleep
+        const realSleep = liveSensors.sleep?.hours;
 
         const res = await api.post('/insights/context-aware', {
-          weather: mockWeather,
+          weather: realWeather,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           localTime: new Date().toISOString(),
-          calendarBusy: mockCalendar,
+          calendarBusy: hasBusyCalendar,
+          sleepHours: realSleep,
           liveSensors
         });
         
@@ -43,6 +55,8 @@ export default function ContextAwareSuggestions({ metrics }) {
           if (data.iconName === 'CloudRain') IconComponent = CloudRain;
           if (data.iconName === 'Moon') IconComponent = Moon;
           if (data.iconName === 'Calendar') IconComponent = Calendar;
+          if (data.iconName === 'Wind') IconComponent = Wind;
+          if (data.iconName === 'Cloud') IconComponent = Cloud;
 
           setSuggestion({
             icon: <IconComponent size={24} color={data.color || "var(--c-blue)"} />,

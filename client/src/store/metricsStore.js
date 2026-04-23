@@ -39,8 +39,12 @@ const useMetricsStore = create((set, get) => ({
     // Device
     battery: null,      // { level, charging }
     network: null,      // { type, downlink }
+    // Sleep (auto-detected or manual)
+    sleep: null,        // { hours, quality, bedtime, wakeTime, source }
+    // Real weather from Open-Meteo
+    weather: null,      // { temp, feelsLike, humidity, windSpeed, condition, icon, type }
     // Meta
-    sensorSource: 'real', // 'real' | 'simulation'
+    sensorSource: 'real',
     permissionGranted: false,
   },
 
