@@ -15,7 +15,7 @@ const EMOTIONS = [
 ];
 
 export default function CoachPage() {
-  const { messages, isTyping, inputValue, setInputValue, sendMessage, currentSentiment } = useChat();
+  const { messages, isTyping, inputValue, setInputValue, sendMessage, currentSentiment, addMessage, setTypingStatus } = useChat();
   const [detectedEmotion, setDetectedEmotion] = useState('Neutral');
   const [isListening, setIsListening] = useState(false);
   const chatEndRef = useRef(null);
@@ -79,12 +79,14 @@ export default function CoachPage() {
     const file = e.target.files[0];
     if (!file) return;
 
+    const imagePreviewUrl = URL.createObjectURL(file);
+    addMessage({ role: 'user', content: 'Analyze this food photo for me.', image: imagePreviewUrl });
+    setTypingStatus(true);
+
     const formData = new FormData();
     formData.append('image', file);
 
     try {
-      setInputValue('Analyzing food photo...');
-      
       const token = localStorage.getItem('wellness_token');
       const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1';
       
@@ -100,15 +102,19 @@ export default function CoachPage() {
       
       const resData = await response.json();
       const detection = resData.data?.matches?.[0];
+      
       if (detection) {
-        setInputValue(`I'm eating ${detection.name}. It has around ${detection.cal} calories.`);
-        sendMessage(`I'm eating ${detection.name}. Analyze this for me?`, {
-          context: `Detected ${detection.name} (${detection.cal} cal, ${detection.p}g Protein, ${detection.c}g Carbs, ${detection.f}g Fat).`
-        });
+        const aiResponseText = `I analyzed the photo! It looks like you're having **${detection.name}**. This contains roughly **${detection.cal} calories** (${detection.p}g Protein, ${detection.c}g Carbs, ${detection.f}g Fat). How can I help you fit this into your daily plan?`;
+        addMessage({ role: 'ai', content: aiResponseText });
+      } else {
+        addMessage({ role: 'ai', content: "I couldn't quite identify the food in this picture. Could you tell me what it is?" });
       }
     } catch (err) {
       console.error('Scan failed', err);
-      setInputValue('');
+      addMessage({ role: 'ai', content: "Sorry, I had trouble analyzing that photo right now. Please try again." });
+    } finally {
+      setTypingStatus(false);
+      // We don't revoke the ObjectURL so it stays visible in the chat log
     }
   };
 
@@ -214,6 +220,9 @@ export default function CoachPage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxWidth: '75%' }}>
               <div className={`chat-bubble ${msg.role}`}>
+                {msg.image && (
+                  <img src={msg.image} alt="Uploaded food" style={{ width: '100%', borderRadius: 12, marginBottom: 8, objectFit: 'cover' }} />
+                )}
                 <p style={{ margin: 0 }}>{msg.content}</p>
                 <p className="chat-time">{formatTime(msg.timestamp)}</p>
               </div>

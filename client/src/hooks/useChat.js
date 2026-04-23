@@ -91,6 +91,12 @@ export function useChat() {
     setMessages(MOCK_MESSAGES);
   }, []);
 
+  const addMessage = useCallback((msg) => {
+    setMessages(p => [...p, { id: Date.now() + Math.random(), timestamp: new Date(), ...msg }]);
+  }, []);
+
+  const setTypingStatus = useCallback((status) => setIsTyping(status), []);
+
   return {
     messages: hasStarted ? messages : [],
     isTyping,
@@ -99,6 +105,8 @@ export function useChat() {
     currentSentiment,
     sendMessage,
     clearChat,
+    addMessage,
+    setTypingStatus,
     hasStarted
   };
 }
