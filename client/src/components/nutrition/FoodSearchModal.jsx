@@ -111,9 +111,7 @@ export default function FoodSearchModal({ isOpen, onClose, mealType, date, onFoo
     try {
       const formData = new FormData();
       formData.append('image', file);
-      const res = await api.post('/nutrition/scan-photo', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await api.post('/nutrition/scan-photo', formData);
       const match = res.data?.matches?.[0];
       if (match) {
         setPhotoResult({

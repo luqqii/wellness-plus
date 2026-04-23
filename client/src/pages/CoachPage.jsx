@@ -84,11 +84,9 @@ export default function CoachPage() {
 
     try {
       setInputValue('Analyzing food photo...');
-      const res = await api.post('/nutrition/scan-photo', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await api.post('/nutrition/scan-photo', formData);
       
-      const detection = res.data.data.matches[0];
+      const detection = res.data?.matches?.[0];
       if (detection) {
         setInputValue(`I'm eating ${detection.name}. It has around ${detection.cal} calories.`);
         sendMessage(`I'm eating ${detection.name}. Analyze this for me?`, {
