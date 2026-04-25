@@ -44,6 +44,7 @@ import RoutinePlannerPage from './pages/RoutinePlannerPage';
 import CrossSourceDataSyncPage from './pages/CrossSourceDataSyncPage';
 import RecipesPage from './pages/RecipesPage';
 import CalendarPage from './pages/CalendarPage';
+import PredictiveInsightsPage from './pages/PredictiveInsightsPage';
 
 // Loading fallback
 function PageLoader() {
@@ -124,6 +125,7 @@ export default function App() {
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/check-in" element={<CheckInPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/insights" element={<PredictiveInsightsPage />} />
           </Route>
         </Route>
 

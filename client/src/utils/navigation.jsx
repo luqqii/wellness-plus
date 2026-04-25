@@ -2,11 +2,12 @@ import {
   LayoutDashboard, Target, MessageCircle, Utensils, Activity,
   User, Settings, Sparkles, Brain, Calendar, ChefHat,
   Calculator, FlaskConical, User2, Scale, BookOpen, Users, Salad, Heart,
-  ListTodo, RefreshCw, CalendarDays
+  ListTodo, RefreshCw, CalendarDays, Zap
 } from 'lucide-react';
 
 export const NAV_ITEMS = [
   { path: '/dashboard',     label: 'Dashboard',      icon: LayoutDashboard },
+  { path: '/insights',      label: 'Insights',       icon: Zap, badge: 'AI' },
   { path: '/calendar',      label: 'Calendar',       icon: CalendarDays, badge: 'New' },
   { path: '/check-in',      label: 'Daily Check-in', icon: Heart },
   { path: '/habits',        label: 'Habits',         icon: Target },
