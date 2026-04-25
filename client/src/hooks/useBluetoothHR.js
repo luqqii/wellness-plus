@@ -75,12 +75,16 @@ export default function useBluetoothHR() {
         console.warn("Could not read GAP device name", e);
       }
 
-      const service = await server.getPrimaryService('heart_rate');
-      const characteristic = await service.getCharacteristic('heart_rate_measurement');
-      characteristicRef.current = characteristic;
+      try {
+        const service = await server.getPrimaryService('heart_rate');
+        const characteristic = await service.getCharacteristic('heart_rate_measurement');
+        characteristicRef.current = characteristic;
 
-      await characteristic.startNotifications();
-      characteristic.addEventListener('characteristicvaluechanged', handleHRNotification);
+        await characteristic.startNotifications();
+        characteristic.addEventListener('characteristicvaluechanged', handleHRNotification);
+      } catch (e) {
+        console.warn("Device does not have a heart rate service. Connected anyway.", e);
+      }
 
       setStatus('connected');
       updateLiveSensors({ hrSource: 'bluetooth' });
