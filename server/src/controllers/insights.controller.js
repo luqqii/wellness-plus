@@ -296,3 +296,25 @@ export const getOnboardingAssessment = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * @desc    Analyze diagnostic quiz results using AI
+ * @route   POST /api/v1/insights/analyze-quiz
+ * @access  Private
+ */
+export const analyzeQuizResult = async (req, res, next) => {
+  try {
+    const { quizType, answers } = req.body;
+    
+    const { analyzeDiagnosticQuiz } = await import('../services/ai.service.js');
+    
+    const result = await analyzeDiagnosticQuiz(quizType, answers);
+
+    res.json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+};

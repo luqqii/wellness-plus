@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ActivitySquare, AlertTriangle, ArrowLeft, Battery, BatteryWarning, Brain, CheckCircle2, ChevronRight, HeartPulse, RefreshCw, Sparkles, TrendingDown } from 'lucide-react';
+import { ActivitySquare, AlertTriangle, ArrowLeft, Battery, BatteryWarning, Brain, CheckCircle2, ChevronRight, HeartPulse, RefreshCw, Sparkles, TrendingDown, Loader2 } from 'lucide-react';
+import api from '../services/api';
 
 const QUIZ_DATA = {
   fatigue: {
     title: "Fatigue Anticipation",
     icon: BatteryWarning,
-    color: "#14B8A6", // Teal base, but uses dynamic colors for results
+    color: "#14B8A6",
     desc: "Real-time energy depletion model",
     questions: [
       { q: "How many hours of uninterrupted sleep did you get last night?", options: [{text: "7+ hours", score: 1}, {text: "5-6 hours", score: 2}, {text: "Broken, poor quality sleep", score: 3}, {text: "4 hours or less", score: 4}] },
@@ -19,7 +20,7 @@ const QUIZ_DATA = {
   overtraining: {
     title: "Overtraining Risk",
     icon: HeartPulse,
-    color: "#F97316", // Orange base
+    color: "#F97316",
     desc: "Strain vs. Recovery analysis",
     questions: [
       { q: "How many days have you trained at high intensity in the last 7 days without rest?", options: [{text: "0-2 days", score: 1}, {text: "3-4 days", score: 2}, {text: "5-6 days", score: 3}, {text: "7 days straight", score: 4}] },
@@ -32,7 +33,7 @@ const QUIZ_DATA = {
   burnout: {
     title: "Burnout Prediction",
     icon: TrendingDown,
-    color: "#EF4444", // Red base
+    color: "#EF4444",
     desc: "Long-term systemic stress model",
     questions: [
       { q: "How often do you feel emotionally drained or exhausted by your daily responsibilities?", options: [{text: "Rarely", score: 1}, {text: "Sometimes", score: 2}, {text: "Frequently", score: 3}, {text: "Every single day", score: 4}] },
@@ -44,51 +45,57 @@ const QUIZ_DATA = {
   }
 };
 
-const getResult = (type, score) => {
-  const isHigh = score >= 16;
-  const isMod = score >= 10 && score <= 15;
-  
-  if (type === 'fatigue') {
-    if (isHigh) return { level: 'High Risk', color: '#EF4444', tips: ['Take a 20-30 min power nap today', 'Avoid heavy lifting or complex cognitive tasks', 'Hydrate and consume complex carbs'] };
-    if (isMod) return { level: 'Moderate Risk', color: '#F97316', tips: ['Consider a lighter workout today', 'Ensure you get 8h of sleep tonight', 'Limit caffeine after 2 PM'] };
-    return { level: 'Low Risk', color: '#14B8A6', tips: ['Energy reserves are optimal', 'Ready for high intensity training', 'Maintain current habits'] };
-  }
-  if (type === 'overtraining') {
-    if (isHigh) return { level: 'High Risk', color: '#EF4444', tips: ['Mandatory 48-72h of complete rest', 'Focus purely on mobility and stretching', 'Monitor resting heart rate for recovery'] };
-    if (isMod) return { level: 'Moderate Risk', color: '#F97316', tips: ['Deload your training volume by 50%', 'Prioritize active recovery (walking, yoga)', 'Increase protein and sleep intake'] };
-    return { level: 'Low Risk', color: '#14B8A6', tips: ['Training load is well-tolerated', 'Continue progressive overload', 'Maintain current recovery protocols'] };
-  }
-  if (type === 'burnout') {
-    if (isHigh) return { level: 'High Risk', color: '#EF4444', tips: ['Take immediate time off work/training if possible', 'Consider speaking to a therapist or counselor', 'Strictly disconnect from stressors digitally'] };
-    if (isMod) return { level: 'Moderate Risk', color: '#F97316', tips: ['Schedule dedicated blocks of unstructured downtime', 'Practice daily mindfulness or deep breathing', 'Review and reduce your current commitments'] };
-    return { level: 'Low Risk', color: '#14B8A6', tips: ['Psychological and physical strain are balanced', 'Keep practicing your current stress management', 'Stay engaged and motivated'] };
-  }
-}
-
 export default function PredictiveInsightsPage() {
-  const [activeQuiz, setActiveQuiz] = useState(null); // 'fatigue', 'overtraining', 'burnout'
+  const [activeQuiz, setActiveQuiz] = useState(null); 
   const [qIndex, setQIndex] = useState(0);
-  const [score, setScore] = useState(0);
+  const [userAnswers, setUserAnswers] = useState([]);
   const [results, setResults] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const startQuiz = (type) => {
     setActiveQuiz(type);
     setQIndex(0);
-    setScore(0);
+    setUserAnswers([]);
   };
 
-  const handleAnswer = (optionScore) => {
-    const newScore = score + optionScore;
-    const nextIndex = qIndex + 1;
+  const handleAnswer = async (opt) => {
+    const questionText = QUIZ_DATA[activeQuiz].questions[qIndex].q;
+    const newAnswers = [...userAnswers, { q: questionText, text: opt.text, score: opt.score }];
     
-    if (nextIndex < 5) {
-      setScore(newScore);
-      setQIndex(nextIndex);
+    if (qIndex < 4) {
+      setUserAnswers(newAnswers);
+      setQIndex(prev => prev + 1);
     } else {
-      // Finished
-      const finalResult = getResult(activeQuiz, newScore);
-      setResults(prev => ({ ...prev, [activeQuiz]: finalResult }));
-      setActiveQuiz(null);
+      // Finished - Call AI Backend
+      setLoading(true);
+      try {
+        const response = await api.post('/insights/analyze-quiz', {
+          quizType: activeQuiz,
+          answers: newAnswers
+        });
+        
+        const aiResult = response.data.data;
+        // Map Risk Level to Color
+        const colorMap = {
+          'Low Risk': '#14B8A6',
+          'Moderate Risk': '#F97316',
+          'High Risk': '#EF4444'
+        };
+        
+        setResults(prev => ({ 
+          ...prev, 
+          [activeQuiz]: { 
+            ...aiResult, 
+            color: colorMap[aiResult.level] || '#9333EA' 
+          } 
+        }));
+        setActiveQuiz(null);
+      } catch (error) {
+        console.error("AI Analysis failed:", error);
+        // Fallback UI if needed, but the backend has a deterministic fallback too
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -119,7 +126,7 @@ export default function PredictiveInsightsPage() {
           </div>
           <div>
             <h1 className="page-title" style={{ margin: 0, fontSize: 28 }}>Predictive Insights</h1>
-            <p className="page-subtitle" style={{ margin: 0 }}>Diagnostic assessments for your health trajectory.</p>
+            <p className="page-subtitle" style={{ margin: 0 }}>AI-Driven diagnostic assessments for your health trajectory.</p>
           </div>
         </div>
       </motion.div>
@@ -132,11 +139,19 @@ export default function PredictiveInsightsPage() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             className="glass-card"
-            style={{ padding: '30px', borderTop: `4px solid ${QUIZ_DATA[activeQuiz].color}` }}
+            style={{ padding: '30px', borderTop: `4px solid ${QUIZ_DATA[activeQuiz].color}`, position: 'relative' }}
           >
+            {loading && (
+              <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 10, borderRadius: 16 }}>
+                <Loader2 className="animate-spin" size={40} color="var(--c-purple)" />
+                <p style={{ marginTop: 12, fontWeight: 700, color: 'var(--c-text-primary)' }}>AI is analyzing your results...</p>
+              </div>
+            )}
+
             <button 
+              disabled={loading}
               onClick={() => setActiveQuiz(null)}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: 'var(--c-text-muted)', fontSize: 13, fontWeight: 700, cursor: 'pointer', marginBottom: 24, padding: 0 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: 'var(--c-text-muted)', fontSize: 13, fontWeight: 700, cursor: loading ? 'default' : 'pointer', marginBottom: 24, padding: 0 }}
             >
               <ArrowLeft size={14} /> Back to Modules
             </button>
@@ -162,17 +177,18 @@ export default function PredictiveInsightsPage() {
               {QUIZ_DATA[activeQuiz].questions[qIndex].options.map((opt, i) => (
                 <motion.button
                   key={i}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  onClick={() => handleAnswer(opt.score)}
+                  disabled={loading}
+                  whileHover={loading ? {} : { scale: 1.01 }}
+                  whileTap={loading ? {} : { scale: 0.99 }}
+                  onClick={() => handleAnswer(opt)}
                   style={{
                     padding: '16px 20px', background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)',
                     borderRadius: 12, fontSize: 15, fontWeight: 600, color: 'var(--c-text-primary)',
-                    textAlign: 'left', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    textAlign: 'left', cursor: loading ? 'default' : 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                     transition: 'border-color 0.2s ease, background 0.2s ease'
                   }}
-                  onMouseOver={(e) => { e.currentTarget.style.borderColor = QUIZ_DATA[activeQuiz].color; e.currentTarget.style.background = `${QUIZ_DATA[activeQuiz].color}0a`; }}
-                  onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--c-border)'; e.currentTarget.style.background = 'var(--c-bg-secondary)'; }}
+                  onMouseOver={(e) => { if(!loading) { e.currentTarget.style.borderColor = QUIZ_DATA[activeQuiz].color; e.currentTarget.style.background = `${QUIZ_DATA[activeQuiz].color}0a`; } }}
+                  onMouseOut={(e) => { if(!loading) { e.currentTarget.style.borderColor = 'var(--c-border)'; e.currentTarget.style.background = 'var(--c-bg-secondary)'; } }}
                 >
                   {opt.text}
                   <ChevronRight size={16} color="var(--c-text-muted)" />
@@ -240,7 +256,7 @@ export default function PredictiveInsightsPage() {
 
                   {result && (
                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ background: 'var(--c-bg-tertiary)', borderRadius: 12, padding: 16 }}>
-                      <h4 style={{ margin: '0 0 12px 0', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--c-text-muted)', fontWeight: 800 }}>Actionable Tips</h4>
+                      <h4 style={{ margin: '0 0 12px 0', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--c-text-muted)', fontWeight: 800 }}>AI Personalized Tips</h4>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                         {result.tips.map((tip, i) => (
                           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>

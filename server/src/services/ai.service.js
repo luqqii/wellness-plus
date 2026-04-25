@@ -441,3 +441,57 @@ Return ONLY a JSON object with this exact structure:
     recommendedFocus
   };
 };
+
+/**
+ * Generate a personalized assessment from a diagnostic quiz (Fatigue, Overtraining, Burnout)
+ */
+export const analyzeDiagnosticQuiz = async (quizType, answers) => {
+  if (model) {
+    try {
+      const prompt = `You are an elite, highly empathetic Personal Health Coach and Sports Scientist.
+A user has just completed a 5-question diagnostic quiz for "${quizType}".
+Here are the actual questions and the specific answers they selected:
+${answers.map((a, i) => `${i + 1}. Q: ${a.q}\n   A: ${a.text}`).join('\n')}
+
+Analyze these nuanced answers and determine their current risk level ("Low Risk", "Moderate Risk", or "High Risk").
+Provide 3 highly specific, actionable tips (1-2 sentences each) based EXACTLY on their answers. Be direct, professional, and empathetic.
+
+Return ONLY a valid JSON object with this exact structure:
+{
+  "level": "Low Risk" | "Moderate Risk" | "High Risk",
+  "tips": ["Tip 1", "Tip 2", "Tip 3"]
+}`;
+      const text = await callGemini(prompt);
+      return JSON.parse(text.replace(/```json|```/g, '').trim());
+    } catch (e) {
+      console.error('[AI] analyzeDiagnosticQuiz error:', e.message?.substring(0, 150));
+    }
+  }
+
+  // Fallback engine if AI is unavailable or quota exceeded
+  let score = 0;
+  answers.forEach(a => {
+    score += (a.score || 2); // Default to moderate if no score provided
+  });
+
+  const isHigh = score >= 16;
+  const isMod = score >= 10 && score <= 15;
+
+  if (quizType === 'fatigue') {
+    if (isHigh) return { level: 'High Risk', tips: ['Take a 20-30 min power nap today.', 'Avoid heavy lifting or complex cognitive tasks.', 'Hydrate and consume complex carbs.'] };
+    if (isMod) return { level: 'Moderate Risk', tips: ['Consider a lighter workout today.', 'Ensure you get 8h of sleep tonight.', 'Limit caffeine after 2 PM.'] };
+    return { level: 'Low Risk', tips: ['Energy reserves are optimal.', 'Ready for high intensity training.', 'Maintain current habits.'] };
+  }
+  if (quizType === 'overtraining') {
+    if (isHigh) return { level: 'High Risk', tips: ['Mandatory 48-72h of complete rest.', 'Focus purely on mobility and stretching.', 'Monitor resting heart rate for recovery.'] };
+    if (isMod) return { level: 'Moderate Risk', tips: ['Deload your training volume by 50%.', 'Prioritize active recovery.', 'Increase protein and sleep intake.'] };
+    return { level: 'Low Risk', tips: ['Training load is well-tolerated.', 'Continue progressive overload.', 'Maintain current recovery protocols.'] };
+  }
+  if (quizType === 'burnout') {
+    if (isHigh) return { level: 'High Risk', tips: ['Take immediate time off work/training if possible.', 'Consider speaking to a therapist or counselor.', 'Strictly disconnect from stressors digitally.'] };
+    if (isMod) return { level: 'Moderate Risk', tips: ['Schedule dedicated blocks of unstructured downtime.', 'Practice daily mindfulness or deep breathing.', 'Review and reduce your current commitments.'] };
+    return { level: 'Low Risk', tips: ['Psychological and physical strain are balanced.', 'Keep practicing your current stress management.', 'Stay engaged and motivated.'] };
+  }
+  
+  return { level: 'Moderate Risk', tips: ['Take it easy today.', 'Prioritize rest.', 'Stay hydrated.'] };
+};
