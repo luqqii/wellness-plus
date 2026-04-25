@@ -47,8 +47,8 @@ export default function useBluetoothHR() {
       setError(null);
 
       const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
-        optionalServices: ['heart_rate', 'battery_service', 'device_information', 'generic_access']
+        filters: [{ services: ['heart_rate'] }],
+        optionalServices: ['battery_service', 'device_information', 'generic_access']
       });
 
       deviceRef.current = device;
