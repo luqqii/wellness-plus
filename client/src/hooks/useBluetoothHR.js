@@ -48,7 +48,7 @@ export default function useBluetoothHR() {
 
       const device = await navigator.bluetooth.requestDevice({
         acceptAllDevices: true,
-        optionalServices: ['heart_rate', 'battery_service', 'device_information']
+        optionalServices: ['heart_rate', 'battery_service', 'device_information', 'generic_access']
       });
 
       deviceRef.current = device;
@@ -61,6 +61,20 @@ export default function useBluetoothHR() {
       });
 
       const server = await device.gatt.connect();
+      
+      try {
+        const gapService = await server.getPrimaryService('generic_access');
+        const nameChar = await gapService.getCharacteristic('gap.device_name');
+        const nameValue = await nameChar.readValue();
+        const decoder = new TextDecoder('utf-8');
+        const realName = decoder.decode(nameValue);
+        if (realName) {
+          setDeviceName(realName);
+        }
+      } catch (e) {
+        console.warn("Could not read GAP device name", e);
+      }
+
       const service = await server.getPrimaryService('heart_rate');
       const characteristic = await service.getCharacteristic('heart_rate_measurement');
       characteristicRef.current = characteristic;
