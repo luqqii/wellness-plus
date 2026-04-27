@@ -43,26 +43,35 @@ export default function ManualLogModal({ isOpen, onClose }) {
       <motion.div 
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         onClick={onClose}
-        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} 
+        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }} 
       />
       
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 10 }} 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }} 
         animate={{ opacity: 1, scale: 1, y: 0 }} 
-        style={{ position: 'relative', background: 'var(--c-bg-primary)', borderRadius: 24, padding: 32, width: '100%', maxWidth: 400, boxShadow: '0 24px 48px rgba(0,0,0,0.2)' }}
+        style={{ 
+          position: 'relative', 
+          background: 'var(--c-bg-card)', 
+          borderRadius: 24, 
+          padding: 32, 
+          width: '100%', 
+          maxWidth: 420, 
+          boxShadow: '0 24px 48px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+          border: '1px solid var(--c-border)'
+        }}
       >
-        <button onClick={onClose} style={{ position: 'absolute', top: 20, right: 20, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-text-muted)' }}>
-          <X size={20} />
+        <button onClick={onClose} style={{ position: 'absolute', top: 24, right: 24, background: 'var(--c-bg-secondary)', border: 'none', cursor: 'pointer', color: 'var(--c-text-muted)', width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--c-text-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--c-text-muted)'}>
+          <X size={18} />
         </button>
 
-        <h2 style={{ fontSize: 22, fontWeight: 900, color: 'var(--c-text-primary)', marginBottom: 8, marginTop: 0 }}>Log Metrics Manually</h2>
-        <p style={{ fontSize: 14, color: 'var(--c-text-secondary)', marginBottom: 24, marginTop: 0 }}>
+        <h2 style={{ fontSize: 24, fontWeight: 900, color: 'var(--c-text-primary)', marginBottom: 8, marginTop: 0, letterSpacing: '-0.5px' }}>Log Metrics Manually</h2>
+        <p style={{ fontSize: 14, color: 'var(--c-text-secondary)', marginBottom: 28, marginTop: 0, lineHeight: 1.5 }}>
           Override your daily data if your wearable didn't sync correctly.
         </p>
 
         {/* Steps Input */}
         <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--c-teal)', marginBottom: 8 }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--c-teal)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             <Footprints size={14} /> Step Count
           </label>
           <input 
@@ -70,13 +79,22 @@ export default function ManualLogModal({ isOpen, onClose }) {
             value={steps} 
             onChange={e => setSteps(e.target.value)}
             placeholder="e.g. 10000"
-            style={{ width: '100%', padding: '14px 16px', borderRadius: 12, border: '1px solid var(--c-border)', fontSize: 16, fontWeight: 600, color: 'var(--c-text-primary)', background: 'var(--c-bg-secondary)', boxSizing: 'border-box' }}
+            style={{ 
+              width: '100%', padding: '16px 20px', borderRadius: 16, 
+              border: '2px solid transparent', 
+              fontSize: 18, fontWeight: 700, color: 'var(--c-text-primary)', 
+              background: 'var(--c-bg-hover)', boxSizing: 'border-box',
+              outline: 'none', transition: 'all 0.2s',
+              fontFamily: 'inherit'
+            }}
+            onFocus={e => e.currentTarget.style.borderColor = 'var(--c-teal)'}
+            onBlur={e => e.currentTarget.style.borderColor = 'transparent'}
           />
         </div>
 
         {/* Sleep Input */}
-        <div style={{ marginBottom: 24 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--c-purple)', marginBottom: 8 }}>
+        <div style={{ marginBottom: 32 }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--c-purple)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             <Moon size={14} /> Hours of Sleep
           </label>
           <input 
@@ -85,17 +103,35 @@ export default function ManualLogModal({ isOpen, onClose }) {
             value={sleep} 
             onChange={e => setSleep(e.target.value)}
             placeholder="e.g. 7.5"
-            style={{ width: '100%', padding: '14px 16px', borderRadius: 12, border: '1px solid var(--c-border)', fontSize: 16, fontWeight: 600, color: 'var(--c-text-primary)', background: 'var(--c-bg-secondary)', boxSizing: 'border-box' }}
+            style={{ 
+              width: '100%', padding: '16px 20px', borderRadius: 16, 
+              border: '2px solid transparent', 
+              fontSize: 18, fontWeight: 700, color: 'var(--c-text-primary)', 
+              background: 'var(--c-bg-hover)', boxSizing: 'border-box',
+              outline: 'none', transition: 'all 0.2s',
+              fontFamily: 'inherit'
+            }}
+            onFocus={e => e.currentTarget.style.borderColor = 'var(--c-purple)'}
+            onBlur={e => e.currentTarget.style.borderColor = 'transparent'}
           />
         </div>
 
         <button 
           onClick={handleSave}
           disabled={isSaving || success}
-          style={{ width: '100%', padding: '16px', borderRadius: 14, background: success ? '#22C55E' : 'var(--c-text-primary)', color: 'var(--c-bg-primary)', border: 'none', fontSize: 16, fontWeight: 800, cursor: (isSaving || success) ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'all 0.2s' }}
+          style={{ 
+            width: '100%', padding: '18px', borderRadius: 16, 
+            background: success ? '#22C55E' : 'linear-gradient(135deg, var(--c-teal), var(--c-blue))', 
+            color: '#fff', border: 'none', fontSize: 16, fontWeight: 800, 
+            cursor: (isSaving || success) ? 'default' : 'pointer', 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, 
+            transition: 'all 0.2s', boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
+          }}
+          onMouseEnter={e => { if(!isSaving && !success) e.currentTarget.style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={e => { if(!isSaving && !success) e.currentTarget.style.transform = 'none'; }}
         >
           {isSaving ? <Loader2 size={18} className="animate-spin" /> : success ? <Check size={18} /> : null}
-          {isSaving ? 'Saving...' : success ? 'Saved!' : 'Save Metrics'}
+          {isSaving ? 'Saving Data...' : success ? 'Successfully Saved!' : 'Save Metrics'}
         </button>
       </motion.div>
     </div>
