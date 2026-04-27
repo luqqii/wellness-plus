@@ -104,9 +104,22 @@ const useMetricsStore = create((set, get) => ({
       ]);
       
       if (todayRes.data) {
-        set(state => ({ 
-          todayMetrics: { ...state.todayMetrics, ...todayRes.data } 
-        }));
+        set(state => {
+          const fetched = todayRes.data;
+          const newToday = { ...state.todayMetrics, ...fetched };
+          
+          // Also sync liveSensors so they start from the DB value on refresh
+          const newLive = { ...state.liveSensors };
+          if (fetched.steps > (state.liveSensors.steps || 0)) newLive.steps = fetched.steps;
+          if (fetched.activity?.calories > (state.liveSensors.activeCalories || 0)) {
+            newLive.activeCalories = fetched.activity.calories;
+          }
+
+          return { 
+            todayMetrics: newToday,
+            liveSensors: newLive
+          };
+        });
       }
       
       if (trendRes.data) {
