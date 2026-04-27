@@ -98,8 +98,9 @@ const useMetricsStore = create((set, get) => ({
   fetchData: async (apiInstance) => {
     set({ isLoading: true, error: null });
     try {
+      const localDate = new Date().toISOString().split('T')[0];
       const [todayRes, trendRes] = await Promise.all([
-        apiInstance.get('/metrics'),
+        apiInstance.get(`/metrics?date=${localDate}`),
         apiInstance.get('/metrics/trend')
       ]);
       
@@ -144,7 +145,8 @@ const useMetricsStore = create((set, get) => ({
   // Log metrics manually and sync to backend
   saveManualMetrics: async (apiInstance, updates) => {
     try {
-      const payload = {};
+      const localDate = new Date().toISOString().split('T')[0];
+      const payload = { date: localDate };
       if (updates.steps !== undefined) payload.steps = Number(updates.steps);
       if (updates.sleepHours !== undefined) payload['sleep.hours'] = Number(updates.sleepHours);
       if (updates.water !== undefined) payload['nutrition.water'] = Number(updates.water);
