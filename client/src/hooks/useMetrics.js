@@ -1,39 +1,25 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import api from '../services/api';
+import useMetricsStore from '../store/metricsStore';
 
 /**
- * useMetrics — Hook to fetch and manage user daily metrics
+ * useMetrics — Hook to fetch and manage user daily metrics via global store
  */
 export function useMetrics() {
-  const [today, setToday] = useState(null);
-  const [weekly, setWeekly] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      // 1. Fetch today's summary
-      const resToday = await api.get('/metrics');
-      
-      // 2. Fetch weekly trend (7 days)
-      const resWeekly = await api.get('/metrics/trend?days=7');
-
-      setToday(resToday?.data || resToday || null);
-      setWeekly(Array.isArray(resWeekly?.data) ? resWeekly.data : (Array.isArray(resWeekly) ? resWeekly : []));
-    } catch (err) {
-      console.error('Failed to fetch metrics', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { 
+    todayMetrics: today, 
+    weeklyTrend: weekly, 
+    isLoading: loading, 
+    error, 
+    fetchData 
+  } = useMetricsStore();
 
   useEffect(() => {
-    fetchData();
+    // Initial fetch
+    fetchData(api);
     
-    // Listen for manual log updates
-    const handleUpdate = () => fetchData();
+    // Listen for manual log updates from any tab
+    const handleUpdate = () => fetchData(api);
     window.addEventListener('metrics-updated', handleUpdate);
     return () => window.removeEventListener('metrics-updated', handleUpdate);
   }, [fetchData]);
@@ -43,8 +29,10 @@ export function useMetrics() {
     weekly,
     loading,
     error,
-    refresh: fetchData
+    refresh: () => fetchData(api)
   };
 }
+
+export default useMetrics;
 
 export default useMetrics;

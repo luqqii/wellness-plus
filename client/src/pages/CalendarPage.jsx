@@ -155,8 +155,8 @@ export default function CalendarPage() {
         {[
           { label: 'Days Tracked', value: totalDays, icon: Activity, color: 'var(--c-blue)' },
           { label: 'Current Streak', value: `${streak} days`, icon: Heart, color: 'var(--c-red)' },
-          { label: 'Live Steps', value: (liveSensors.steps || 0).toLocaleString(), icon: Footprints, color: 'var(--c-teal)' },
-          { label: 'Sleep (Tonight)', value: todayMetrics?.sleep?.hours ? `${todayMetrics.sleep.hours}h` : '—', icon: Moon, color: 'var(--c-purple)' },
+          { label: 'Live Steps', value: Math.max(Number(liveSensors.steps || 0), Number(todayMetrics?.steps || 0)).toLocaleString(), icon: Footprints, color: 'var(--c-teal)' },
+          { label: 'Sleep (Tonight)', value: `${Number(todayMetrics?.sleep?.hours || liveSensors?.sleep?.hours || 0)}h`, icon: Moon, color: 'var(--c-purple)' },
           { label: 'Weather', value: liveSensors.weather ? `${liveSensors.weather.icon} ${liveSensors.weather.temp}°C` : '—', icon: Thermometer, color: 'var(--c-orange)' },
         ].map((s, i) => (
           <motion.div key={s.label} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
