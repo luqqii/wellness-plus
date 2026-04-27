@@ -29,6 +29,9 @@ export default function NutritionPage() {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [goalForm, setGoalForm] = useState({ target: 2200, mode: 'deficit' });
 
+  const [showExerciseModal, setShowExerciseModal] = useState(false);
+  const [exerciseForm, setExerciseForm] = useState({ calories: 0, duration: 0 });
+
   const todayMetrics = useMetricsStore(s => s.todayMetrics);
   const { saveManualMetrics } = useMetricsStore();
 
@@ -70,6 +73,18 @@ export default function NutritionPage() {
     // If clicking the current amount, decrement by 1 (toggle off)
     const newAmount = (todayMetrics?.nutrition?.water === amount) ? amount - 1 : amount;
     await saveManualMetrics(api, { water: newAmount });
+  };
+
+  const handleSaveExercise = async () => {
+    try {
+      await saveManualMetrics(api, { 
+        activeCalories: exerciseForm.calories, 
+        exerciseDuration: exerciseForm.duration 
+      });
+      setShowExerciseModal(false);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   // Derive Data
@@ -236,7 +251,7 @@ export default function NutritionPage() {
             { val: '−', label: '', color: 'var(--c-text-muted)', isSym: true },
             { val: totalCal.toLocaleString(), label: 'Food', color: 'var(--c-orange)' },
             { val: '+', label: '', color: 'var(--c-text-muted)', isSym: true },
-            { val: liveExerciseCal.toString(), label: 'Exercise', color: 'var(--c-teal)' },
+            { val: liveExerciseCal.toString(), label: 'Exercise', color: 'var(--c-teal)', isClickable: true, onClick: () => { setExerciseForm({ calories: liveExerciseCal, duration: todayMetrics?.activity?.duration || 0 }); setShowExerciseModal(true); } },
             { val: '=', label: '', color: 'var(--c-text-muted)', isSym: true },
             { 
               val: Math.abs(targetCalories - totalCal + liveExerciseCal).toLocaleString(), 
@@ -246,9 +261,10 @@ export default function NutritionPage() {
                 : ((targetCalories - totalCal + liveExerciseCal) <= 0 ? 'var(--c-green)' : 'var(--c-blue)') 
             },
           ].map((item, i) => (
-            <div key={i} style={{ textAlign: 'center' }}>
+            <div key={i} style={{ textAlign: 'center', cursor: item.isClickable ? 'pointer' : 'default' }} onClick={item.onClick}>
               <div className={item.isSym ? 'macro-equation-sym' : 'macro-equation-val'} style={{ fontSize: item.isSym ? 20 : 26, fontWeight: 800, color: item.color, letterSpacing: '-1px', lineHeight: 1 }}>
                 {item.val}
+                {item.isClickable && <Settings2 size={12} style={{ display: 'inline', marginLeft: 4, opacity: 0.5 }} />}
               </div>
               {item.label && <div style={{ fontSize: 10, color: 'var(--c-text-muted)', marginTop: 3, fontWeight: 500 }}>{item.label}</div>}
             </div>
@@ -525,6 +541,34 @@ export default function NutritionPage() {
               </div>
 
               <button onClick={handleSaveGoal} className="btn btn-primary" style={{ width: '100%', padding: '14px', fontSize: 15 }}>Save Goals</button>
+            </motion.div>
+          </div>
+        )}
+        {showExerciseModal && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} style={{ background: 'var(--c-bg-card)', borderRadius: 20, padding: 24, width: '100%', maxWidth: 400, border: '1px solid var(--c-border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--c-text-primary)' }}>Log Exercise</div>
+                <button onClick={() => setShowExerciseModal(false)} className="btn btn-icon"><X size={18} /></button>
+              </div>
+              
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--c-text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>Active Calories Burned</label>
+                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--c-bg)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '12px 16px' }}>
+                  <input type="number" value={exerciseForm.calories} onChange={e => setExerciseForm(p => ({ ...p, calories: Number(e.target.value) }))} style={{ flex: 1, background: 'transparent', border: 'none', color: 'var(--c-text-primary)', fontSize: 24, fontWeight: 800, outline: 'none' }} />
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)' }}>kcal</span>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--c-text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>Duration</label>
+                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--c-bg)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '12px 16px' }}>
+                  <input type="number" value={exerciseForm.duration} onChange={e => setExerciseForm(p => ({ ...p, duration: Number(e.target.value) }))} style={{ flex: 1, background: 'transparent', border: 'none', color: 'var(--c-text-primary)', fontSize: 24, fontWeight: 800, outline: 'none' }} />
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)' }}>min</span>
+                </div>
+              </div>
+
+              <button onClick={handleSaveExercise} className="btn btn-primary" style={{ width: '100%', padding: '14px', fontSize: 15 }}>Save Exercise</button>
             </motion.div>
           </div>
         )}

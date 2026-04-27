@@ -135,6 +135,8 @@ const useMetricsStore = create((set, get) => ({
       if (updates.steps !== undefined) payload.steps = Number(updates.steps);
       if (updates.sleepHours !== undefined) payload['sleep.hours'] = Number(updates.sleepHours);
       if (updates.water !== undefined) payload['nutrition.water'] = Number(updates.water);
+      if (updates.activeCalories !== undefined) payload['activity.calories'] = Number(updates.activeCalories);
+      if (updates.exerciseDuration !== undefined) payload['activity.duration'] = Number(updates.exerciseDuration);
 
       if (Object.keys(payload).length > 0) {
         await apiInstance.post('/metrics', payload);
@@ -170,6 +172,24 @@ const useMetricsStore = create((set, get) => ({
           todayMetrics: {
             ...s.todayMetrics,
             nutrition: { ...(s.todayMetrics?.nutrition || {}), water: Number(updates.water) }
+          }
+        }));
+      }
+
+      if (updates.activeCalories !== undefined || updates.exerciseDuration !== undefined) {
+        set(s => ({
+          todayMetrics: {
+            ...s.todayMetrics,
+            activity: { 
+              ...(s.todayMetrics?.activity || {}), 
+              ...(updates.activeCalories !== undefined && { calories: Number(updates.activeCalories) }),
+              ...(updates.exerciseDuration !== undefined && { duration: Number(updates.exerciseDuration) })
+            }
+          },
+          // Also sync to liveSensors so it reflects immediately everywhere
+          liveSensors: {
+            ...s.liveSensors,
+            ...(updates.activeCalories !== undefined && { activeCalories: Number(updates.activeCalories) })
           }
         }));
       }

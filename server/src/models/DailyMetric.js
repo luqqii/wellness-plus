@@ -37,6 +37,10 @@ const dailyMetricSchema = new mongoose.Schema(
       fat: { type: Number, default: 0 },
       water: { type: Number, default: 0 }, // in glasses
     },
+    activity: {
+      duration: { type: Number, default: 0 }, // in minutes
+      calories: { type: Number, default: 0 }, // active calories
+    },
     wellnessScore: {
       type: Number,
       min: 0,
