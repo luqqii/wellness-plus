@@ -6,64 +6,40 @@ import User from '../models/User.js';
 const router = express.Router();
 
 /**
- * @desc    Simulate Google Fit OAuth handshake
- * @route   POST /api/v1/integrations/google-fit/auth
- * @access  Private
- */
-router.post('/google-fit/auth', protect, async (req, res, next) => {
-  try {
-    res.json({
-      success: true,
-      message: 'Google Fit connected successfully',
-      status: 'CONNECTED'
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-/**
  * @desc    Sync all connected integrations
- * IMPORTANT: This route MUST be defined BEFORE /:provider/toggle and /:provider/sync
- * to prevent Express matching "sync-all" as a provider param.
+ * NOTE: MUST be before /:provider routes to avoid Express matching "sync-all" as a provider param.
  * @route   POST /api/v1/integrations/sync-all
  * @access  Private
  */
 router.post('/sync-all', protect, async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id);
-    if (!user.integrations || user.integrations.length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'No integrations connected. Please connect at least one source first.' 
+    const user = await User.findById(req.user._id).select('integrations');
+    if (!user?.integrations?.length) {
+      return res.status(400).json({
+        success: false,
+        message: 'No integrations connected. Please connect at least one source first.'
       });
     }
 
-    // Sync all connected providers in parallel
+    // Sync all providers in parallel
     const syncResults = await Promise.allSettled(
       user.integrations.map(i => syncProviderMetrics(req.user._id, i.provider))
     );
 
-    // Update lastSync for each successfully synced integration
-    user.integrations.forEach((integration, idx) => {
-      if (syncResults[idx].status === 'fulfilled') {
-        integration.lastSync = new Date();
-      }
-    });
+    // Atomically update all lastSync timestamps
+    const now = new Date();
+    await User.updateOne(
+      { _id: req.user._id },
+      { $set: { 'integrations.$[].lastSync': now } }
+    );
 
-    await user.save();
-
+    const updatedUser = await User.findById(req.user._id).select('integrations');
     const successCount = syncResults.filter(r => r.status === 'fulfilled').length;
 
     res.json({
       success: true,
       message: `Synced ${successCount} of ${user.integrations.length} source(s) successfully`,
-      integrations: user.integrations,
-      syncResults: syncResults.map((r, i) => ({
-        provider: user.integrations[i].provider,
-        status: r.status,
-        data: r.status === 'fulfilled' ? r.value : null,
-      }))
+      integrations: updatedUser.integrations,
     });
   } catch (error) {
     next(error);
@@ -71,35 +47,33 @@ router.post('/sync-all', protect, async (req, res, next) => {
 });
 
 /**
- * @desc    Toggle an integration on/off
+ * @desc    Toggle an integration on/off (connect or disconnect)
  * @route   POST /api/v1/integrations/:provider/toggle
  * @access  Private
  */
 router.post('/:provider/toggle', protect, async (req, res, next) => {
   try {
     const { provider } = req.params;
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).select('integrations');
 
-    if (!user.integrations) user.integrations = [];
+    const existingIntegration = user.integrations?.find(i => i.provider === provider);
 
-    const existingIndex = user.integrations.findIndex(i => i.provider === provider);
-
-    if (existingIndex >= 0) {
-      // Disconnect
-      user.integrations.splice(existingIndex, 1);
+    let updatedUser;
+    if (existingIntegration) {
+      // Disconnect — use $pull to avoid triggering pre-save hooks on password
+      updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { $pull: { integrations: { provider } } },
+        { new: true, select: 'integrations' }
+      );
     } else {
-      // Connect — immediately do an initial sync to populate metrics
-      user.integrations.push({
-        provider,
-        connectedAt: new Date(),
-        lastSync: new Date()
-      });
-    }
-
-    await user.save();
-
-    // If we just connected, perform an initial sync in the background
-    if (existingIndex < 0) {
+      // Connect — use $push to avoid triggering pre-save hooks on password
+      updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { $push: { integrations: { provider, connectedAt: new Date(), lastSync: new Date() } } },
+        { new: true, select: 'integrations' }
+      );
+      // Background initial sync after connecting
       syncProviderMetrics(req.user._id, provider).catch(err =>
         console.error(`[Integrations] Initial sync failed for ${provider}:`, err)
       );
@@ -107,8 +81,8 @@ router.post('/:provider/toggle', protect, async (req, res, next) => {
 
     res.json({
       success: true,
-      integrations: user.integrations,
-      action: existingIndex >= 0 ? 'disconnected' : 'connected',
+      integrations: updatedUser.integrations,
+      action: existingIntegration ? 'disconnected' : 'connected',
       provider,
     });
   } catch (error) {
@@ -124,46 +98,31 @@ router.post('/:provider/toggle', protect, async (req, res, next) => {
 router.post('/:provider/sync', protect, async (req, res, next) => {
   try {
     const { provider } = req.params;
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).select('integrations');
 
     const integration = user.integrations?.find(i => i.provider === provider);
     if (!integration) {
-      return res.status(400).json({ 
-        success: false, 
-        message: `${provider} is not connected. Toggle it on first.` 
+      return res.status(400).json({
+        success: false,
+        message: `${provider} is not connected. Toggle it on first.`
       });
     }
 
     // Perform sync
     const syncedData = await syncProviderMetrics(req.user._id, provider);
 
-    // Update lastSync timestamp
-    integration.lastSync = new Date();
-    await user.save();
+    // Atomically update lastSync
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: req.user._id, 'integrations.provider': provider },
+      { $set: { 'integrations.$.lastSync': new Date() } },
+      { new: true, select: 'integrations' }
+    );
 
     res.json({
       success: true,
       message: `${provider} synced successfully`,
       data: syncedData,
-      integrations: user.integrations,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-/**
- * @desc    Trigger explicit sync from Google Fit (legacy)
- * @route   POST /api/v1/integrations/google-fit/sync
- * @access  Private
- */
-router.post('/google-fit/sync', protect, async (req, res, next) => {
-  try {
-    const updatedMetrics = await syncGoogleFitMetrics(req.user._id);
-    res.json({
-      success: true,
-      message: 'Sync completed',
-      metrics: updatedMetrics
+      integrations: updatedUser.integrations,
     });
   } catch (error) {
     next(error);

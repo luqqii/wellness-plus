@@ -69,12 +69,14 @@ const userSchema = new mongoose.Schema(
 
 // Encrypt password using bcrypt before save
 userSchema.pre('save', async function (next) {
+  // Only re-hash if password was actually changed
   if (!this.isModified('password')) {
-    next();
+    return next(); // CRITICAL: return here to prevent falling through to bcrypt
   }
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
 // Method to verify password
