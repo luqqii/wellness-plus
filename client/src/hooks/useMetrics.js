@@ -34,5 +34,3 @@ export function useMetrics() {
 }
 
 export default useMetrics;
-
-export default useMetrics;
