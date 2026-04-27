@@ -80,6 +80,7 @@ export default function CalendarPage() {
 
   const { events, addEvent, deleteEvent, getDatesWithEvents, getTotalDaysTracked, getStreakDays } = useCalendarStore();
   const liveSensors = useMetricsStore(s => s.liveSensors);
+  const todayMetrics = useMetricsStore(s => s.todayMetrics);
 
   const datesWithEvents = getDatesWithEvents();
   const totalDays = getTotalDaysTracked();
@@ -151,7 +152,7 @@ export default function CalendarPage() {
           { label: 'Days Tracked', value: totalDays, icon: Activity, color: 'var(--c-blue)' },
           { label: 'Current Streak', value: `${streak} days`, icon: Heart, color: 'var(--c-red)' },
           { label: 'Live Steps', value: (liveSensors.steps || 0).toLocaleString(), icon: Footprints, color: 'var(--c-teal)' },
-          { label: 'Sleep (Tonight)', value: liveSensors.sleep ? `${liveSensors.sleep.hours}h` : '—', icon: Moon, color: 'var(--c-purple)' },
+          { label: 'Sleep (Tonight)', value: todayMetrics?.sleep?.hours ? `${todayMetrics.sleep.hours}h` : '—', icon: Moon, color: 'var(--c-purple)' },
           { label: 'Weather', value: liveSensors.weather ? `${liveSensors.weather.icon} ${liveSensors.weather.temp}°C` : '—', icon: Thermometer, color: 'var(--c-orange)' },
         ].map((s, i) => (
           <motion.div key={s.label} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
