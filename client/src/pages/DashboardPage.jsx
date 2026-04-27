@@ -90,13 +90,26 @@ export default function DashboardPage() {
 
   // Map weekly trend for chart
   const resolvedWeekly = (weekly && weekly.length > 0) ? weekly : SAMPLE_METRICS.weeklyScores;
-  const weeklyData = resolvedWeekly.map((w, index) => {
-    // If it's the last day (Today), use live sensors for steps
-    const isToday = index === resolvedWeekly.length - 1;
+
+  // Generate last 7 days to ensure charts always look full and properly proportioned
+  const weeklyData = Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const dayStr = d.toLocaleDateString([], { weekday: 'short' });
+    const fullDate = d.toISOString().split('T')[0];
+    
+    // Find matching data in the resolved weekly array
+    const existing = resolvedWeekly?.find(w => w.day === dayStr || (w.date && w.date.startsWith(fullDate)));
+    
+    // If it's the last day (Today), merge live sensors
+    const isToday = i === 6;
+    const baseSteps = existing?.steps || 0;
+    const baseScore = existing?.score || existing?.wellnessScore || 50;
+
     return {
-      day: w.day || (w.date ? new Date(w.date).toLocaleDateString([], { weekday: 'short' }) : '---'),
-      steps: isToday ? Math.max(w.steps || 0, steps) : (w.steps || 0),
-      score: w.wellnessScore || w.score || 50
+      day: dayStr,
+      steps: isToday ? Math.max(baseSteps, steps) : baseSteps,
+      score: baseScore
     };
   });
 
@@ -435,7 +448,7 @@ export default function DashboardPage() {
             </div>
             <span className="badge badge-purple">Trending Up</span>
           </div>
-          <div style={{ height: 180 }}>
+          <div style={{ height: 180, display: 'flex', flexDirection: 'column' }}>
             {/* Real Weather Forecast Strip */}
             {liveSensors.weather?.forecast && (
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, padding: '8px 0', borderBottom: '1px solid var(--c-border)' }}>
@@ -451,7 +464,8 @@ export default function DashboardPage() {
               </div>
             )}
 
-            <ResponsiveContainer width="100%" height={liveSensors.weather?.forecast ? 'calc(100% - 60px)' : '100%'}>
+            <div style={{ flex: 1, minHeight: 0 }}>
+              <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={weeklyData}>
                 <defs>
                   <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
@@ -466,6 +480,7 @@ export default function DashboardPage() {
                 <Area type="monotone" dataKey="score" name="Score" stroke="var(--c-purple)" strokeWidth={2.5} fill="url(#scoreGrad)" dot={{ fill: 'var(--c-purple)', r: 4, strokeWidth: 0 }} activeDot={{ r: 6 }} />
               </AreaChart>
             </ResponsiveContainer>
+            </div>
           </div>
         </motion.div>
 
