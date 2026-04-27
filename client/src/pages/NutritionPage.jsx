@@ -27,7 +27,14 @@ export default function NutritionPage() {
   const [loadingSuggestions, setLoadingSuggestions] = useState(true);
 
   const [showGoalModal, setShowGoalModal] = useState(false);
-  const [goalForm, setGoalForm] = useState({ target: 2200, mode: 'deficit' });
+
+  // Load goal from localStorage first (works offline/before API deploys), then override with API value
+  const [goalForm, setGoalForm] = useState(() => {
+    try {
+      const saved = localStorage.getItem('wplus_nutrition_goal');
+      return saved ? JSON.parse(saved) : { target: 2200, mode: 'deficit' };
+    } catch { return { target: 2200, mode: 'deficit' }; }
+  });
 
   const [showExerciseModal, setShowExerciseModal] = useState(false);
   const [exerciseForm, setExerciseForm] = useState({ calories: 0, duration: 0 });
@@ -40,25 +47,26 @@ export default function NutritionPage() {
       try {
         const res = await api.get('/users/profile');
         const pref = res.data?.data?.preferences?.nutrition;
-        if (pref) {
-          setGoalForm({ target: pref.calorieGoal || 2200, mode: pref.goalMode || 'deficit' });
+        if (pref?.calorieGoal) {
+          const serverGoal = { target: pref.calorieGoal, mode: pref.goalMode || 'deficit' };
+          setGoalForm(serverGoal);
+          localStorage.setItem('wplus_nutrition_goal', JSON.stringify(serverGoal));
         }
-      } catch (e) {}
+      } catch (e) {} // silently fall back to localStorage
     }
     loadUser();
   }, []);
 
   const handleSaveGoal = async () => {
-    try {
-      await api.put('/users/nutrition-goal', {
-        calorieGoal: goalForm.target,
-        goalMode: goalForm.mode,
-      });
-      setShowGoalModal(false);
-    } catch (e) {
-      console.error(e);
-      alert('Failed to save goal: ' + e.message);
-    }
+    // 1. Save to localStorage IMMEDIATELY so UI updates now
+    localStorage.setItem('wplus_nutrition_goal', JSON.stringify(goalForm));
+    setShowGoalModal(false); // close right away
+
+    // 2. Sync to backend in the background (non-blocking)
+    api.put('/users/nutrition-goal', {
+      calorieGoal: goalForm.target,
+      goalMode: goalForm.mode,
+    }).catch(e => console.warn('Goal sync to server failed (will retry on next save):', e.message));
   };
 
   const handleDeleteFood = async (mealKey, itemId) => {
