@@ -520,9 +520,9 @@ export default function NutritionPage() {
               
               <div style={{ marginBottom: 16 }}>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--c-text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>Daily Calorie Target</label>
-                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--c-bg)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '12px 16px' }}>
-                  <input type="number" value={goalForm.target} onChange={e => setGoalForm(p => ({ ...p, target: Number(e.target.value) }))} style={{ flex: 1, background: 'transparent', border: 'none', color: 'var(--c-text-primary)', fontSize: 24, fontWeight: 800, outline: 'none' }} />
-                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)' }}>kcal</span>
+                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--c-bg)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '12px 16px', width: '100%' }}>
+                  <input type="number" value={goalForm.target} onChange={e => setGoalForm(p => ({ ...p, target: Number(e.target.value) }))} style={{ flex: 1, minWidth: 0, width: '100%', background: 'transparent', border: 'none', color: 'var(--c-text-primary)', fontSize: 24, fontWeight: 800, outline: 'none', padding: 0 }} />
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)', marginLeft: 8 }}>kcal</span>
                 </div>
               </div>
 
@@ -554,17 +554,17 @@ export default function NutritionPage() {
               
               <div style={{ marginBottom: 16 }}>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--c-text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>Active Calories Burned</label>
-                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--c-bg)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '12px 16px' }}>
-                  <input type="number" value={exerciseForm.calories} onChange={e => setExerciseForm(p => ({ ...p, calories: Number(e.target.value) }))} style={{ flex: 1, background: 'transparent', border: 'none', color: 'var(--c-text-primary)', fontSize: 24, fontWeight: 800, outline: 'none' }} />
-                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)' }}>kcal</span>
+                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--c-bg)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '12px 16px', width: '100%' }}>
+                  <input type="number" value={exerciseForm.calories} onChange={e => setExerciseForm(p => ({ ...p, calories: Number(e.target.value) }))} style={{ flex: 1, minWidth: 0, width: '100%', background: 'transparent', border: 'none', color: 'var(--c-text-primary)', fontSize: 24, fontWeight: 800, outline: 'none', padding: 0 }} />
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)', marginLeft: 8 }}>kcal</span>
                 </div>
               </div>
 
               <div style={{ marginBottom: 24 }}>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--c-text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>Duration</label>
-                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--c-bg)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '12px 16px' }}>
-                  <input type="number" value={exerciseForm.duration} onChange={e => setExerciseForm(p => ({ ...p, duration: Number(e.target.value) }))} style={{ flex: 1, background: 'transparent', border: 'none', color: 'var(--c-text-primary)', fontSize: 24, fontWeight: 800, outline: 'none' }} />
-                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)' }}>min</span>
+                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--c-bg)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '12px 16px', width: '100%' }}>
+                  <input type="number" value={exerciseForm.duration} onChange={e => setExerciseForm(p => ({ ...p, duration: Number(e.target.value) }))} style={{ flex: 1, minWidth: 0, width: '100%', background: 'transparent', border: 'none', color: 'var(--c-text-primary)', fontSize: 24, fontWeight: 800, outline: 'none', padding: 0 }} />
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)', marginLeft: 8 }}>min</span>
                 </div>
               </div>
 
