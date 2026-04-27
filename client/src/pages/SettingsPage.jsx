@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Smartphone, Shield, LogOut, Download, Trash2, X, Apple, Watch, AlertTriangle, Loader2, CheckCircle2, Link2 } from 'lucide-react';
+import { Bell, Smartphone, Shield, LogOut, Download, Trash2, X, AlertTriangle, Loader2, CheckCircle2 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import userService from '../services/userService';
 import api from '../services/api';
@@ -88,21 +88,6 @@ export default function SettingsPage() {
     }
   };
 
-  const [integrations, setIntegrations] = useState([
-    { id: 'apple_health', name: 'Apple Health', icon: <Apple size={16} />, color: '#fff', status: 'Connected' },
-    { id: 'fitbit',       name: 'Fitbit',       icon: <Watch size={16} />, color: 'var(--c-blue)', status: 'Connect' },
-    { id: 'google_fit',   name: 'Google Fit',   icon: '💚', status: 'Connect' },
-    { id: 'garmin',       name: 'Garmin',       icon: '⌚', status: 'Connect' },
-  ]);
-
-  const handleConnectIntegration = async (id) => {
-    // Mock connect flow — show success feedback for all apps in MVP
-    setIntegrations(prev => prev.map(i => i.id === id ? { ...i, status: 'Connecting...', connecting: true } : i));
-    await new Promise(r => setTimeout(r, 1200)); // Simulate network
-    setIntegrations(prev => prev.map(i => i.id === id ? { ...i, status: 'Connected', connecting: false } : i));
-    showToast(`${integrations.find(i => i.id === id)?.name} connected!`);
-  };
-
   const S = ({ title, children }) => (
     <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="glass-card" style={{ marginBottom: 16 }}>
       <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)', marginBottom: 16 }}>{title}</div>
@@ -156,32 +141,6 @@ export default function SettingsPage() {
         ))}
       </S>
 
-      <S title="📱 Connected Apps">
-        {integrations.map(app => (
-          <Row key={app.name}
-            label={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><span>{typeof app.icon === 'string' ? app.icon : app.icon}</span>{app.name}</div>}
-            right={
-              <button
-                onClick={() => (app.status === 'Connect') ? handleConnectIntegration(app.id) : null}
-                disabled={app.connecting}
-                style={{
-                  padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
-                  cursor: app.status === 'Connected' ? 'default' : 'pointer',
-                  background: app.status === 'Connected' ? 'var(--c-teal-dim)' : app.connecting ? 'rgba(255,255,255,0.05)' : 'var(--c-blue-dim)',
-                  border: `1px solid ${app.status === 'Connected' ? 'rgba(0,212,170,0.2)' : 'rgba(79,141,255,0.2)'}`,
-                  color: app.status === 'Connected' ? 'var(--c-teal)' : app.connecting ? 'var(--c-text-muted)' : 'var(--c-blue)',
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  transition: 'all 200ms ease',
-                }}
-              >
-                {app.connecting && <Loader2 size={11} style={{ animation: 'spin 0.8s linear infinite' }} />}
-                {app.status === 'Connected' && <CheckCircle2 size={11} />}
-                {app.status}
-              </button>
-            }
-          />
-        ))}
-      </S>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
 
       <S title="🔒 Privacy & Data">
