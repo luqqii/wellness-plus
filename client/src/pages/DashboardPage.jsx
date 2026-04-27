@@ -118,10 +118,7 @@ export default function DashboardPage() {
       {/* Weather Widget */}
       <WeatherWidget weather={liveSensors?.weather} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <PredictiveWellnessInsights metrics={currentMetric} />
-        <ContextAwareSuggestions metrics={currentMetric} />
-      </div>
+      <ContextAwareSuggestions metrics={currentMetric} />
       
       {/* Wellness+ DAILY LESSONS */}
       <motion.div {...fadeUp(0)} style={{ background: '#FFFFFF', borderRadius: 24, padding: 24, boxShadow: '0 8px 24px rgba(0,0,0,0.04)', border: '1px solid #EAE6DF' }}>
