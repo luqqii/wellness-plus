@@ -65,6 +65,8 @@ export default function FoodSearchModal({ isOpen, onClose, mealType, date, onFoo
       });
       setAddedId(idx);
       onFoodAdded();
+      // Notify the rest of the app to re-fetch metrics (calories changed)
+      window.dispatchEvent(new Event('metrics-updated'));
       setTimeout(() => onClose(), 700);
     } catch (e) { alert('Failed to add food. Please try again.'); }
   };

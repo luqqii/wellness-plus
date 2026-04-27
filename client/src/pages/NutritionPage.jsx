@@ -74,6 +74,8 @@ export default function NutritionPage() {
     try {
       await api.delete(`/nutrition/log/${date}/${mealKey}/${itemId}`);
       fetchLog();
+      // Notify the rest of the app to re-fetch metrics (calories changed)
+      window.dispatchEvent(new Event('metrics-updated'));
     } catch (e) {
       console.error(e);
     }

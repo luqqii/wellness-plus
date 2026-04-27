@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import useCalendarStore from '../store/calendarStore';
 import useMetricsStore from '../store/metricsStore';
+import useMetrics from '../hooks/useMetrics';
 import { manualLogSleep } from '../hooks/useSleepTracker';
 
 const EVENT_COLORS = {
@@ -79,6 +80,9 @@ export default function CalendarPage() {
   const [sleepForm, setSleepForm] = useState({ bedtime: '', wakeTime: '', quality: 7 });
 
   const { events, addEvent, deleteEvent, getDatesWithEvents, getTotalDaysTracked, getStreakDays } = useCalendarStore();
+  
+  // Use useMetrics hook to keep today's stats in sync
+  const { today } = useMetrics();
   const liveSensors = useMetricsStore(s => s.liveSensors);
   const todayMetrics = useMetricsStore(s => s.todayMetrics);
 
