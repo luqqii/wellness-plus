@@ -141,7 +141,7 @@ export default function CrossSourceDataSyncPage() {
       try {
         const { default: api } = await import('../services/api');
         const res = await api.get('/users/profile');
-        const userIntegrations = res.data?.integrations || [];
+        const userIntegrations = res?.integrations || [];
         if (userIntegrations.length > 0) {
           setSources(prev => prev.map(s => {
             const match = userIntegrations.find(i => i.provider === s.id);
@@ -168,7 +168,7 @@ export default function CrossSourceDataSyncPage() {
     try {
       const { default: api } = await import('../services/api');
       const res = await api.post(`/integrations/${oauthModal.id}/toggle`);
-      const integrations = res.data.integrations || [];
+      const integrations = res?.integrations || [];
       setSources(prev => prev.map(s => {
         const match = integrations.find(i => i.provider === s.id);
         return { ...s, connected: !!match, lastSync: match ? new Date(match.lastSync).toLocaleString() : null };
@@ -203,7 +203,7 @@ export default function CrossSourceDataSyncPage() {
       try {
         const { default: api } = await import('../services/api');
         const res = await api.post(`/integrations/${btModal.id}/toggle`);
-        const integrations = res.data.integrations || [];
+        const integrations = res?.integrations || [];
         setSources(prev => prev.map(s => {
           const match = integrations.find(i => i.provider === s.id);
           return { ...s, connected: !!match, lastSync: match ? new Date(match.lastSync).toLocaleString() : null };
@@ -231,7 +231,7 @@ export default function CrossSourceDataSyncPage() {
       try {
         const { default: api } = await import('../services/api');
         const res = await api.post(`/integrations/${source.id}/toggle`);
-        const integrations = res.data.integrations || [];
+        const integrations = res?.integrations || [];
         setSources(prev => prev.map(s => {
           const match = integrations.find(i => i.provider === s.id);
           return { ...s, connected: !!match, lastSync: match ? new Date(match.lastSync).toLocaleString() : null };
@@ -262,7 +262,7 @@ export default function CrossSourceDataSyncPage() {
     try {
       const { default: api } = await import('../services/api');
       const res = await api.post(`/integrations/${source.id}/sync`);
-      const integrations = res.data.integrations || [];
+      const integrations = res?.integrations || [];
       setSources(prev => prev.map(s => {
         const match = integrations.find(i => i.provider === s.id);
         return match ? { ...s, lastSync: 'Just now' } : s;
@@ -284,12 +284,12 @@ export default function CrossSourceDataSyncPage() {
     try {
       const { default: api } = await import('../services/api');
       const res = await api.post('/integrations/sync-all');
-      const integrations = res.data.integrations || [];
+      const integrations = res?.integrations || [];
       setSources(prev => prev.map(s => {
         const match = integrations.find(i => i.provider === s.id);
         return match ? { ...s, lastSync: 'Just now' } : s;
       }));
-      addToast(res.data.message || 'All sources synced!', 'success');
+      addToast(res?.message || 'All sources synced!', 'success');
       await refreshMetrics();
     } catch (e) {
       addToast(e.message || 'Sync All failed. Check your connections.', 'error');
