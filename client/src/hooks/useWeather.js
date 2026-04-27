@@ -75,7 +75,8 @@ async function fetchWeatherData(lat, lon) {
     `?latitude=${lat}&longitude=${lon}` +
     `&current=temperature_2m,relative_humidity_2m,apparent_temperature,` +
     `weather_code,wind_speed_10m,precipitation,uv_index` +
-    `&timezone=auto&forecast_days=1`;
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
+    `&timezone=auto&forecast_days=7`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error('Weather API error');
@@ -97,6 +98,18 @@ export default function useWeather() {
       const c   = data.current;
       const wmo = WMO_CODES[c.weather_code] ?? { label: 'Unknown', icon: '🌡️', type: 'clear' };
 
+      // Process 7-day forecast
+      const forecast = data.daily.time.map((time, i) => {
+        const dayWmo = WMO_CODES[data.daily.weather_code[i]] ?? { label: 'Unknown', icon: '🌡️' };
+        return {
+          date: time,
+          tempMax: Math.round(data.daily.temperature_2m_max[i]),
+          tempMin: Math.round(data.daily.temperature_2m_min[i]),
+          condition: dayWmo.label,
+          icon: dayWmo.icon,
+        };
+      });
+
       updateLiveSensors({
         weather: {
           temp:        Math.round(c.temperature_2m),
@@ -109,6 +122,7 @@ export default function useWeather() {
           icon:        wmo.icon,
           type:        wmo.type,
           city:        city,
+          forecast:    forecast, // New: 7-day forecast
           fetchedAt:   new Date().toISOString(),
         },
       });

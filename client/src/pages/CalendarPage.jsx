@@ -200,6 +200,16 @@ export default function CalendarPage() {
               const dayEvents = events[dateStr] || [];
               const eventDots = [...new Set(dayEvents.map(e => e.type))].slice(0, 4);
 
+              // Interconnect: Find steps for this day in weekly trend
+              const trendData = weekly?.find(w => {
+                const wDate = w.date ? new Date(w.date).toISOString().split('T')[0] : null;
+                return wDate === dateStr;
+              });
+              const daySteps = isToday ? Math.max(liveSensors.steps || 0, todayMetrics.steps || 0) : (trendData?.steps || 0);
+
+              // Interconnect: Find forecast for this day
+              const dayForecast = liveSensors.weather?.forecast?.find(f => f.date === dateStr);
+
               return (
                 <motion.button
                   key={dateStr}
@@ -208,18 +218,32 @@ export default function CalendarPage() {
                   style={{
                     aspectRatio: '1', borderRadius: 10, border: 'none', cursor: 'pointer',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    gap: 2, padding: 4,
+                    gap: 1, padding: 2,
                     background: isSelected ? 'var(--c-blue)' : isToday ? 'rgba(79,141,255,0.12)' : 'transparent',
                     transition: 'all 150ms ease',
+                    position: 'relative'
                   }}
                 >
                   <span style={{ fontSize: 13, fontWeight: isToday || isSelected ? 800 : 500, color: isSelected ? 'white' : isToday ? 'var(--c-blue)' : 'var(--c-text-primary)' }}>
                     {day}
                   </span>
+                  
+                  {/* Weather Icon (Forecast) */}
+                  {dayForecast && !isSelected && (
+                    <span style={{ fontSize: 10, position: 'absolute', top: 2, right: 4 }}>{dayForecast.icon}</span>
+                  )}
+
+                  {/* Step Count (Interconnected) */}
+                  {daySteps > 0 && !isSelected && (
+                    <span style={{ fontSize: 8, color: isToday ? 'var(--c-blue)' : 'var(--c-text-muted)', fontWeight: 600 }}>
+                      {daySteps > 999 ? (daySteps/1000).toFixed(1)+'k' : daySteps}
+                    </span>
+                  )}
+
                   {hasEvents && (
-                    <div style={{ display: 'flex', gap: 2 }}>
+                    <div style={{ display: 'flex', gap: 2, marginTop: 1 }}>
                       {eventDots.map(type => (
-                        <div key={type} style={{ width: 4, height: 4, borderRadius: '50%', background: isSelected ? 'rgba(255,255,255,0.7)' : (EVENT_COLORS[type]?.dot || '#888') }} />
+                        <div key={type} style={{ width: 3, height: 3, borderRadius: '50%', background: isSelected ? 'rgba(255,255,255,0.7)' : (EVENT_COLORS[type]?.dot || '#888') }} />
                       ))}
                     </div>
                   )}

@@ -436,7 +436,22 @@ export default function DashboardPage() {
             <span className="badge badge-purple">Trending Up</span>
           </div>
           <div style={{ height: 180 }}>
-            <ResponsiveContainer width="100%" height="100%">
+            {/* Real Weather Forecast Strip */}
+            {liveSensors.weather?.forecast && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, padding: '8px 0', borderBottom: '1px solid var(--c-border)' }}>
+                {liveSensors.weather.forecast.map((f, i) => (
+                  <div key={i} style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 9, color: 'var(--c-text-muted)', textTransform: 'uppercase', marginBottom: 3 }}>
+                      {new Date(f.date).toLocaleDateString([], { weekday: 'short' })}
+                    </div>
+                    <div style={{ fontSize: 16, marginBottom: 2 }}>{f.icon}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--c-text-primary)' }}>{f.tempMax}°</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <ResponsiveContainer width="100%" height={liveSensors.weather?.forecast ? 'calc(100% - 60px)' : '100%'}>
               <AreaChart data={weeklyData}>
                 <defs>
                   <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
