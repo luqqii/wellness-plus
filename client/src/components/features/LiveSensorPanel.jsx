@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Activity, MapPin, Footprints, Zap, Battery, BatteryCharging,
-  Wifi, Compass, Sun, HeartPulse, Navigation, AlertCircle, CheckCircle
+  Wifi, Compass, Sun, HeartPulse, Navigation, AlertCircle, CheckCircle, Edit3
 } from 'lucide-react';
 import useMetricsStore from '../../store/metricsStore';
 import DeviceConnectBanner from './DeviceConnectBanner';
+import ManualLogModal from './ManualLogModal';
+import { AnimatePresence } from 'framer-motion';
 
 function SensorCard({ icon: Icon, label, value, unit, color, sub }) {
   const isAvailable = value !== null && value !== undefined;
@@ -36,6 +38,7 @@ function SensorCard({ icon: Icon, label, value, unit, color, sub }) {
 
 export default function LiveSensorPanel() {
   const s = useMetricsStore(state => state.liveSensors);
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
 
   const batteryIcon = s.battery?.charging ? BatteryCharging : Battery;
   const batteryColor = !s.battery ? 'var(--c-text-muted)'
@@ -80,7 +83,7 @@ export default function LiveSensorPanel() {
           <Activity size={12} />
           Live Device Sensors
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, flex: 1 }}>
           <span style={{
             width: 7, height: 7, borderRadius: '50%',
             background: s.location ? '#22C55E' : '#EAB308',
@@ -91,7 +94,14 @@ export default function LiveSensorPanel() {
             {s.location ? 'GPS Active' : 'Acquiring sensors…'}
           </span>
         </div>
+        <button onClick={() => setIsManualModalOpen(true)} style={{ background: 'none', border: '1px solid var(--c-purple)', color: 'var(--c-purple)', padding: '4px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <Edit3 size={12} /> Log Manually
+        </button>
       </div>
+
+      <AnimatePresence>
+        {isManualModalOpen && <ManualLogModal isOpen={isManualModalOpen} onClose={() => setIsManualModalOpen(false)} />}
+      </AnimatePresence>
 
       {/* Bluetooth device connect row */}
       <DeviceConnectBanner />

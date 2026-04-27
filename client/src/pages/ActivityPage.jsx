@@ -4,9 +4,10 @@ import {
   AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { Footprints, Zap, Clock, Battery, TrendingUp, TrendingDown, Minus, ChevronRight, Brain, RefreshCw, Bot, PersonStanding, Waves, Moon, Leaf, Dna, MapPin } from 'lucide-react';
+import { Footprints, Zap, Clock, Battery, TrendingUp, TrendingDown, Minus, ChevronRight, Brain, RefreshCw, Bot, PersonStanding, Waves, Moon, Leaf, Dna, MapPin, Edit3 } from 'lucide-react';
 import api from '../services/api';
 import useMetricsStore from '../store/metricsStore';
+import ManualLogModal from '../components/features/ManualLogModal';
 
 // Fallback chart data when no backend data exists
 const FALLBACK_ACTIVITY = [
@@ -70,6 +71,7 @@ export default function ActivityPage() {
   const [memoryData, setMemoryData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedMemory, setExpandedMemory] = useState(null);
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
 
   // Live sensor-derived metrics
   const liveSteps = liveSensors.steps || 0;
@@ -138,6 +140,16 @@ export default function ActivityPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 1100 }}>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: -10 }}>
+        <button onClick={() => setIsManualModalOpen(true)} style={{ background: 'var(--c-teal)', color: 'var(--c-bg-primary)', border: 'none', padding: '8px 16px', borderRadius: 99, fontSize: 13, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,212,170,0.2)' }}>
+          <Edit3 size={14} /> Log Data Manually
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {isManualModalOpen && <ManualLogModal isOpen={isManualModalOpen} onClose={() => setIsManualModalOpen(false)} />}
+      </AnimatePresence>
 
       {/* No real data notice */}
       {!loading && !hasRealData && (

@@ -127,6 +127,44 @@ const useMetricsStore = create((set, get) => ({
 
   setLoading: (v) => set({ isLoading: v }),
   setError: (e) => set({ error: e }),
+
+  // Log metrics manually and sync to backend
+  saveManualMetrics: async (apiInstance, updates) => {
+    try {
+      const payload = {};
+      if (updates.steps !== undefined) payload.steps = Number(updates.steps);
+      if (updates.sleepHours !== undefined) payload['sleep.hours'] = Number(updates.sleepHours);
+
+      if (Object.keys(payload).length > 0) {
+        await apiInstance.post('/metrics', payload);
+      }
+
+      // Optimistically update local state immediately
+      const state = get();
+      
+      if (updates.steps !== undefined) {
+        set({
+          liveSensors: { ...state.liveSensors, steps: Number(updates.steps) },
+          todayMetrics: { ...state.todayMetrics, steps: Number(updates.steps) }
+        });
+      }
+      
+      if (updates.sleepHours !== undefined) {
+        const sleepHours = Number(updates.sleepHours);
+        set(s => ({
+          todayMetrics: { 
+            ...s.todayMetrics, 
+            sleep: { ...(s.todayMetrics.sleep || {}), hours: sleepHours } 
+          }
+        }));
+      }
+      
+      return true;
+    } catch (err) {
+      console.error('[MetricsStore] Save Manual Error:', err);
+      return false;
+    }
+  },
 }));
 
 export default useMetricsStore;
