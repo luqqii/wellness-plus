@@ -50,8 +50,9 @@ export default function NutritionPage() {
 
   const handleSaveGoal = async () => {
     try {
-      await api.put('/users/profile', {
-        preferences: { nutrition: { calorieGoal: goalForm.target, goalMode: goalForm.mode } }
+      await api.put('/users/nutrition-goal', {
+        calorieGoal: goalForm.target,
+        goalMode: goalForm.mode,
       });
       setShowGoalModal(false);
     } catch (e) {

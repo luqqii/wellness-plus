@@ -81,6 +81,47 @@ export const updateUserProfile = async (req, res, next) => {
 };
 
 /**
+ * @desc    Save user nutrition goals (calorieGoal + goalMode)
+ * @route   PUT /api/v1/users/nutrition-goal
+ * @access  Private
+ */
+export const saveNutritionGoal = async (req, res, next) => {
+  try {
+    const { calorieGoal, goalMode } = req.body;
+
+    if (!calorieGoal || isNaN(Number(calorieGoal)) || Number(calorieGoal) <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid calorie goal — must be a positive number.' });
+    }
+    if (!['deficit', 'surplus'].includes(goalMode)) {
+      return res.status(400).json({ success: false, message: 'Invalid goal mode — must be "deficit" or "surplus".' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $set: {
+          'preferences.nutrition.calorieGoal': Number(calorieGoal),
+          'preferences.nutrition.goalMode': goalMode,
+        },
+      },
+      { new: true, runValidators: false }
+    );
+
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    res.json({
+      success: true,
+      data: {
+        calorieGoal: user.preferences?.nutrition?.calorieGoal,
+        goalMode: user.preferences?.nutrition?.goalMode,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * @desc    Export all user data as JSON
  * @route   GET /api/v1/users/export
  * @access  Private
