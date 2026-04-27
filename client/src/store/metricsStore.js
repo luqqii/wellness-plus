@@ -3,11 +3,11 @@ import { create } from 'zustand';
 const useMetricsStore = create((set, get) => ({
   // Today's metrics
   todayMetrics: {
-    steps: 6842,
+    steps: null,
     stepGoal: 10000,
-    sleep: { hours: 7.2, quality: 7 },
-    stressLevel: 4,
-    mood: 'good',
+    sleep: null,
+    stressLevel: null,
+    mood: null,
     nutrition: {
       calories: 1640,
       calorieGoal: 2100,

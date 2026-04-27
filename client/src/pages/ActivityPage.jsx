@@ -65,6 +65,7 @@ const TrendIcon = ({ trend }) => {
 
 export default function ActivityPage() {
   const liveSensors = useMetricsStore(s => s.liveSensors);
+  const todayMetrics = useMetricsStore(s => s.todayMetrics);
   const [prediction, setPrediction] = useState(null);
   const [recovery, setRecovery] = useState(null);
   const [trend, setTrend] = useState([]);
@@ -76,6 +77,7 @@ export default function ActivityPage() {
   // Live sensor-derived metrics
   const liveSteps = liveSensors.steps || 0;
   const liveCalories = Math.round(liveSensors.activeCalories || 0);
+  const sleepHours = todayMetrics?.sleep?.hours || 0;
   const liveSpeed = liveSensors.speed != null ? liveSensors.speed : null;
   const liveLocation = liveSensors.location;
 
@@ -114,11 +116,14 @@ export default function ActivityPage() {
     : FALLBACK_ACTIVITY;
 
   const sleepChartData = trend.length >= 3
-    ? trend.map((m) => ({
-        day: new Date(m.date).toLocaleDateString('en', { weekday: 'short' }),
-        hours: m.sleep?.hours || 0,
-        quality: m.sleep?.quality || 0,
-      }))
+    ? trend.map((m, index) => {
+        const isToday = index === trend.length - 1;
+        return {
+          day: new Date(m.date).toLocaleDateString('en', { weekday: 'short' }),
+          hours: isToday && sleepHours > 0 ? sleepHours : (m.sleep?.hours || 0),
+          quality: m.sleep?.quality || 0,
+        };
+      })
     : FALLBACK_SLEEP;
 
   const recoveryScore = recovery?.recoveryScore ?? 72;
@@ -178,13 +183,13 @@ export default function ActivityPage() {
             color: 'var(--c-teal)', trend: stepsTrend,
           },
           {
-            icon: Zap, label: 'Burned', value: liveCalories.toString(),
-            sub: 'kcal', pct: Math.min(Math.round((liveCalories / 600) * 100), 100), color: 'var(--c-orange)', trend: 'stable',
+            icon: Moon, label: 'Sleep', value: `${sleepHours || avgSleep}h`,
+            sub: '/ 8h', pct: Math.min(Math.round(((sleepHours || avgSleep) / 8) * 100), 100), 
+            color: 'var(--c-purple)', trend: 'stable',
           },
           {
-            icon: Clock, label: 'Active', value: `${Math.round(liveSteps / 130)} min`,
-            sub: '/ 60 min', pct: Math.min(Math.round((liveSteps / 130) / 60 * 100), 100),
-            color: 'var(--c-blue)', trend: stepsTrend,
+            icon: Zap, label: 'Burned', value: liveCalories.toString(),
+            sub: 'kcal', pct: Math.min(Math.round((liveCalories / 600) * 100), 100), color: 'var(--c-orange)', trend: 'stable',
           },
           {
             icon: Battery, label: 'Recovery', value: `${recoveryScore}%`,
