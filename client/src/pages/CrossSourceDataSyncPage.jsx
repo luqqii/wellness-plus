@@ -28,39 +28,101 @@ function Toast({ message, type, onDismiss }) {
   );
 }
 
-// OAuth Consent Modal
-function OAuthModal({ source, onConfirm, onCancel, loading }) {
+// Simulated Device Pairing Modal
+function SimulatedPairingModal({ source, onConfirm, onCancel }) {
+  const [phase, setPhase] = useState('initial'); // initial | scanning | select | requesting | awaiting
+  const [devices, setDevices] = useState([]);
+  const [selectedDevice, setSelectedDevice] = useState(null);
+
   if (!source) return null;
-  const { Icon, color, name, oauthNote } = source;
+  const { Icon, color, name, id } = source;
+
+  const handleScan = () => {
+    setPhase('scanning');
+    setTimeout(() => {
+      // Mock devices based on provider
+      const mocks = {
+        apple: [{ id: 'a1', name: "User's Apple Watch Series 9" }, { id: 'a2', name: "User's iPhone 15 Pro" }],
+        google: [{ id: 'g1', name: "Pixel Watch 2" }, { id: 'g2', name: "Galaxy S24 Ultra" }],
+        oura: [{ id: 'o1', name: "Oura Ring Gen 3" }],
+        calendar: [{ id: 'c1', name: "Google Calendar (Primary)" }]
+      };
+      setDevices(mocks[id] || [{ id: 'd1', name: "Unknown Device" }]);
+      setPhase('select');
+    }, 2000);
+  };
+
+  const handleSelect = (device) => {
+    setSelectedDevice(device);
+    setPhase('requesting');
+    setTimeout(() => {
+      setPhase('awaiting');
+      setTimeout(() => {
+        onConfirm(); // Trigger actual connection logic
+      }, 3000);
+    }, 1500);
+  };
+
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
         style={{ background: 'var(--c-bg-card)', borderRadius: 20, padding: 32, maxWidth: 420, width: '100%', border: `1px solid ${color}40`, boxShadow: '0 24px 48px rgba(0,0,0,0.3)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
-          <div style={{ width: 52, height: 52, borderRadius: 14, background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon size={26} color={color} />
+        
+        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+          <div style={{ width: 64, height: 64, borderRadius: '50%', background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', position: 'relative' }}>
+            {phase === 'scanning' && (
+              <motion.div animate={{ scale: [1, 2], opacity: [0.5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}
+                style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `2px solid ${color}` }} />
+            )}
+            <Icon size={30} color={color} />
           </div>
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--c-text-primary)' }}>Connect {name}</div>
-            <div style={{ fontSize: 13, color: 'var(--c-text-muted)', marginTop: 2 }}>{oauthNote}</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--c-text-primary)' }}>
+            {phase === 'initial' ? `Connect ${name}` : 
+             phase === 'scanning' ? `Searching for ${name} devices...` :
+             phase === 'select' ? 'Select a device to connect' :
+             phase === 'requesting' ? `Connecting to ${selectedDevice?.name}...` :
+             'Awaiting Approval'}
+          </div>
+          <div style={{ fontSize: 13, color: 'var(--c-text-muted)', marginTop: 6 }}>
+            {phase === 'initial' ? 'Scan for nearby or linked devices to sync data.' :
+             phase === 'scanning' ? 'Ensure your device is powered on and nearby.' :
+             phase === 'select' ? 'Choose the device you want to sync with Wellness+.' :
+             phase === 'requesting' ? 'Sending connection request to the device.' :
+             'Please accept the pairing request on your device screen.'}
           </div>
         </div>
-        <div style={{ background: 'var(--c-bg-secondary)', borderRadius: 12, padding: '14px 16px', marginBottom: 20 }}>
-          <div style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', color: 'var(--c-text-muted)', marginBottom: 8 }}>Data Wellness+ will access:</div>
-          {['Daily step count & activity minutes', 'Sleep duration & quality scores', 'Heart rate & stress indicators', 'Workout history & recovery metrics'].map(p => (
-            <div key={p} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <CheckCircle2 size={14} color={color} />
-              <span style={{ fontSize: 13, color: 'var(--c-text-secondary)' }}>{p}</span>
-            </div>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={onCancel} disabled={loading} style={{ flex: 1, padding: '12px 0', borderRadius: 12, background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)', fontSize: 14, fontWeight: 700, cursor: 'pointer', color: 'var(--c-text-secondary)' }}>Cancel</button>
-          <button onClick={onConfirm} disabled={loading}
-            style={{ flex: 2, padding: '12px 0', borderRadius: 12, background: color, border: 'none', fontSize: 14, fontWeight: 800, cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            {loading ? <><Loader2 size={16} className="animate-spin" /> Connecting…</> : <><Link size={16} /> Authorize & Connect</>}
-          </button>
-        </div>
+
+        {phase === 'initial' && (
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button onClick={onCancel} style={{ flex: 1, padding: '12px 0', borderRadius: 12, background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)', fontSize: 14, fontWeight: 700, cursor: 'pointer', color: 'var(--c-text-secondary)' }}>Cancel</button>
+            <button onClick={handleScan}
+              style={{ flex: 2, padding: '12px 0', borderRadius: 12, background: color, border: 'none', fontSize: 14, fontWeight: 800, cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <Activity size={16} /> Scan for Devices
+            </button>
+          </div>
+        )}
+
+        {phase === 'select' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {devices.map(d => (
+              <button key={d.id} onClick={() => handleSelect(d)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', borderRadius: 12, background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)', cursor: 'pointer', transition: 'border-color 0.2s' }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)' }}>{d.name}</span>
+                <Link size={16} color="var(--c-text-muted)" />
+              </button>
+            ))}
+            <button onClick={onCancel} style={{ marginTop: 8, padding: '12px 0', borderRadius: 12, background: 'transparent', border: '1px solid var(--c-border)', fontSize: 14, fontWeight: 700, cursor: 'pointer', color: 'var(--c-text-secondary)' }}>Cancel</button>
+          </div>
+        )}
+
+        {(phase === 'requesting' || phase === 'awaiting') && (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
+             <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}>
+              <Loader2 size={32} color={color} />
+            </motion.div>
+          </div>
+        )}
+
       </motion.div>
     </div>
   );
@@ -161,8 +223,8 @@ export default function CrossSourceDataSyncPage() {
     } catch (e) { console.warn('[DataSync] Metrics refresh failed:', e); }
   }, [fetchMetrics]);
 
-  // OAuth connect flow
-  const handleOAuthConnect = async () => {
+  // Simulated Pairing flow completion
+  const handleSimulatedConnect = async () => {
     if (!oauthModal) return;
     setOauthLoading(true);
     try {
@@ -311,7 +373,7 @@ export default function CrossSourceDataSyncPage() {
 
       {/* Modals */}
       <AnimatePresence>
-        {oauthModal && <OAuthModal source={oauthModal} onConfirm={handleOAuthConnect} onCancel={() => setOauthModal(null)} loading={oauthLoading} />}
+        {oauthModal && <SimulatedPairingModal source={oauthModal} onConfirm={handleSimulatedConnect} onCancel={() => setOauthModal(null)} />}
         {btModal && <BluetoothModal source={btModal} onConfirm={handleBluetoothScan} onCancel={() => { setBtModal(null); setBtStatus('idle'); }} btStatus={btStatus} btDevice={btDevice} btError={btError} />}
       </AnimatePresence>
 
