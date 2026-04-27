@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema(
       theme: { type: String, enum: ['light', 'dark', 'auto'], default: 'auto' },
       notifications: { push: { type: Boolean, default: true }, email: { type: Boolean, default: true } },
       units: { type: String, enum: ['metric', 'imperial'], default: 'metric' },
+      nutrition: {
+        calorieGoal: { type: Number, default: 2200 },
+        goalMode: { type: String, enum: ['deficit', 'surplus'], default: 'deficit' }
+      }
     },
     onboarding: {
       completed: { type: Boolean, default: false },

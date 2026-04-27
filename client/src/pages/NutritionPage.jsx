@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip
 } from 'recharts';
-import { Plus, ChevronLeft, ChevronRight, Check, Sparkles, Apple, Watch } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Check, Sparkles, Apple, Watch, Trash2, X, Settings2 } from 'lucide-react';
 import api from '../services/api';
 import FoodSearchModal from '../components/nutrition/FoodSearchModal';
 import DynamicIcon from '../components/ui/DynamicIcon';
@@ -26,11 +26,57 @@ export default function NutritionPage() {
   const [aiSuggestions, setAiSuggestions] = useState([]);
   const [loadingSuggestions, setLoadingSuggestions] = useState(true);
 
+  const [showGoalModal, setShowGoalModal] = useState(false);
+  const [goalForm, setGoalForm] = useState({ target: 2200, mode: 'deficit' });
+
+  const todayMetrics = useMetricsStore(s => s.todayMetrics);
+  const { saveManualMetrics } = useMetricsStore();
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const res = await api.get('/users/profile');
+        const pref = res.data?.data?.preferences?.nutrition;
+        if (pref) {
+          setGoalForm({ target: pref.calorieGoal || 2200, mode: pref.goalMode || 'deficit' });
+        }
+      } catch (e) {}
+    }
+    loadUser();
+  }, []);
+
+  const handleSaveGoal = async () => {
+    try {
+      await api.put('/users/profile', {
+        preferences: { nutrition: { calorieGoal: goalForm.target, goalMode: goalForm.mode } }
+      });
+      setShowGoalModal(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleDeleteFood = async (mealKey, itemId) => {
+    if(!window.confirm('Remove this item?')) return;
+    try {
+      await api.delete(`/nutrition/log/${date}/${mealKey}/${itemId}`);
+      fetchLog();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleWaterClick = async (amount) => {
+    // If clicking the current amount, decrement by 1 (toggle off)
+    const newAmount = (todayMetrics?.nutrition?.water === amount) ? amount - 1 : amount;
+    await saveManualMetrics(api, { water: newAmount });
+  };
+
   // Derive Data
-  const targetCalories = 2200;
-  const targetProtein = 137;
-  const targetCarbs = 247;
-  const targetFat = 73;
+  const targetCalories = goalForm.target;
+  const targetProtein = Math.round(targetCalories * 0.3 / 4);
+  const targetCarbs = Math.round(targetCalories * 0.4 / 4);
+  const targetFat = Math.round(targetCalories * 0.3 / 9);
 
   const fetchLog = async () => {
     try {
@@ -180,16 +226,25 @@ export default function NutritionPage() {
           marginBottom: 16
         }}>
           {[
-            { val: targetCalories.toLocaleString(), label: 'Goal', color: 'var(--c-text-primary)' },
+            { val: targetCalories.toLocaleString(), label: 'Goal', color: 'var(--c-text-primary)', isClickable: true },
             { val: '−', label: '', color: 'var(--c-text-muted)', isSym: true },
             { val: totalCal.toLocaleString(), label: 'Food', color: 'var(--c-orange)' },
             { val: '+', label: '', color: 'var(--c-text-muted)', isSym: true },
             { val: liveExerciseCal.toString(), label: 'Exercise', color: 'var(--c-teal)' },
             { val: '=', label: '', color: 'var(--c-text-muted)', isSym: true },
-            { val: Math.max(0, targetCalories - totalCal + liveExerciseCal).toLocaleString(), label: 'Remaining', color: (targetCalories - totalCal + liveExerciseCal) < 0 ? 'var(--c-red)' : 'var(--c-blue)' },
+            { 
+              val: Math.abs(targetCalories - totalCal + liveExerciseCal).toLocaleString(), 
+              label: goalForm.mode === 'deficit' ? 'Remaining' : 'To Eat', 
+              color: goalForm.mode === 'deficit' 
+                ? ((targetCalories - totalCal + liveExerciseCal) < 0 ? 'var(--c-red)' : 'var(--c-blue)')
+                : ((targetCalories - totalCal + liveExerciseCal) <= 0 ? 'var(--c-green)' : 'var(--c-blue)') 
+            },
           ].map((item, i) => (
-            <div key={i} style={{ textAlign: 'center' }}>
-              <div className={item.isSym ? 'macro-equation-sym' : 'macro-equation-val'} style={{ fontSize: item.isSym ? 20 : 26, fontWeight: 800, color: item.color, letterSpacing: '-1px', lineHeight: 1 }}>{item.val}</div>
+            <div key={i} style={{ textAlign: 'center', cursor: item.isClickable ? 'pointer' : 'default' }} onClick={() => item.isClickable && setShowGoalModal(true)}>
+              <div className={item.isSym ? 'macro-equation-sym' : 'macro-equation-val'} style={{ fontSize: item.isSym ? 20 : 26, fontWeight: 800, color: item.color, letterSpacing: '-1px', lineHeight: 1 }}>
+                {item.val}
+                {item.isClickable && <Settings2 size={12} style={{ display: 'inline', marginLeft: 4, opacity: 0.5 }} />}
+              </div>
               {item.label && <div style={{ fontSize: 10, color: 'var(--c-text-muted)', marginTop: 3, fontWeight: 500 }}>{item.label}</div>}
             </div>
           ))}
@@ -247,9 +302,14 @@ export default function NutritionPage() {
                           </div>
                         </div>
                       </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)' }}>{item.customFood?.calories * item.servingsConsumed}</div>
-                        <div style={{ fontSize: 10, color: 'var(--c-text-muted)' }}>cal</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)' }}>{item.customFood?.calories * item.servingsConsumed}</div>
+                          <div style={{ fontSize: 10, color: 'var(--c-text-muted)' }}>cal</div>
+                        </div>
+                        <button onClick={() => handleDeleteFood(section.key, item._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-text-muted)', padding: 4 }}>
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     </div>
                   );
@@ -271,7 +331,7 @@ export default function NutritionPage() {
                 <DynamicIcon icon="💧" size={16} color="var(--c-blue)" />
                 <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--c-text-primary)' }}>Water</span>
               </div>
-              <span style={{ fontSize: 12, color: 'var(--c-text-muted)' }}>6 / 8 glasses</span>
+              <span style={{ fontSize: 12, color: 'var(--c-text-muted)' }}>{todayMetrics?.nutrition?.water || 0} / 8 glasses</span>
             </div>
             <div style={{ display: 'flex', gap: 6 }}>
               {Array.from({ length: 8 }).map((_, i) => (
@@ -280,10 +340,11 @@ export default function NutritionPage() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: i * 0.05 }}
+                  onClick={() => handleWaterClick(i + 1)}
                   style={{
                     flex: 1, height: 28, borderRadius: 6,
-                    background: i < 6 ? 'rgba(79,141,255,0.5)' : 'rgba(255,255,255,0.06)',
-                    border: `1px solid ${i < 6 ? 'rgba(79,141,255,0.4)' : 'var(--c-border)'}`,
+                    background: i < (todayMetrics?.nutrition?.water || 0) ? 'rgba(79,141,255,0.5)' : 'rgba(255,255,255,0.06)',
+                    border: `1px solid ${i < (todayMetrics?.nutrition?.water || 0) ? 'rgba(79,141,255,0.4)' : 'var(--c-border)'}`,
                     cursor: 'pointer', transition: 'all 150ms ease',
                   }}
                 />
@@ -427,6 +488,40 @@ export default function NutritionPage() {
             date={date} 
             onFoodAdded={() => fetchLog()} 
           />
+        )}
+        {showGoalModal && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} style={{ background: 'var(--c-bg-card)', borderRadius: 20, padding: 24, width: '100%', maxWidth: 400, border: '1px solid var(--c-border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--c-text-primary)' }}>Nutrition Goals</div>
+                <button onClick={() => setShowGoalModal(false)} className="btn btn-icon"><X size={18} /></button>
+              </div>
+              
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--c-text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>Daily Calorie Target</label>
+                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--c-bg)', border: '1px solid var(--c-border)', borderRadius: 12, padding: '12px 16px' }}>
+                  <input type="number" value={goalForm.target} onChange={e => setGoalForm(p => ({ ...p, target: Number(e.target.value) }))} style={{ flex: 1, background: 'transparent', border: 'none', color: 'var(--c-text-primary)', fontSize: 24, fontWeight: 800, outline: 'none' }} />
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)' }}>kcal</span>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--c-text-muted)', marginBottom: 8, textTransform: 'uppercase' }}>Goal Mode</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  <button onClick={() => setGoalForm(p => ({ ...p, mode: 'deficit' }))} style={{ padding: '12px', borderRadius: 12, border: `1px solid ${goalForm.mode === 'deficit' ? 'var(--c-blue)' : 'var(--c-border)'}`, background: goalForm.mode === 'deficit' ? 'rgba(79,141,255,0.1)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s' }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: goalForm.mode === 'deficit' ? 'var(--c-blue)' : 'var(--c-text-primary)' }}>Deficit</div>
+                    <div style={{ fontSize: 11, color: 'var(--c-text-muted)', marginTop: 4 }}>Weight Loss</div>
+                  </button>
+                  <button onClick={() => setGoalForm(p => ({ ...p, mode: 'surplus' }))} style={{ padding: '12px', borderRadius: 12, border: `1px solid ${goalForm.mode === 'surplus' ? 'var(--c-green)' : 'var(--c-border)'}`, background: goalForm.mode === 'surplus' ? 'rgba(34,197,94,0.1)' : 'transparent', cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s' }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: goalForm.mode === 'surplus' ? 'var(--c-green)' : 'var(--c-text-primary)' }}>Surplus</div>
+                    <div style={{ fontSize: 11, color: 'var(--c-text-muted)', marginTop: 4 }}>Bulking / Maint.</div>
+                  </button>
+                </div>
+              </div>
+
+              <button onClick={handleSaveGoal} className="btn btn-primary" style={{ width: '100%', padding: '14px', fontSize: 15 }}>Save Goals</button>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

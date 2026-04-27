@@ -106,14 +106,18 @@ export const updateProfileSchema = z.object({
   name: z.string().min(1).max(50).optional(),
   profilePic: z.string().optional(),
   goals: z.array(z.enum(['weight_loss', 'muscle_gain', 'stress', 'energy', 'nutrition', 'fitness'])).optional(),
-  preferences: z.object({
-    theme: z.enum(['light', 'dark', 'auto']).optional(),
-    notifications: z.object({
-      push: z.boolean().optional(),
-      email: z.boolean().optional(),
+    preferences: z.object({
+      theme: z.enum(['light', 'dark', 'auto']).optional(),
+      notifications: z.object({
+        push: z.boolean().optional(),
+        email: z.boolean().optional(),
+      }).optional(),
+      units: z.enum(['metric', 'imperial']).optional(),
+      nutrition: z.object({
+        calorieGoal: z.number().positive().optional(),
+        goalMode: z.enum(['deficit', 'surplus']).optional(),
+      }).optional(),
     }).optional(),
-    units: z.enum(['metric', 'imperial']).optional(),
-  }).optional(),
   onboarding: z.object({
     completed: z.boolean().optional(),
     lifestyle: z.enum(['sedentary', 'light', 'moderate', 'very_active']).optional(),

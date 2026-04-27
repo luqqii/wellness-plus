@@ -55,6 +55,31 @@ export const addFoodEntry = async (req, res, next) => {
   }
 };
 
+// @desc    Delete food from diary
+// @route   DELETE /api/v1/nutrition/log/:date/:mealType/:itemId
+export const deleteFoodEntry = async (req, res, next) => {
+  try {
+    const { date, mealType, itemId } = req.params;
+
+    if (!['breakfast', 'lunch', 'dinner', 'snacks'].includes(mealType)) {
+      return res.status(400).json({ success: false, message: 'Invalid meal type' });
+    }
+
+    const log = await MealLog.findOne({ userId: req.user._id, date });
+    if (!log) {
+      return res.status(404).json({ success: false, message: 'Meal log not found' });
+    }
+
+    // Pull the item from the array
+    log[mealType] = log[mealType].filter(item => item._id.toString() !== itemId);
+    await log.save(); // triggers pre-save macro recalculation
+
+    res.json({ success: true, data: log });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Get AI-powered nutrition suggestions
 // @route   GET /api/v1/nutrition/suggestions
 export const getNutritionSuggestions = async (req, res, next) => {
@@ -67,11 +92,14 @@ export const getNutritionSuggestions = async (req, res, next) => {
     const lifestyle = req.user.onboarding?.lifestyle || 'moderate';
 
     const baseCalories = { sedentary: 1800, light: 2000, moderate: 2200, very_active: 2600 };
-    const targetCalories = baseCalories[lifestyle] || 2200;
-
-    let adjustedCalories = targetCalories;
-    if (userGoals.includes('weight_loss')) adjustedCalories -= 300;
-    if (userGoals.includes('muscle_gain')) adjustedCalories += 300;
+    let adjustedCalories = req.user.preferences?.nutrition?.calorieGoal;
+    
+    if (!adjustedCalories) {
+      const targetCalories = baseCalories[lifestyle] || 2200;
+      adjustedCalories = targetCalories;
+      if (userGoals.includes('weight_loss')) adjustedCalories -= 300;
+      if (userGoals.includes('muscle_gain')) adjustedCalories += 300;
+    }
 
     const remaining = {
       calories: Math.max(0, adjustedCalories - consumed.calories),
@@ -109,9 +137,12 @@ export const getMealPlan = async (req, res, next) => {
     const userGoals = req.user.goals || [];
     const lifestyle = req.user.onboarding?.lifestyle || 'moderate';
     const baseCalories = { sedentary: 1800, light: 2000, moderate: 2200, very_active: 2600 };
-    let targetCalories = baseCalories[lifestyle] || 2200;
-    if (userGoals.includes('weight_loss')) targetCalories -= 300;
-    if (userGoals.includes('muscle_gain')) targetCalories += 300;
+    let targetCalories = req.user.preferences?.nutrition?.calorieGoal;
+    if (!targetCalories) {
+      targetCalories = baseCalories[lifestyle] || 2200;
+      if (userGoals.includes('weight_loss')) targetCalories -= 300;
+      if (userGoals.includes('muscle_gain')) targetCalories += 300;
+    }
 
     const mealPlan = await aiGenerateMealPlan(req.user, targetCalories);
     res.json({ success: true, data: { ...mealPlan, targetCalories } });
@@ -127,9 +158,12 @@ export const getGroceryList = async (req, res, next) => {
     const userGoals = req.user.goals || [];
     const lifestyle = req.user.onboarding?.lifestyle || 'moderate';
     const baseCalories = { sedentary: 1800, light: 2000, moderate: 2200, very_active: 2600 };
-    let targetCalories = baseCalories[lifestyle] || 2200;
-    if (userGoals.includes('weight_loss')) targetCalories -= 300;
-    if (userGoals.includes('muscle_gain')) targetCalories += 300;
+    let targetCalories = req.user.preferences?.nutrition?.calorieGoal;
+    if (!targetCalories) {
+      targetCalories = baseCalories[lifestyle] || 2200;
+      if (userGoals.includes('weight_loss')) targetCalories -= 300;
+      if (userGoals.includes('muscle_gain')) targetCalories += 300;
+    }
 
     const mealPlan = req.body.mealPlan || await aiGenerateMealPlan(req.user, targetCalories);
     const groceryList = await aiGenerateGroceryList(mealPlan);

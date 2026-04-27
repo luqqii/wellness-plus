@@ -1,5 +1,5 @@
 import express from 'express';
-import { searchFoods, getMealLog, addFoodEntry, getNutritionSuggestions, getMealPlan, scanFoodPhoto, getGroceryList } from '../controllers/nutrition.controller.js';
+import { searchFoods, getMealLog, addFoodEntry, deleteFoodEntry, getNutritionSuggestions, getMealPlan, scanFoodPhoto, getGroceryList } from '../controllers/nutrition.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.js';
 import { addFoodSchema } from '../middleware/validators.js';
@@ -16,5 +16,7 @@ router.post('/scan-photo', scanFoodPhoto);
 router.route('/log/:date')
   .get(getMealLog)
   .post(validate(addFoodSchema), addFoodEntry);
+
+router.delete('/log/:date/:mealType/:itemId', deleteFoodEntry);
 
 export default router;

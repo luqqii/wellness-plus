@@ -134,6 +134,7 @@ const useMetricsStore = create((set, get) => ({
       const payload = {};
       if (updates.steps !== undefined) payload.steps = Number(updates.steps);
       if (updates.sleepHours !== undefined) payload['sleep.hours'] = Number(updates.sleepHours);
+      if (updates.water !== undefined) payload['nutrition.water'] = Number(updates.water);
 
       if (Object.keys(payload).length > 0) {
         await apiInstance.post('/metrics', payload);
@@ -160,6 +161,15 @@ const useMetricsStore = create((set, get) => ({
           todayMetrics: { 
             ...s.todayMetrics, 
             sleep: { ...(s.todayMetrics.sleep || {}), hours: sleepHours } 
+          }
+        }));
+      }
+
+      if (updates.water !== undefined) {
+        set(s => ({
+          todayMetrics: {
+            ...s.todayMetrics,
+            nutrition: { ...(s.todayMetrics?.nutrition || {}), water: Number(updates.water) }
           }
         }));
       }
