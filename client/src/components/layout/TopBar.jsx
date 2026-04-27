@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../../store/authStore';
 import useUIStore from '../../store/uiStore';
+import useMetricsStore from '../../store/metricsStore';
 import NotificationBell from '../notifications/NotificationBell';
 import Avatar from '../ui/Avatar';
 
@@ -41,6 +42,7 @@ const SEARCH_ROUTES = [
 export default function TopBar() {
   const { user } = useAuthStore();
   const { setMobileMenuOpen } = useUIStore();
+  const weather = useMetricsStore(s => s.liveSensors?.weather);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isFocused, setIsFocused] = React.useState(false);
   const navigate = useNavigate();
@@ -161,6 +163,15 @@ export default function TopBar() {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Compact Weather Pill */}
+        {weather && (
+          <div className="mobile-hide" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px', background: 'rgba(255,255,255,0.06)', borderRadius: 99, border: '1px solid var(--c-border)', flexShrink: 0 }}>
+            <span style={{ fontSize: 16 }}>{weather.icon}</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--c-text-primary)' }}>{weather.temp}°C</span>
+            {weather.city && <span style={{ fontSize: 11, color: 'var(--c-text-muted)' }}>{weather.city}</span>}
+          </div>
+        )}
 
         {/* Notification Bell with dropdown panel */}
         <NotificationBell />

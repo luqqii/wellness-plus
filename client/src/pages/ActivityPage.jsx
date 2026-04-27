@@ -8,6 +8,8 @@ import { Footprints, Zap, Clock, Battery, TrendingUp, TrendingDown, Minus, Chevr
 import api from '../services/api';
 import useMetricsStore from '../store/metricsStore';
 import ManualLogModal from '../components/features/ManualLogModal';
+import WeatherWidget from '../components/features/WeatherWidget';
+import { getOutdoorSuitability } from '../hooks/useWeather';
 
 // Fallback chart data when no backend data exists
 const FALLBACK_ACTIVITY = [
@@ -155,6 +157,25 @@ export default function ActivityPage() {
           <Edit3 size={14} /> Log Data Manually
         </button>
       </div>
+
+      {/* Weather + Outdoor Suitability Strip */}
+      {liveSensors?.weather ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <WeatherWidget weather={liveSensors.weather} compact />
+          {(() => {
+            const s = getOutdoorSuitability(liveSensors.weather);
+            return s ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', borderRadius: 12, background: `${s.color}15`, border: `1px solid ${s.color}35`, flex: 1 }}>
+                <span style={{ fontSize: 20 }}>{['🚫','🏠','⚠️','🚶','🏃','🌟'][s.score]}</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: s.color }}>{s.label}</div>
+                  <div style={{ fontSize: 11, color: 'var(--c-text-muted)' }}>Based on current conditions in {liveSensors.weather.city || 'your area'}</div>
+                </div>
+              </div>
+            ) : null;
+          })()}
+        </div>
+      ) : null}
 
       <AnimatePresence>
         {isManualModalOpen && <ManualLogModal isOpen={isManualModalOpen} onClose={() => setIsManualModalOpen(false)} />}

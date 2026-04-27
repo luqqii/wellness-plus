@@ -21,6 +21,7 @@ import MobileFeaturePortal from '../components/dashboard/MobileFeaturePortal';
 import useLessonStore from '../store/lessonStore';
 import PredictiveWellnessInsights from '../components/features/PredictiveWellnessInsights';
 import ContextAwareSuggestions from '../components/features/ContextAwareSuggestions';
+import WeatherWidget from '../components/features/WeatherWidget';
 import LiveSensorPanel from '../components/features/LiveSensorPanel';
 
 
@@ -113,6 +114,9 @@ export default function DashboardPage() {
       </div>
 
       <LiveSensorPanel />
+
+      {/* Weather Widget */}
+      <WeatherWidget weather={liveSensors?.weather} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PredictiveWellnessInsights metrics={currentMetric} />
