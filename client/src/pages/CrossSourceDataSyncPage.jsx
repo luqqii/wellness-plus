@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Watch, Smartphone, Heart, Calendar, Activity, RefreshCw, Bluetooth, CheckCircle2, XCircle, Loader2, Zap, X, AlertTriangle, Link } from 'lucide-react';
+import { Watch, Smartphone, Heart, Calendar, Activity, RefreshCw, Bluetooth, CheckCircle2, XCircle, Loader2, Zap, X, AlertTriangle, Link, HeartPulse, MessageCircle } from 'lucide-react';
 import useMetricsStore from '../store/metricsStore';
 
 // Per-source metadata
 const SOURCES_META = [
   { id: 'apple',    name: 'Apple Health',    color: '#FF2D55', Icon: Heart,      desc: 'Sync steps, sleep, and vitals from your iPhone and Apple Watch.', connectMethod: 'oauth', oauthNote: 'Requires iPhone or iPad with Apple Health app.' },
   { id: 'google',   name: 'Google Fit',      color: '#4285F4', Icon: Activity,   desc: 'Connect to sync activity data from Android devices.',              connectMethod: 'oauth', oauthNote: 'Requires a Google account with Fit enabled.' },
+  { id: 'huawei',   name: 'Huawei Health',   color: '#CF0A2C', Icon: HeartPulse, desc: 'Sync health and activity data from Huawei wearables and phones.',  connectMethod: 'oauth', oauthNote: 'Requires a Huawei account with Health Kit access.' },
+  { id: 'wechat',   name: 'WeChat Sports',   color: '#07C160', Icon: MessageCircle, desc: 'Import daily step counts from WeChat Sports (WeRun).',          connectMethod: 'oauth', oauthNote: 'Requires WeChat authorization.' },
   { id: 'garmin',   name: 'Garmin Connect',  color: '#0B6EFD', Icon: Watch,      desc: 'Import workouts and advanced recovery metrics from Garmin.',       connectMethod: 'oauth', oauthNote: 'Connects via Garmin Cloud Health API.' },
   { id: 'oura',     name: 'Oura Ring',       color: '#7C3AED', Icon: Smartphone, desc: 'Sync detailed sleep stages and readiness scores.',                  connectMethod: 'oauth', oauthNote: 'Requires Oura account and Ring gen 3+.' },
   { id: 'calendar', name: 'Google Calendar', color: '#FABB05', Icon: Calendar,   desc: 'Sync your schedule to power Context-Aware Suggestions.',            connectMethod: 'oauth', oauthNote: 'Read-only access to your calendar events.' },

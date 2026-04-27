@@ -38,6 +38,20 @@ const PROVIDER_PROFILES = {
     activeMinutes: () => 30,
     stressLevel: () => 5,
   },
+  huawei: {
+    // Huawei users have strong sleep and step tracking
+    steps: () => Math.floor(6000 + Math.random() * 8000),
+    sleepHours: () => 6.5 + Math.random() * 2,
+    activeMinutes: () => Math.floor(40 + Math.random() * 60),
+    stressLevel: () => Math.floor(3 + Math.random() * 4),
+  },
+  wechat: {
+    // WeChat Sports (WeRun) is primarily steps tracking via phone
+    steps: () => Math.floor(3000 + Math.random() * 12000),
+    sleepHours: () => 7, // Fallback
+    activeMinutes: () => Math.floor(20 + Math.random() * 40),
+    stressLevel: () => 5, // Fallback
+  },
 };
 
 /**
