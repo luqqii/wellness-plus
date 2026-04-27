@@ -7,7 +7,7 @@ import useMetricsStore from '../store/metricsStore';
 const SOURCES_META = [
   { id: 'apple',    name: 'Apple Health',    color: '#FF2D55', Icon: Heart,      desc: 'Sync steps, sleep, and vitals from your iPhone and Apple Watch.', connectMethod: 'oauth', oauthNote: 'Requires iPhone or iPad with Apple Health app.' },
   { id: 'google',   name: 'Google Fit',      color: '#4285F4', Icon: Activity,   desc: 'Connect to sync activity data from Android devices.',              connectMethod: 'oauth', oauthNote: 'Requires a Google account with Fit enabled.' },
-  { id: 'garmin',   name: 'Garmin Connect',  color: '#0B6EFD', Icon: Watch,      desc: 'Import workouts and advanced recovery metrics from Garmin.',       connectMethod: 'bluetooth', oauthNote: 'Connects via Bluetooth LE (GATT) or Garmin cloud.' },
+  { id: 'garmin',   name: 'Garmin Connect',  color: '#0B6EFD', Icon: Watch,      desc: 'Import workouts and advanced recovery metrics from Garmin.',       connectMethod: 'oauth', oauthNote: 'Connects via Garmin Cloud Health API.' },
   { id: 'oura',     name: 'Oura Ring',       color: '#7C3AED', Icon: Smartphone, desc: 'Sync detailed sleep stages and readiness scores.',                  connectMethod: 'oauth', oauthNote: 'Requires Oura account and Ring gen 3+.' },
   { id: 'calendar', name: 'Google Calendar', color: '#FABB05', Icon: Calendar,   desc: 'Sync your schedule to power Context-Aware Suggestions.',            connectMethod: 'oauth', oauthNote: 'Read-only access to your calendar events.' },
 ];
@@ -28,148 +28,38 @@ function Toast({ message, type, onDismiss }) {
   );
 }
 
-// Simulated Device Pairing Modal
-function SimulatedPairingModal({ source, onConfirm, onCancel }) {
-  const [phase, setPhase] = useState('initial'); // initial | scanning | select | requesting | awaiting
-  const [devices, setDevices] = useState([]);
-  const [selectedDevice, setSelectedDevice] = useState(null);
-
+// OAuth Consent Modal
+function OAuthModal({ source, onConfirm, onCancel, loading }) {
   if (!source) return null;
-  const { Icon, color, name, id } = source;
-
-  const handleScan = () => {
-    setPhase('scanning');
-    setTimeout(() => {
-      // Mock devices based on provider
-      const mocks = {
-        apple: [{ id: 'a1', name: "User's Apple Watch Series 9" }, { id: 'a2', name: "User's iPhone 15 Pro" }],
-        google: [{ id: 'g1', name: "Pixel Watch 2" }, { id: 'g2', name: "Galaxy S24 Ultra" }],
-        oura: [{ id: 'o1', name: "Oura Ring Gen 3" }],
-        calendar: [{ id: 'c1', name: "Google Calendar (Primary)" }]
-      };
-      setDevices(mocks[id] || [{ id: 'd1', name: "Unknown Device" }]);
-      setPhase('select');
-    }, 2000);
-  };
-
-  const handleSelect = (device) => {
-    setSelectedDevice(device);
-    setPhase('requesting');
-    setTimeout(() => {
-      setPhase('awaiting');
-      setTimeout(() => {
-        onConfirm(); // Trigger actual connection logic
-      }, 3000);
-    }, 1500);
-  };
-
+  const { Icon, color, name, oauthNote } = source;
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
         style={{ background: 'var(--c-bg-card)', borderRadius: 20, padding: 32, maxWidth: 420, width: '100%', border: `1px solid ${color}40`, boxShadow: '0 24px 48px rgba(0,0,0,0.3)' }}>
-        
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', position: 'relative' }}>
-            {phase === 'scanning' && (
-              <motion.div animate={{ scale: [1, 2], opacity: [0.5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}
-                style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: `2px solid ${color}` }} />
-            )}
-            <Icon size={30} color={color} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 14, background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon size={26} color={color} />
           </div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--c-text-primary)' }}>
-            {phase === 'initial' ? `Connect ${name}` : 
-             phase === 'scanning' ? `Searching for ${name} devices...` :
-             phase === 'select' ? 'Select a device to connect' :
-             phase === 'requesting' ? `Connecting to ${selectedDevice?.name}...` :
-             'Awaiting Approval'}
-          </div>
-          <div style={{ fontSize: 13, color: 'var(--c-text-muted)', marginTop: 6 }}>
-            {phase === 'initial' ? 'Scan for nearby or linked devices to sync data.' :
-             phase === 'scanning' ? 'Ensure your device is powered on and nearby.' :
-             phase === 'select' ? 'Choose the device you want to sync with Wellness+.' :
-             phase === 'requesting' ? 'Sending connection request to the device.' :
-             'Please accept the pairing request on your device screen.'}
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--c-text-primary)' }}>Connect {name}</div>
+            <div style={{ fontSize: 13, color: 'var(--c-text-muted)', marginTop: 2 }}>{oauthNote}</div>
           </div>
         </div>
-
-        {phase === 'initial' && (
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={onCancel} style={{ flex: 1, padding: '12px 0', borderRadius: 12, background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)', fontSize: 14, fontWeight: 700, cursor: 'pointer', color: 'var(--c-text-secondary)' }}>Cancel</button>
-            <button onClick={handleScan}
-              style={{ flex: 2, padding: '12px 0', borderRadius: 12, background: color, border: 'none', fontSize: 14, fontWeight: 800, cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              <Activity size={16} /> Scan for Devices
-            </button>
-          </div>
-        )}
-
-        {phase === 'select' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {devices.map(d => (
-              <button key={d.id} onClick={() => handleSelect(d)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', borderRadius: 12, background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)', cursor: 'pointer', transition: 'border-color 0.2s' }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)' }}>{d.name}</span>
-                <Link size={16} color="var(--c-text-muted)" />
-              </button>
-            ))}
-            <button onClick={onCancel} style={{ marginTop: 8, padding: '12px 0', borderRadius: 12, background: 'transparent', border: '1px solid var(--c-border)', fontSize: 14, fontWeight: 700, cursor: 'pointer', color: 'var(--c-text-secondary)' }}>Cancel</button>
-          </div>
-        )}
-
-        {(phase === 'requesting' || phase === 'awaiting') && (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
-             <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}>
-              <Loader2 size={32} color={color} />
-            </motion.div>
-          </div>
-        )}
-
-      </motion.div>
-    </div>
-  );
-}
-
-// Bluetooth Connect Modal
-function BluetoothModal({ source, onConfirm, onCancel, btStatus, btDevice, btError }) {
-  if (!source) return null;
-  const { color, name } = source;
-  return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-        style={{ background: 'var(--c-bg-card)', borderRadius: 20, padding: 32, maxWidth: 400, width: '100%', border: '1px solid rgba(79,141,255,0.3)', boxShadow: '0 24px 48px rgba(0,0,0,0.3)' }}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(79,141,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-            <Bluetooth size={30} color="#4F8DFF" />
-          </div>
-          <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--c-text-primary)' }}>Connect {name} via BLE</div>
-          <div style={{ fontSize: 13, color: 'var(--c-text-muted)', marginTop: 6 }}>
-            {btStatus === 'connecting' ? 'Scanning for nearby BLE devices…' :
-             btStatus === 'connected' ? `Connected to: ${btDevice}` :
-             btError || 'Make sure your device is in pairing mode and nearby.'}
-          </div>
+        <div style={{ background: 'var(--c-bg-secondary)', borderRadius: 12, padding: '14px 16px', marginBottom: 20 }}>
+          <div style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', color: 'var(--c-text-muted)', marginBottom: 8 }}>Data Wellness+ will access:</div>
+          {['Daily step count & activity minutes', 'Sleep duration & quality scores', 'Heart rate & stress indicators', 'Workout history & recovery metrics'].map(p => (
+            <div key={p} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <CheckCircle2 size={14} color={color} />
+              <span style={{ fontSize: 13, color: 'var(--c-text-secondary)' }}>{p}</span>
+            </div>
+          ))}
         </div>
-        {btStatus === 'connecting' && (
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}>
-              <Loader2 size={32} color="#4F8DFF" />
-            </motion.div>
-          </div>
-        )}
-        {btError && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
-            <AlertTriangle size={14} color="#EF4444" />
-            <span style={{ fontSize: 12, color: '#EF4444' }}>{btError}</span>
-          </div>
-        )}
         <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={onCancel} style={{ flex: 1, padding: '12px 0', borderRadius: 12, background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)', fontSize: 14, fontWeight: 700, cursor: 'pointer', color: 'var(--c-text-secondary)' }}>
-            {btStatus === 'connected' ? 'Done' : 'Cancel'}
+          <button onClick={onCancel} disabled={loading} style={{ flex: 1, padding: '12px 0', borderRadius: 12, background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)', fontSize: 14, fontWeight: 700, cursor: 'pointer', color: 'var(--c-text-secondary)' }}>Cancel</button>
+          <button onClick={onConfirm} disabled={loading}
+            style={{ flex: 2, padding: '12px 0', borderRadius: 12, background: color, border: 'none', fontSize: 14, fontWeight: 800, cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            {loading ? <><Loader2 size={16} className="animate-spin" /> Authorizing…</> : <><Link size={16} /> Authorize & Connect</>}
           </button>
-          {btStatus !== 'connected' && (
-            <button onClick={onConfirm} disabled={btStatus === 'connecting'}
-              style={{ flex: 2, padding: '12px 0', borderRadius: 12, background: '#4F8DFF', border: 'none', fontSize: 14, fontWeight: 800, cursor: btStatus === 'connecting' ? 'default' : 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              {btStatus === 'connecting' ? 'Scanning…' : <><Bluetooth size={16} /> Scan for Devices</>}
-            </button>
-          )}
         </div>
       </motion.div>
     </div>
@@ -185,10 +75,6 @@ export default function CrossSourceDataSyncPage() {
   const [toasts, setToasts] = useState([]);
   const [oauthModal, setOauthModal] = useState(null); // source meta
   const [oauthLoading, setOauthLoading] = useState(false);
-  const [btModal, setBtModal] = useState(null);
-  const [btStatus, setBtStatus] = useState('idle'); // idle|connecting|connected|error
-  const [btDevice, setBtDevice] = useState(null);
-  const [btError, setBtError] = useState(null);
 
   const addToast = useCallback((message, type = 'success') => {
     const id = Date.now();
@@ -223,66 +109,67 @@ export default function CrossSourceDataSyncPage() {
     } catch (e) { console.warn('[DataSync] Metrics refresh failed:', e); }
   }, [fetchMetrics]);
 
-  // Simulated Pairing flow completion
-  const handleSimulatedConnect = async () => {
+  // Real OAuth connect flow using popup
+  const handleOAuthConnect = () => {
     if (!oauthModal) return;
     setOauthLoading(true);
-    try {
-      const { default: api } = await import('../services/api');
-      const res = await api.post(`/integrations/${oauthModal.id}/toggle`);
-      const integrations = res?.integrations || [];
-      setSources(prev => prev.map(s => {
-        const match = integrations.find(i => i.provider === s.id);
-        return { ...s, connected: !!match, lastSync: match ? new Date(match.lastSync).toLocaleString() : null };
-      }));
-      addToast(`${oauthModal.name} connected! Initial sync in progress…`, 'success');
-      setOauthModal(null);
-      setTimeout(refreshMetrics, 1500);
-    } catch (e) {
-      addToast(`Failed to connect ${oauthModal?.name}: ${e.message}`, 'error');
-    } finally {
-      setOauthLoading(false);
-    }
-  };
 
-  // Bluetooth connect flow using Web Bluetooth API
-  const handleBluetoothScan = async () => {
-    if (!('bluetooth' in navigator)) {
-      setBtError('Web Bluetooth is not supported in this browser. Please use Chrome or Edge on a desktop or Android device.');
+    // Get current session token to pass to popup so backend knows who to link
+    // Wellness+ stores token in localStorage or cookie depending on auth. We'll try both or let interceptor handle it
+    const sessionToken = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1] || '';
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+    const authUrl = `${backendUrl}/integrations/auth/${oauthModal.id}?token=${sessionToken}`;
+
+    // Open popup
+    const popup = window.open(authUrl, `Connect ${oauthModal.name}`, 'width=500,height=600');
+    
+    // Fallback if popup blocked
+    if (!popup) {
+      addToast('Popup blocked! Please allow popups for this site.', 'error');
+      setOauthLoading(false);
       return;
     }
-    setBtStatus('connecting');
-    setBtError(null);
-    try {
-      const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
-        optionalServices: ['heart_rate', 'battery_service', 'device_information', 'fitness_machine']
-      });
-      setBtDevice(device.name || 'Unknown Device');
-      await device.gatt.connect();
-      setBtStatus('connected');
-      // Save the "connection" to backend
-      try {
-        const { default: api } = await import('../services/api');
-        const res = await api.post(`/integrations/${btModal.id}/toggle`);
-        const integrations = res?.integrations || [];
-        setSources(prev => prev.map(s => {
-          const match = integrations.find(i => i.provider === s.id);
-          return { ...s, connected: !!match, lastSync: match ? new Date(match.lastSync).toLocaleString() : null };
-        }));
-        addToast(`${device.name || 'Device'} connected via Bluetooth! Syncing data…`, 'success');
-        setTimeout(refreshMetrics, 1500);
-      } catch (_) {}
-    } catch (err) {
-      if (err.name === 'NotFoundError') {
-        setBtStatus('idle'); // User cancelled picker
-      } else {
-        setBtStatus('error');
-        setBtError(err.message || 'Bluetooth connection failed.');
-        addToast('Bluetooth connection failed. Ensure the device is nearby and in pairing mode.', 'error');
+
+    // Set timeout in case user closes it or it hangs
+    const checkClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkClosed);
+        if (oauthLoading) setOauthLoading(false); // Only if it wasn't successful
       }
-    }
+    }, 1000);
   };
+
+  // Listen for OAuth success from popup
+  useEffect(() => {
+    const handleMessage = async (event) => {
+      // In production, verify event.origin here!
+      if (event.data?.type === 'OAUTH_SUCCESS') {
+        const { provider } = event.data;
+        addToast(`Successfully connected to ${provider}! Initial sync in progress…`, 'success');
+        
+        // Refresh local UI state
+        setOauthModal(null);
+        setOauthLoading(false);
+        
+        try {
+          const { default: api } = await import('../services/api');
+          const res = await api.get('/users/profile');
+          const userIntegrations = res?.integrations || [];
+          setSources(prev => prev.map(s => {
+            const match = userIntegrations.find(i => i.provider === s.id);
+            return match ? { ...s, connected: true, lastSync: new Date(match.lastSync).toLocaleString() } : s;
+          }));
+        } catch (e) {
+          console.error('[DataSync] Failed to fetch updated profile:', e);
+        }
+        
+        setTimeout(refreshMetrics, 1500);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [addToast, refreshMetrics]);
 
   // Toggle connection (entry point — routes to OAuth or BT modal)
   const handleToggle = async (source) => {
@@ -305,15 +192,8 @@ export default function CrossSourceDataSyncPage() {
         setTogglingId(null);
       }
     } else {
-      // Connect — show appropriate modal
-      if (source.connectMethod === 'bluetooth') {
-        setBtStatus('idle');
-        setBtDevice(null);
-        setBtError(null);
-        setBtModal(source);
-      } else {
-        setOauthModal(source);
-      }
+      // Connect — show OAuth modal
+      setOauthModal(source);
     }
   };
 
@@ -373,8 +253,7 @@ export default function CrossSourceDataSyncPage() {
 
       {/* Modals */}
       <AnimatePresence>
-        {oauthModal && <SimulatedPairingModal source={oauthModal} onConfirm={handleSimulatedConnect} onCancel={() => setOauthModal(null)} />}
-        {btModal && <BluetoothModal source={btModal} onConfirm={handleBluetoothScan} onCancel={() => { setBtModal(null); setBtStatus('idle'); }} btStatus={btStatus} btDevice={btDevice} btError={btError} />}
+        {oauthModal && <OAuthModal source={oauthModal} onConfirm={handleOAuthConnect} onCancel={() => setOauthModal(null)} loading={oauthLoading} />}
       </AnimatePresence>
 
       {/* Header */}
