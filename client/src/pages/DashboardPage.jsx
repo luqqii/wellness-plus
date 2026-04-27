@@ -22,7 +22,6 @@ import WeatherWidget from '../components/features/WeatherWidget';
 import useLessonStore from '../store/lessonStore';
 import PredictiveWellnessInsights from '../components/features/PredictiveWellnessInsights';
 import ContextAwareSuggestions from '../components/features/ContextAwareSuggestions';
-import WeatherWidget from '../components/features/WeatherWidget';
 import LiveSensorPanel from '../components/features/LiveSensorPanel';
 
 

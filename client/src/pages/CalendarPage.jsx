@@ -81,8 +81,8 @@ export default function CalendarPage() {
 
   const { events, addEvent, deleteEvent, getDatesWithEvents, getTotalDaysTracked, getStreakDays } = useCalendarStore();
   
-  // Use useMetrics hook to keep today's stats in sync
-  const { today } = useMetrics();
+  // Use useMetrics hook to keep today's stats in sync and get weekly steps history
+  const { weekly } = useMetrics();
   const liveSensors = useMetricsStore(s => s.liveSensors);
   const todayMetrics = useMetricsStore(s => s.todayMetrics);
 
