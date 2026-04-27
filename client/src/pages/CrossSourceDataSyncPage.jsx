@@ -18,8 +18,8 @@ export default function CrossSourceDataSyncPage() {
       try {
         const { default: api } = await import('../services/api');
         const res = await api.get('/users/profile');
-        if (res.data?.data?.integrations) {
-          const userIntegrations = res.data.data.integrations;
+        if (res.data?.integrations) {
+          const userIntegrations = res.data.integrations;
           setSources(prev => prev.map(s => {
             const match = userIntegrations.find(i => i.provider === s.id);
             if (match) {

@@ -220,7 +220,7 @@ export default function OnboardingPage() {
         
         // 1. Get Assessment from AI
         const res = await api.post('/insights/onboarding-assessment', { answers });
-        setAssessment(res.data.data);
+        setAssessment(res.data);
         
         // 2. Save goals/completion to DB
         let goalEnum = 'fitness';

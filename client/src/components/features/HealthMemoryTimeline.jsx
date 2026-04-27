@@ -11,9 +11,9 @@ export default function HealthMemoryTimeline({ events }) {
       try {
         const { default: api } = await import('../../services/api');
         const res = await api.get('/users/timeline');
-        if (res.data?.data) {
+        if (res.data) {
           // Map backend data to icon components
-          const formatted = res.data.data.map(ev => {
+          const formatted = res.data.map(ev => {
             let IconComponent = Flag;
             if (ev.icon === 'Star') IconComponent = Award;
             if (ev.icon === 'Activity') IconComponent = TrendingUp;

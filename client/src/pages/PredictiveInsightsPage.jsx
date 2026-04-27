@@ -62,8 +62,10 @@ export default function PredictiveInsightsPage() {
     const questionText = QUIZ_DATA[activeQuiz].questions[qIndex].q;
     const newAnswers = [...userAnswers, { q: questionText, text: opt.text, score: opt.score }];
     
+    // Always update answers so the state is complete
+    setUserAnswers(newAnswers);
+
     if (qIndex < 4) {
-      setUserAnswers(newAnswers);
       setQIndex(prev => prev + 1);
     } else {
       // Finished - Call AI Backend
@@ -74,7 +76,10 @@ export default function PredictiveInsightsPage() {
           answers: newAnswers
         });
         
-        const aiResult = response.data.data;
+        const aiResult = response.data; // Fixed: api.js already returns response.data
+        
+        if (!aiResult) throw new Error("No analysis received");
+
         // Map Risk Level to Color
         const colorMap = {
           'Low Risk': '#14B8A6',
@@ -92,7 +97,8 @@ export default function PredictiveInsightsPage() {
         setActiveQuiz(null);
       } catch (error) {
         console.error("AI Analysis failed:", error);
-        // Fallback UI if needed, but the backend has a deterministic fallback too
+        // Fallback or error state could be handled here
+        setActiveQuiz(null); // Go back even if it fails so user isn't stuck
       } finally {
         setLoading(false);
       }
@@ -132,7 +138,7 @@ export default function PredictiveInsightsPage() {
       </motion.div>
 
       <AnimatePresence mode="wait">
-        {activeQuiz ? (
+        {activeQuiz && QUIZ_DATA[activeQuiz] ? (
           <motion.div
             key="quiz-view"
             initial={{ opacity: 0, scale: 0.98 }}

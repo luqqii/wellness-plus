@@ -13,8 +13,8 @@ export default function RoutineAIPlanner() {
     try {
       const { default: api } = await import('../../services/api');
       const res = await api.get('/coach/routine');
-      if (res.data?.data) {
-        setRoutine(res.data.data);
+      if (res.data) {
+        setRoutine(res.data);
       }
     } catch (error) {
       console.error("Failed to generate routine:", error);
