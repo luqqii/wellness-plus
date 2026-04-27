@@ -218,6 +218,12 @@ export default function NutritionPage() {
         </div>
 
         {/* Calorie equation */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-text-primary)' }}>Daily Targets</span>
+          <button onClick={() => setShowGoalModal(true)} className="btn btn-sm btn-ghost" style={{ fontSize: 12 }}>
+            <Settings2 size={13} style={{ marginRight: 4 }} /> Edit Goal
+          </button>
+        </div>
         <div className="macro-equation" style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           gap: 14, padding: '16px 20px',
@@ -226,7 +232,7 @@ export default function NutritionPage() {
           marginBottom: 16
         }}>
           {[
-            { val: targetCalories.toLocaleString(), label: 'Goal', color: 'var(--c-text-primary)', isClickable: true },
+            { val: targetCalories.toLocaleString(), label: 'Goal', color: 'var(--c-text-primary)' },
             { val: '−', label: '', color: 'var(--c-text-muted)', isSym: true },
             { val: totalCal.toLocaleString(), label: 'Food', color: 'var(--c-orange)' },
             { val: '+', label: '', color: 'var(--c-text-muted)', isSym: true },
@@ -240,10 +246,9 @@ export default function NutritionPage() {
                 : ((targetCalories - totalCal + liveExerciseCal) <= 0 ? 'var(--c-green)' : 'var(--c-blue)') 
             },
           ].map((item, i) => (
-            <div key={i} style={{ textAlign: 'center', cursor: item.isClickable ? 'pointer' : 'default' }} onClick={() => item.isClickable && setShowGoalModal(true)}>
+            <div key={i} style={{ textAlign: 'center' }}>
               <div className={item.isSym ? 'macro-equation-sym' : 'macro-equation-val'} style={{ fontSize: item.isSym ? 20 : 26, fontWeight: 800, color: item.color, letterSpacing: '-1px', lineHeight: 1 }}>
                 {item.val}
-                {item.isClickable && <Settings2 size={12} style={{ display: 'inline', marginLeft: 4, opacity: 0.5 }} />}
               </div>
               {item.label && <div style={{ fontSize: 10, color: 'var(--c-text-muted)', marginTop: 3, fontWeight: 500 }}>{item.label}</div>}
             </div>
