@@ -45,11 +45,17 @@ export const updateUserProfile = async (req, res, next) => {
 
       // Update nested objects safely
       if (req.body.preferences) {
-        user.preferences = { ...user.preferences, ...req.body.preferences };
+        Object.keys(req.body.preferences).forEach(key => {
+          user.preferences[key] = req.body.preferences[key];
+        });
+        user.markModified('preferences');
       }
       
       if (req.body.onboarding) {
-        user.onboarding = { ...user.onboarding, ...req.body.onboarding };
+        Object.keys(req.body.onboarding).forEach(key => {
+          user.onboarding[key] = req.body.onboarding[key];
+        });
+        user.markModified('onboarding');
       }
 
       if (req.body.password) {
