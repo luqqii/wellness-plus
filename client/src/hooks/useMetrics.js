@@ -31,6 +31,11 @@ export function useMetrics() {
 
   useEffect(() => {
     fetchData();
+    
+    // Listen for manual log updates
+    const handleUpdate = () => fetchData();
+    window.addEventListener('metrics-updated', handleUpdate);
+    return () => window.removeEventListener('metrics-updated', handleUpdate);
   }, [fetchData]);
 
   return {

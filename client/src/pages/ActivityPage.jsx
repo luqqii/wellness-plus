@@ -103,6 +103,10 @@ export default function ActivityPage() {
       }
     };
     fetchAll();
+
+    const handleUpdate = () => fetchAll();
+    window.addEventListener('metrics-updated', handleUpdate);
+    return () => window.removeEventListener('metrics-updated', handleUpdate);
   }, []);
 
   // Build chart data from real metrics trend or fallback

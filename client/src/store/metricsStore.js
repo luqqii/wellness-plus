@@ -137,6 +137,11 @@ const useMetricsStore = create((set, get) => ({
 
       if (Object.keys(payload).length > 0) {
         await apiInstance.post('/metrics', payload);
+        
+        // Interconnect: notify all listening pages (like Activity and Dashboard) to re-fetch their charts and insights
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('metrics-updated'));
+        }
       }
 
       // Optimistically update local state immediately
