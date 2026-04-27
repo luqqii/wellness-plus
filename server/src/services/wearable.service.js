@@ -1,43 +1,94 @@
 import DailyMetric from '../models/DailyMetric.js';
 
 /**
- * Mocks the Google Fit / Apple Health sync process.
- * In a production setting, this uses an external OAuth token to fetch daily
- * aggregations and stores them.
+ * Per-provider realistic data profiles.
+ * Each provider focuses on different biometrics.
  */
-export const syncGoogleFitMetrics = async (userId) => {
-  try {
-    console.log(`[WearableService] Fetching Google Fit data for user ${userId}...`);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+const PROVIDER_PROFILES = {
+  google: {
+    steps: () => Math.floor(4000 + Math.random() * 10000),
+    sleepHours: () => 5.5 + Math.random() * 3,
+    activeMinutes: () => Math.floor(20 + Math.random() * 80),
+    stressLevel: () => Math.floor(3 + Math.random() * 5),
+  },
+  apple: {
+    steps: () => Math.floor(5000 + Math.random() * 9000),
+    sleepHours: () => 6 + Math.random() * 3,
+    activeMinutes: () => Math.floor(30 + Math.random() * 90),
+    stressLevel: () => Math.floor(2 + Math.random() * 5),
+  },
+  garmin: {
+    // Garmin users tend to be serious athletes — more steps, more activity
+    steps: () => Math.floor(8000 + Math.random() * 14000),
+    sleepHours: () => 7 + Math.random() * 2,
+    activeMinutes: () => Math.floor(60 + Math.random() * 120),
+    stressLevel: () => Math.floor(2 + Math.random() * 4),
+  },
+  oura: {
+    // Oura focuses on sleep quality and recovery
+    steps: () => Math.floor(4000 + Math.random() * 7000),
+    sleepHours: () => 7 + Math.random() * 2.5,
+    activeMinutes: () => Math.floor(20 + Math.random() * 60),
+    stressLevel: () => Math.floor(2 + Math.random() * 3),
+  },
+  calendar: {
+    // Calendar only informs context; use average metrics
+    steps: () => Math.floor(5000 + Math.random() * 5000),
+    sleepHours: () => 7,
+    activeMinutes: () => 30,
+    stressLevel: () => 5,
+  },
+};
 
-    // Mock data fetched from an external wearable network
+/**
+ * Sync metrics for a specific provider.
+ * Uses per-provider data profiles to generate realistic data.
+ */
+export const syncProviderMetrics = async (userId, provider = 'google') => {
+  try {
+    const profile = PROVIDER_PROFILES[provider] || PROVIDER_PROFILES.google;
+
+    console.log(`[WearableService] Syncing ${provider} data for user ${userId}...`);
+
+    // Simulate API/BLE latency
+    await new Promise(resolve => setTimeout(resolve, 600 + Math.random() * 400));
+
     const externalData = {
-      steps: Math.floor(Math.random() * 15000), // Random daily steps
-      sleepHours: 5 + Math.random() * 4,        // 5 to 9 hours of sleep
-      activeMinutes: Math.floor(Math.random() * 120),
+      steps: profile.steps(),
+      sleepHours: profile.sleepHours(),
+      activeMinutes: profile.activeMinutes(),
+      stressLevel: profile.stressLevel(),
     };
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Upsert into our system DailyMetrics
     const metric = await DailyMetric.findOneAndUpdate(
       { userId, date: today },
       {
-        $max: { steps: externalData.steps }, // Never lower steps from wearable sync
-        $set: { 
-          'sleep.hours': externalData.sleepHours,
-          activity: externalData.activeMinutes
+        $max: { steps: externalData.steps },
+        $set: {
+          'sleep.hours': parseFloat(externalData.sleepHours.toFixed(1)),
+          stressLevel: externalData.stressLevel,
         }
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
-    return metric;
+    return {
+      steps: metric.steps,
+      sleep: metric.sleep,
+      stressLevel: metric.stressLevel,
+      provider,
+      syncedAt: new Date().toISOString(),
+    };
   } catch (error) {
-    console.error('Error syncing Google Fit data:', error);
+    console.error(`[WearableService] Error syncing ${provider}:`, error);
     throw error;
   }
 };
+
+/**
+ * Legacy alias — kept for backward compatibility.
+ */
+export const syncGoogleFitMetrics = (userId) => syncProviderMetrics(userId, 'google');
