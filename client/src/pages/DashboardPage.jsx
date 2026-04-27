@@ -75,10 +75,11 @@ export default function DashboardPage() {
   const currentMetric = today || SAMPLE_METRICS.today;
 
   // Safe fallbacks to prevent NaN crashes
-  const steps = Number(liveSensors?.steps) || 0;
-  const sleepHours = todayMetrics?.sleep?.hours || currentMetric?.sleep?.hours || 0;
-  const cal = Number(liveSensors?.activeCalories) || currentMetric?.nutrition?.calories || 0;
-  const stress = Number(liveSensors?.stressLevel) || 5;
+  // Merge live sensors with stored metrics (stored metrics = manual logs or previous sensor data)
+  const steps = Math.max(Number(liveSensors?.steps || 0), Number(todayMetrics?.steps || 0));
+  const sleepHours = Number(todayMetrics?.sleep?.hours || liveSensors?.sleep?.hours || currentMetric?.sleep?.hours || 0);
+  const cal = Math.max(Number(liveSensors?.activeCalories || 0), Number(todayMetrics?.activity?.calories || 0));
+  const stress = Number(liveSensors?.stressLevel) || Number(todayMetrics?.stressLevel) || 5;
 
   const STATS = [
     { icon: Footprints, label: 'Steps',    value: steps.toLocaleString(), sub: '/ 10,000', pct: Math.min(100, (steps/10000)*100), color: 'var(--c-teal)', path: '/activity' },

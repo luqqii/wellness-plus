@@ -76,10 +76,10 @@ export default function ActivityPage() {
   const [expandedMemory, setExpandedMemory] = useState(null);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
 
-  // Live sensor-derived metrics
-  const liveSteps = liveSensors.steps || 0;
-  const liveCalories = Math.round(liveSensors.activeCalories || 0);
-  const sleepHours = todayMetrics?.sleep?.hours || 0;
+  // Live sensor-derived metrics merged with stored metrics
+  const liveSteps = Math.max(Number(liveSensors.steps || 0), Number(todayMetrics?.steps || 0));
+  const liveCalories = Math.max(Math.round(liveSensors.activeCalories || 0), Number(todayMetrics?.activity?.calories || 0));
+  const sleepHours = Number(todayMetrics?.sleep?.hours || liveSensors?.sleep?.hours || 0);
   const liveSpeed = liveSensors.speed != null ? liveSensors.speed : null;
   const liveLocation = liveSensors.location;
 
