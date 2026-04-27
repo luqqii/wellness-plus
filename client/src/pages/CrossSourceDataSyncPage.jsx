@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Watch, Smartphone, Heart, Calendar, Activity, RefreshCw, Bluetooth, CheckCircle2, XCircle, Loader2, Zap, X, AlertTriangle, Link } from 'lucide-react';
 import useMetricsStore from '../store/metricsStore';
@@ -55,9 +55,9 @@ function OAuthModal({ source, onConfirm, onCancel, loading }) {
           ))}
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={onCancel} disabled={loading} style={{ flex: 1, padding: '12px 0', borderRadius: 12, background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)', fontSize: 14, fontWeight: 700, cursor: 'pointer', color: 'var(--c-text-secondary)' }}>Cancel</button>
+          <button onClick={onCancel} style={{ flex: 1, padding: '12px 0', borderRadius: 12, background: 'var(--c-bg-secondary)', border: '1px solid var(--c-border)', fontSize: 14, fontWeight: 700, cursor: 'pointer', color: 'var(--c-text-secondary)' }}>Cancel</button>
           <button onClick={onConfirm} disabled={loading}
-            style={{ flex: 2, padding: '12px 0', borderRadius: 12, background: color, border: 'none', fontSize: 14, fontWeight: 800, cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            style={{ flex: 2, padding: '12px 0', borderRadius: 12, background: color, border: 'none', fontSize: 14, fontWeight: 800, cursor: loading ? 'wait' : 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             {loading ? <><Loader2 size={16} className="animate-spin" /> Authorizing…</> : <><Link size={16} /> Authorize & Connect</>}
           </button>
         </div>
@@ -75,6 +75,7 @@ export default function CrossSourceDataSyncPage() {
   const [toasts, setToasts] = useState([]);
   const [oauthModal, setOauthModal] = useState(null); // source meta
   const [oauthLoading, setOauthLoading] = useState(false);
+  const popupRef = useRef(null);
 
   const addToast = useCallback((message, type = 'success') => {
     const id = Date.now();
@@ -122,6 +123,7 @@ export default function CrossSourceDataSyncPage() {
 
     // Open popup
     const popup = window.open(authUrl, `Connect ${oauthModal.name}`, 'width=500,height=600');
+    popupRef.current = popup;
     
     // Fallback if popup blocked
     if (!popup) {
@@ -135,8 +137,18 @@ export default function CrossSourceDataSyncPage() {
       if (popup.closed) {
         clearInterval(checkClosed);
         if (oauthLoading) setOauthLoading(false); // Only if it wasn't successful
+        popupRef.current = null;
       }
     }, 1000);
+  };
+
+  const handleOAuthCancel = () => {
+    if (popupRef.current && !popupRef.current.closed) {
+      popupRef.current.close();
+    }
+    popupRef.current = null;
+    setOauthModal(null);
+    setOauthLoading(false);
   };
 
   // Listen for OAuth success from popup
@@ -253,7 +265,7 @@ export default function CrossSourceDataSyncPage() {
 
       {/* Modals */}
       <AnimatePresence>
-        {oauthModal && <OAuthModal source={oauthModal} onConfirm={handleOAuthConnect} onCancel={() => setOauthModal(null)} loading={oauthLoading} />}
+        {oauthModal && <OAuthModal source={oauthModal} onConfirm={handleOAuthConnect} onCancel={handleOAuthCancel} loading={oauthLoading} />}
       </AnimatePresence>
 
       {/* Header */}
