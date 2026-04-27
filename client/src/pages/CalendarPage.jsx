@@ -73,7 +73,7 @@ export default function CalendarPage() {
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [selectedDate, setSelectedDate] = useState(today.toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(today.toLocaleDateString('en-CA'));
   const [showAddForm, setShowAddForm] = useState(false);
   const [newEvent, setNewEvent] = useState({ type: 'note', title: '', note: '' });
   const [showSleepForm, setShowSleepForm] = useState(false);
@@ -136,7 +136,7 @@ export default function CalendarPage() {
       addEvent({
         date: selectedDate,
         type: 'weather',
-        title: `Weather: ${liveSensors.weather.icon} ${liveSensors.weather.condition}`,
+        title: `Weather: ${liveSensors.weather.icon} ${liveSensors.weather.condition}${liveSensors.weather.city ? ` in ${liveSensors.weather.city}` : ''}`,
         data: { temp: liveSensors.weather.temp + '°C', humidity: liveSensors.weather.humidity + '%', wind: liveSensors.weather.windSpeed + ' km/h' },
       });
     }
@@ -146,7 +146,7 @@ export default function CalendarPage() {
 
   const handleDelete = (eventId) => deleteEvent(selectedDate, eventId);
 
-  const todayStr = today.toISOString().split('T')[0];
+  const todayStr = today.toLocaleDateString('en-CA');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 1000 }}>
@@ -157,7 +157,7 @@ export default function CalendarPage() {
           { label: 'Current Streak', value: `${streak} days`, icon: Heart, color: 'var(--c-red)' },
           { label: 'Live Steps', value: Math.max(Number(liveSensors.steps || 0), Number(todayMetrics?.steps || 0)).toLocaleString(), icon: Footprints, color: 'var(--c-teal)' },
           { label: 'Sleep (Tonight)', value: `${Number(todayMetrics?.sleep?.hours || liveSensors?.sleep?.hours || 0)}h`, icon: Moon, color: 'var(--c-purple)' },
-          { label: 'Weather', value: liveSensors.weather ? `${liveSensors.weather.icon} ${liveSensors.weather.temp}°C` : '—', icon: Thermometer, color: 'var(--c-orange)' },
+          { label: 'Weather', value: liveSensors.weather ? `${liveSensors.weather.icon} ${liveSensors.weather.temp}°C ${liveSensors.weather.city ? `(${liveSensors.weather.city})` : ''}` : '—', icon: Thermometer, color: 'var(--c-orange)' },
         ].map((s, i) => (
           <motion.div key={s.label} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
             className="glass-card" style={{ padding: '14px 16px' }}>

@@ -98,7 +98,7 @@ const useMetricsStore = create((set, get) => ({
   fetchData: async (apiInstance) => {
     set({ isLoading: true, error: null });
     try {
-      const localDate = new Date().toISOString().split('T')[0];
+      const localDate = new Date().toLocaleDateString('en-CA'); // Gets local YYYY-MM-DD
       const [todayRes, trendRes] = await Promise.all([
         apiInstance.get(`/metrics?date=${localDate}`),
         apiInstance.get('/metrics/trend')
@@ -145,7 +145,7 @@ const useMetricsStore = create((set, get) => ({
   // Log metrics manually and sync to backend
   saveManualMetrics: async (apiInstance, updates) => {
     try {
-      const localDate = new Date().toISOString().split('T')[0];
+      const localDate = new Date().toLocaleDateString('en-CA'); // Gets local YYYY-MM-DD
       const payload = { date: localDate };
       if (updates.steps !== undefined) payload.steps = Number(updates.steps);
       if (updates.sleepHours !== undefined) payload['sleep.hours'] = Number(updates.sleepHours);
