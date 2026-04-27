@@ -18,6 +18,7 @@ import useMetricsStore from '../store/metricsStore';
 import useMetrics from '../hooks/useMetrics';
 import { useNavigate } from 'react-router-dom';
 import MobileFeaturePortal from '../components/dashboard/MobileFeaturePortal';
+import WeatherWidget from '../components/features/WeatherWidget';
 import useLessonStore from '../store/lessonStore';
 import PredictiveWellnessInsights from '../components/features/PredictiveWellnessInsights';
 import ContextAwareSuggestions from '../components/features/ContextAwareSuggestions';

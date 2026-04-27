@@ -5,7 +5,7 @@ import useMetricsStore from '../store/metricsStore';
 /**
  * useMetrics — Hook to fetch and manage user daily metrics via global store
  */
-export function useMetrics() {
+function useMetrics() {
   const { 
     todayMetrics: today, 
     weeklyTrend: weekly, 
