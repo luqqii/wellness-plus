@@ -36,7 +36,7 @@ export default function DeviceConnectBanner() {
       </div>
 
       <button
-        onClick={() => navigate('/dashboard/sync')}
+        onClick={() => navigate('/data-sync')}
         style={{
           display: 'flex', alignItems: 'center', gap: 6,
           fontSize: 12, fontWeight: 700, color: 'white',
