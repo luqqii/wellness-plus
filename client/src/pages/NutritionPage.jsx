@@ -56,6 +56,7 @@ export default function NutritionPage() {
       setShowGoalModal(false);
     } catch (e) {
       console.error(e);
+      alert('Failed to save goal: ' + e.message);
     }
   };
 
